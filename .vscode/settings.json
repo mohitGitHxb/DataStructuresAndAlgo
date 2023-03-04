@@ -1,0 +1,24 @@
+{
+    "files.associations": {
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "new": "cpp",
+        "array": "cpp",
+        "bitset": "cpp",
+        "initializer_list": "cpp",
+        "regex": "cpp",
+        "utility": "cpp",
+        "valarray": "cpp"
+    },
+    "cSpell.words": [
+        "getnode",
+        "newnode"
+    ],
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 85,
+    "audioCues.onDebugBreak": "auto",
+    "[markdown]": {
+        "editor.wordWrapColumn": 85,
+        "editor.wordWrap": "wordWrapColumn"
+    }
+}

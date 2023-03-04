@@ -816,6 +816,46 @@ int pathWithMaxSum(vector<int> &A , vector<int> &B){
     return ans;
     
 }
+
+//^ 23 Kth element in two sorted arrays
+/* 
+~ Method - 1: Two pointer / Divide and Conquer
+& We will keep two pointers, say p1 and p2, each in two arrays. A counter to keep track of whether we have reached the kth position. Start iterating through both arrays. If array1[p1] < array2[p2], move p1 pointer ahead and increase counter value. If array2[p2] <array1[p1], move p2 pointer ahead and increase counter. When the count is equal to k, return the element in which condition makes the counter value equal to k.
+
+!O(K) T.C | O(1) S.C
+
+~ Method - 2: BINARY SEARCH
+& Apply binary search in an array with a small size. Start iterating with two pointers, say left and right. Find the middle of the range. Take elements from low to middle of array1 and the remaining elements from the second array. Then using the condition mentioned above, check if the left half is valid. If valid, print the maximum of both array’s last element. If not, move the range towards the right if l2 > r1, else move the range towards the left if l1 > r2.
+
+* O(min( log(min(m,n)) ) T.C | O(1) S.C
+
+ */
+    int kthElement(int arr1[], int arr2[], int n, int m, int k)
+    {
+        if(m > n){
+          return  kthElement(arr2,arr1,m,n,k);
+        }
+
+            int low = max(0,k-m);
+            int high = min(k,n);
+            while(low <= high){
+                int cut1 = (low + high)/2;
+                int cut2 = (k - cut1);
+                int left1 = cut1 == 0 ? INT_MIN : arr1[cut1 - 1];
+                int left2 = cut2 == 0 ? INT_MIN : arr2[cut2 - 1];
+                int right1 = cut1 == n ? INT_MAX : arr1[cut1];
+                int right2 = cut2 == m ? INT_MAX : arr2[cut2];
+                
+                if(left1 <= right2 && left2 <= right1){
+                    return max(left1,left2);
+                }
+                else if(left1 > right2)
+                    high = cut1 - 1;
+                else
+                    low = cut1 + 1;
+            }
+            return 1;
+    }
 int main(int argc, char const *argv[])
 {
     

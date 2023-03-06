@@ -856,6 +856,41 @@ int pathWithMaxSum(vector<int> &A , vector<int> &B){
             }
             return 1;
     }
+
+class subsetSum{
+    private:
+    /* 
+   & v1,v2 stores the subsequence sum  of 1st and 2nd half respectively.
+   & sort both the subset sums
+     */
+    vector<int> v1,v2;
+    public:
+    void subsetSumGenerator(vector<int> &arr , int low,int high){
+        int start = 0;
+        int n = high - low + 1;
+        for(int i = 0; i < (1<<n); i++){ //? 1 << n is same as 2^n
+            start = 0;
+            int j = start;
+            int x = i;
+            while(x){
+                int lo = x&1; 
+                if(lo)start+=arr[j];
+                j++;
+                x >>= 1;
+            }
+            v1.push_back(start);
+        }
+    }
+    int getCount(vector<int> &arr,int a,int b){
+        int count = 0;
+        for(int i=0;i<v1.size();i++){
+            int low = lower_bound(v2.begin(),v2.end(),a-v1[i]) - v2.begin();
+            int high = upper_bound(v2.begin(),v2.end(),b-v1[i]) - v2.begin();
+            count += high - low;
+        }
+        return count;
+    }
+};
 int main(int argc, char const *argv[])
 {
     

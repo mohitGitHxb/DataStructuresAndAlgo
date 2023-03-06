@@ -862,6 +862,12 @@ class subsetSum{
     /* 
    & v1,v2 stores the subsequence sum  of 1st and 2nd half respectively.
    & sort both the subset sums
+   & Now, lets say X(from v1) and Y(from v2) is taken such that
+   & 1. X + Y = A; ==> Y = A - X <--- find y using lower bound
+   & 2. X + Y = B; ==> Y = B - X <--- find y using upper bound
+   & Now our count is high - low;
+
+   *O(NlogN) T.C | O(N) S.C
      */
     vector<int> v1,v2;
     public:

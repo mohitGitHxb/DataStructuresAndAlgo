@@ -577,7 +577,7 @@ class AggressiveCows{
 
 &   If Valid: we will increase mid value by moving in right half as we have to maximise the minimum distance i.e. low = mid+1;
 
-& If Not Valid: It means with 'mid' as minimum distance we can not accommodate cows(there must be cows left to accomodate in stalls), hence if we decrease the 'mid' which is minimum distance we considered, then we can accomodate all cows. Therefore decrease the mid by moving in left half. i.e. high = mid-1 
+& If Not Valid: It means with 'mid' as minimum distance we can not accommodate cows(there must be cows left to accommodate in stalls), hence if we decrease the 'mid' which is minimum distance we considered, then we can accommodate all cows. Therefore decrease the mid by moving in left half. i.e. high = mid-1 
 
 ~ Valid Function: It will check if with mid distance, cow can be accomodated or not?
 
@@ -857,6 +857,7 @@ int pathWithMaxSum(vector<int> &A , vector<int> &B){
             return 1;
     }
 
+//^ 24 Subset Sum SPOJ
 class subsetSum{
     private:
     /* 

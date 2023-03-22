@@ -195,6 +195,131 @@ int m = pat.length();
 return false;	
 } 
 
+//^ 9 Z algorithm using longest prefix substring
+class Zalgorithm{
+    public:
+    void getZarr(vector<int> &zarr,string str){
+        int n = str.length();
+        int L,R,k;
+        L = R = 0;
+        for (int i = 1; i < n; i++)
+        {
+            if(L > R){
+                L = R = i;
+                while (R < n && str[R-L] == str[R]) 
+                {
+                    R++;
+                }
+                zarr[i] = R-L;
+                R--;
+                
+            }
+            else
+            {
+                k = i - L;
+                if(zarr[k] < R-i+1)
+                    zarr[i] = zarr[k];
+                else
+                {
+                    L = i;
+                    while (R < n && str[R-L] == str[R])
+                    {
+                        R++;
+                    }
+                    zarr[i] = R - L;
+                    R--;
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+
+    vector<int> Zalgo(string pat,string txt){
+        vector<int> res;
+        string concat = pat + '$' + txt;
+        int l = concat.length();
+
+        vector<int> Z(l);
+        getZarr(Z,concat);
+        for(int i = 0; i < l; i++){
+            if(Z[i] == pat.length())
+                res.push_back(i - pat.length());
+        }
+        return res;
+    }
+};
+
+//^ 10 KMP algorithm
+class KMP{
+    private:
+    /* 
+&    Build the prefix table: Create an array lps (longest prefix suffix) of length n (length of the pattern string) where lps[i] stores the length of the longest proper prefix of the pattern that is also a proper suffix of the first i characters of the pattern.
+
+& Initialize pointers: Initialize two pointers i and j to 0, where i points to the current character in the text string being compared and j points to the current character in the pattern string being compared.
+
+& Traverse the text string: While i is less than the length of the text string, do the following:
+
+& a. If the current characters in the text and pattern strings match, increment both i and j.
+
+& b. If j reaches the end of the pattern string, a match has been found. Return the starting index of the pattern in the text string.
+
+& c. If the current characters in the text and pattern strings do not match: check if j is 0 if yes do i++ else j = lps[j-1];
+
+& If the end of the text string is reached and no match has been found, return -1.
+
+* O(N) T.C and O(M) S.C
+     */
+    public:
+    void getLPSarray(string &pat,vector<int> &LPS){
+        int len = 0;
+        int i = 1;
+        LPS[0] = 0;
+        while(i < pat.length()){
+            if(pat[i] == pat[len]){
+                LPS[i++] = ++len;
+            }
+            else if(len == 0){
+                LPS[i++] = 0;
+            }
+            else{
+                len = LPS[len - 1];
+            }
+        }
+    }
+    vector<int> KMPAlgo(string txt,string pat){
+        vector<int> ans;
+        vector<int> lps(pat.length());
+        getLPSarray(pat,lps);
+        int i = 0,j = 0;
+        while (i < txt.length()) 
+        {
+            if (pat[j] == txt[i])
+            {
+                i++;
+                j++;
+            }
+            if (j == pat.length())
+            {
+                ans.push_back(i - j);
+                j = lps[j - 1];
+            }
+            else if(i < txt.length() && pat[j] != txt[i])
+            {
+                if(j == 0)
+                    i++;
+                else
+                    j = lps[j - 1];
+            }
+            
+        }
+        
+        return ans;
+    }
+};
+
 int main(){
     string str = "RiCantSnipe";
     duplicatesInString(str);

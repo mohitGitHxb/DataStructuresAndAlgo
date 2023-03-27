@@ -320,6 +320,147 @@ class KMP{
     }
 };
 
+//^ 11 Count and say string
+/* 
+ @ 1.     1
+ @ 2.     11
+ @ 3.     21
+ @ 4.     1211
+ @ 5.     111221 
+ @ 6.     312211
+ @ 7.     13112221
+ @ 8.     1113213211
+ @ 9.     31131211131221
+ @ 10.   13211311123113112211
+
+& From the examples you can see, the (i+1)th sequence is the "count and say" of the ith sequence!
+
+~ approach/method: 
+& First check for the base case which is countAndSay(1) = "1"
+& After this we'll recursively check for countAndSay(n-1); <-- This will return the string
+
+& create empty string res which will hold the answer. 
+& iterate over string obtained from the step 2 and append it to the res in this manner [frequency,character] make sure the counter always goes up;
+& if prev[i]!=prev[i+1] or i is pointing to the end of the string reset counter and add result to res
+& return res
+ */
+  string countAndSay(int n) {
+        if(n == 1)
+            return "1";
+            string prev = countAndSay(n-1);
+            string res = "";
+            int counter = 0;
+            for(int i=0;i<prev.length();i++){
+                counter++;
+                if(i == prev.length()-1 || prev[i]!=prev[i+1]){
+                    string cnt = to_string(counter);
+                    // res.append(cnt);
+                    res += (cnt + prev[i]);
+                    counter = 0;
+                }
+            }
+            return res;
+    }
+
+
+//^ 12 Print all permutations of a string
+class PermutationsString
+{
+    private:
+    /* 
+    
+    *O(N*N!) T.C
+     */
+	public:
+	    void findPermutationUtil(string &s , int index , set<string> &st){
+	        if(index == s.size()){
+	            st.insert(s);
+	            return;
+	        }
+	        for(int i=index;i<s.length();i++){
+	            swap(s[i],s[index]);
+	            findPermutationUtil(s,index+1,st);
+	            swap(s[i],s[index]);
+	        }
+	    }
+		vector<string>find_permutation(string S)
+		{
+		    vector<string> ans;
+		    if(S.size() == 0)
+		        return ans;
+            set<string> st;
+            findPermutationUtil(S,0,st);
+            for(auto &x : st)
+                ans.push_back(x);
+            return ans;
+            
+		}
+        /* 
+        ~ More concise code
+                vector<string>find_permutation(string S)
+        {
+            vector<string>res;
+            // sort the string in lexicographically order
+            sort(S.begin(), S.end());
+            do
+            {
+                // keep adding while there is next permutation
+                res.push_back(S);
+            }while(next_permutation(S.begin(), S.end()));
+            return res;
+        }
+         */
+};
+
+//^ 13 longest pallindromic subtring
+/* 
+~ Method 1: Naive
+& Generate all possible subsequences of the string and check if they are pallindrome or not
+!O(N!) T.C
+
+~ Method 2: Using Even and Odd length method
+& Initialize start and end. start = 0 and end = 1 (this is our assumed substring and we will extend this)
+
+& let two variables low and high points to i - 1 and i (even length) and i - 1 and i + 1 (odd length)
+
+& while str[low] == str[high] and low is greater equal to 0 and high is less than string length | check if the size (high-low+1) becomes greater than previous length (denoted by end)
+
+& if it exceeds end then update end and start = low | low-- and high++
+& at the end our desired pallindromic substring is from [start to start+end-1]
+* O(N*substringLen) T.C | O(N) space;
+ */
+string longestPalindrome(const string &s) {
+        string ans = "";
+        int low,high;
+        int start=0,end=1;
+        for(int i = 1; i < s.length(); i++){
+            low = i - 1;
+            high = i;
+            while(low>=0 && high < s.length() && s[low]==s[high]){
+                if(high - low + 1 > end){
+                    end = high - low + 1;
+                    start = low;
+                }
+                low--;
+                high++;
+            }
+            low = i - 1;
+            high = i + 1;
+            while(low>=0 && high < s.length() && s[low]==s[high]){
+                if(high - low + 1 > end){
+                    end = high - low + 1;
+                    start = low;
+                }
+                low--;
+                high++;
+            }
+        }
+
+        for(int i = start; i < (start+end); i++){
+            ans.push_back(s[i]);
+        }
+        return ans;
+    }
 int main(){
     string str = "RiCantSnipe";
     duplicatesInString(str);

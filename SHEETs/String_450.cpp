@@ -461,6 +461,85 @@ string longestPalindrome(const string &s) {
         }
         return ans;
     }
+
+//^ 14 Print all subsequences of a string
+//* O(2*N) T.C
+void printAllSubsequences(int index,string &temp,string &str){
+    if(index>= str.size()){
+        cout << temp << "\n";
+        return;
+    }
+    //& Adding char into a temporary string to take this char into account
+    temp.push_back(str[index]);
+    //& Generating all subsequences including this character
+    printAllSubsequences(index+1,temp,str);
+    //& removing this character (excluding this character) and generating all subsequences
+    temp.pop_back();
+    printAllSubsequences(index+1,temp,str);
+}
+
+//^ 15 Split the binary string into substrings with equal number of 0s and 1s
+/* 
+
+& Initialize count = 0 and traverse the string character by character and keep track of the number of 0s and 1s so far,
+& whenever the count of 0s and 1s become equal increment the count. As in the given question, if it is not possible to split string then on that time count of 0s must not be equal to count of 1s then return -1 else print the value of count after the traversal of the complete string.
+
+*O(N) T.C | O(1) S.C
+ */
+
+int split01(const string &str){
+    int count = 0;
+    int counter = 0;
+    int i = 0;
+    while(i < str.length()){
+        if(str[i] == '0')counter++;
+        else counter--;
+        if(counter == 0){
+            count++;
+        }
+    }
+    return counter == 0 ? count : -1;
+}
+
+//^ 16 Balanced brackets
+class BalancedBrackets{
+/* 
+& isMatching function cares only about comparing two brackets
+& Create a stack of characters it will keep track of opening and closing brackets
+& if str[i] is a opening bracket => add it to the stack
+& else check if stack is empty (false case) else if str[i] and stack.top() is not a match pair (false case) else just pop the element
+
+& check if stack is empty(true)
+
+*O(N) T.C | O(N) S.C
+
+ */
+public:
+    bool isMatching(char a,char b){
+    return ((a=='('&&b==')'))||((a=='{'&&b=='}'))||((a=='['&&b==']'));
+    }
+    bool isParenthesis(const string &str){
+        if(str.empty())return false;
+        stack<char> s;
+   for (int i = 0; i < str.length(); i++)
+    {
+        if(str.at(i)=='('||str.at(i)=='{'||str.at(i)=='['){
+            s.push(str[i]);
+        }
+        else{
+            if(s.empty())
+                return false;
+            else if(isMatching(s.top(),str[i])==false)
+                return false;
+            else 
+                s.pop();
+        }
+    }
+    return s.empty();
+    }
+
+};
+
 int main(){
     string str = "RiCantSnipe";
     duplicatesInString(str);

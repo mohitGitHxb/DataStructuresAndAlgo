@@ -540,6 +540,78 @@ public:
 
 };
 
+//^ 17 count of number of string in a 2D character array
+class CharacterCount{
+    private:
+    /* 
+&    Step 1– Traverse matrix character by character and take one character as string start 
+&    Step 2– For each character find the string in all the four directions recursively 
+&    Step 3– If a string found, we increase the count 
+&    Step 4– When we are done with one character as start, we repeat the same process for the next character 
+&    Step 5– Calculate the sum of count for each character 
+&    Step 6– Final count will be the answer
+    * O(n*m)^2 T.C || O(n*m)
+     */
+    public:
+    int internalSearch(string needle, int row,
+				int col, string hay[],
+				int row_max, int col_max, int xx)
+{
+	int found = 0;
+
+	if (row >= 0 && row <= row_max && col >= 0 &&
+		col <= col_max && needle[xx] == hay[row][col])
+	{
+		char match = needle[xx];
+		xx += 1;
+
+		hay[row][col] = 0;
+
+		if (needle[xx] == 0)
+		{
+			found = 1;
+		}
+		else
+		{
+
+			// through Backtrack searching
+			// in every directions
+			found += internalSearch(needle, row,
+									col + 1, hay,
+									row_max, col_max,xx);
+			found += internalSearch(needle, row, col - 1,
+									hay, row_max, col_max,xx);
+			found += internalSearch(needle, row + 1, col,
+									hay, row_max, col_max,xx);
+			found += internalSearch(needle, row - 1, col,
+									hay, row_max, col_max,xx);
+		}
+		hay[row][col] = match;
+	}
+	return found;
+}
+
+// Function to search the string in 2d array
+int searchString(string needle, int row, int col,
+				string str[], int row_count,
+								int col_count)
+{
+	int found = 0;
+	int r, c;
+
+	for (r = 0; r < row_count; ++r)
+	{
+		for (c = 0; c < col_count; ++c)
+		{
+			found += internalSearch(needle, r, c, str,
+									row_count - 1,
+									col_count - 1, 0);
+		}
+	}
+	return found;
+}
+};
+
 int main(){
     string str = "RiCantSnipe";
     duplicatesInString(str);

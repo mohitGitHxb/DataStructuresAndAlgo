@@ -612,6 +612,87 @@ int searchString(string needle, int row, int col,
 }
 };
 
+//^ 18 Find the string in grid (not in zig-zag form). The 8 directions are, horizontally left, horizontally right, vertically up, vertically down, and 4 diagonal directions.
+
+class StringsInGrid {
+    /* 
+% Uses DFS algorithm
+&    Here's a step-by-step explanation of the code:
+
+&    Initialize a 2D vector d representing the 8 possible directions to traverse in the grid.
+
+&    Define a helper function patternStarts that takes in the current row and col indices, the grid, the word, a vector v representing the direction to traverse, the idx representing the current index of the word. The function returns true if the given word is found in the grid starting from the current row and col position in the given direction v.
+
+&    In the searchWord function, initialize an empty 2D vector matrix to store the positions where the given word is found.
+
+&    Traverse the entire grid in row-major order using two nested loops.
+
+&    If the current character in the grid matches the first character of the given word, then traverse in all 8 directions using the patternStarts helper function. If the word is found in any of the directions, then add the current position (row, col) to the matrix vector.
+
+&    Sort the matrix vector lexicographically.
+
+@    Return the matrix vector.
+
+*O(N*M*Constant) T.C | O(1) S.C 
+     */
+private:
+vector<vector<int>> d={{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1}};
+public:
+    bool patternStarts(int row,int col,vector<vector<char>> &grid,string &word,vector<int> &v,int idx){
+        if(idx == word.length())return true;
+        if(row < 0 || col < 0 || row >= grid.size() || col >= grid.front().size() || grid[row][col]!=word[idx])
+            return false;
+        return patternStarts(row+v[0],col+v[1],grid,word,v,idx+1);
+    }
+	vector<vector<int>>searchWord(vector<vector<char>> &grid, string &word){
+	    // Code here
+	    vector<vector<int>> matrix;
+	    for(int i = 0; i < grid.size(); i++){
+	        for(int j = 0 ;j < grid.front().size(); j++){
+	            if(grid[i][j] == word[0]){
+	                for(auto &it : d){
+	                    if(patternStarts(i,j,grid,word,it,0)){
+	                        matrix.push_back({i,j});
+	                        break;
+	                    }
+	                }
+	            }
+	        }
+	    }
+	    sort(matrix.begin(),matrix.end());
+	    return matrix;
+	}
+};
+
+//^ 19 Roman number to integer conversion
+/* 
+& Just create a hashmap of roman no. and their respective integer values
+& Whenever a smaller roman number is encountered before a larger roman number perform subtraction
+& else if a larger roman number is encountered just add the roman number
+
+*O(N) T.C | O(1) S.C (switch case can be used)
+ */
+int romanToDecimal(string &str) {
+    unordered_map<char,int> mp;
+        mp['I'] = 1;
+        mp['V'] = 5;
+        mp['X'] = 10;
+        mp['L'] = 50;
+        mp['C'] = 100;
+        mp['D'] = 500;
+        mp['M'] = 1000;
+        int ans = 0;
+        for(int i = str.length() - 1; i >=0 ; i--){
+            if(i < str.length()-1 && mp[str[i]]<mp[str[i+1]]){
+                ans -= mp[str[i]];
+            }   
+            else{
+                ans += mp[str[i]];
+            }
+        }
+        return ans;
+    }
+
 int main(){
     string str = "RiCantSnipe";
     duplicatesInString(str);

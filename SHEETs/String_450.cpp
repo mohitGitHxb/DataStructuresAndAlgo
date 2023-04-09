@@ -693,6 +693,101 @@ int romanToDecimal(string &str) {
         return ans;
     }
 
+//^ 20 Longest Common Prefix
+class LongestCommonPrefix{
+    private:
+    /*
+
+ & The longest common prefix is common to all the strings. So, we can fix one string and check the common prefix of this string with other strings. The minimum such length is found and the answer is the substring of the fixed string starting from 0 to the length of the above such minimum.
+Here, I have fixed 0th string and checked other strings with this. 
+     */
+
+    public:
+    string longestCommonPrefix(vector<string>& s) {
+int ans = s[0].length(), n = s.size();
+        for(int i=1; i<n; i++){
+            int j = 0;
+            while(j<s[i].length() && s[i][j]==s[0][j])j++;
+            ans = min(ans, j);
+        }
+        return s[0].substr(0, ans);
+    }
+};
+
+//^ 21 Second most frequent string
+/* 
+& Use unordered_map to store string and its frequency
+& find the most frequent string
+& find the second most frequent string
+
+*O(N) T.C | O(N) S.C
+ */
+    string secFrequent (string arr[], int n)
+    {
+        //code here.
+        unordered_map<string,int> mp;
+        for(int i = 0; i < n; i++){
+            mp[arr[i]]++;
+        }
+        int mostRepeated=-1;
+        for(auto &x : mp){
+            mostRepeated = max(x.second,mostRepeated);
+        }
+        int secondRepeated = -1;
+        string ans;
+        for(auto &x : mp){
+            if(secondRepeated!=mostRepeated && x.second!=mostRepeated){
+                  if(secondRepeated<x.second)
+                {
+                    secondRepeated = x.second;
+                  ans = x.first;
+                }
+            }
+              
+        }
+        return ans;
+    }
+
+//^ 22 Longest common prefix
+/* 
+& The comparision function is defined to compare two strings and return their common prefix. It takes two string arguments a and b by reference, initializes two integer variables i and j to 0, and creates an empty string res to store the common prefix.
+
+& It then enters a while loop and compares the characters at index i of string a and index j of string b. If the characters are the same and the index values are within the bounds of the strings, it appends the character to the res string, increments both i and j, and continues. If the characters at i and j are not the same, it breaks out of the loop.
+
+& The longestCommonPrefix function takes a vector of strings s as an argument. It initializes two integer variables ans and n to the length of the first string in the vector and the size of the vector, respectively.
+
+& It then enters a for loop, starting from the second string in the vector and comparing each string with the first string in the vector. It initializes an integer variable j to 0 and enters a while loop. The while loop compares the characters at index j of the current string and the first string in the vector. If the characters are the same and the index value is within the bounds of the current string, it increments j and continues. If the characters are not the same, it breaks out of the loop.
+
+& The ans variable is then updated to the minimum of its current value and j. This is done to find the length of the longest common prefix among all the strings.
+
+& Finally, the function returns a substring of the first string in the vector, starting from index 0 and ending at index ans. This substring represents the longest common prefix of all the strings in the vector.
+ */
+class LongestCommonPrefix {
+public:
+    string comparision(string &a,string &b){
+        int i = 0;
+        int j = 0;
+        string res="";
+        while(a[i] == b[j] && i < a.length() && j < b.length()){
+            res.push_back(a[i]);
+            i++;
+            j++;
+            if(a[i]!=b[i]){
+                break;
+            }
+        }
+        return res;
+    }
+    string longestCommonPrefix(vector<string>& s) {
+int ans = s[0].length(), n = s.size();
+        for(int i=1; i<n; i++){
+            int j = 0;
+            while(j<s[i].length() && s[i][j]==s[0][j])j++;
+            ans = min(ans, j);
+        }
+        return s[0].substr(0, ans);
+    }
+};
 int main(){
     string str = "RiCantSnipe";
     duplicatesInString(str);

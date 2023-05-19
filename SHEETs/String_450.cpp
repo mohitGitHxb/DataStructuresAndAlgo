@@ -793,3 +793,46 @@ int main(){
     duplicatesInString(str);
     return 0;
 }
+
+//^ 23 Minimum number of flips to make the binary string an alternating sequence
+/* 
+&    It initializes two variables flips1 and flips2 to keep track of the number of flips required for two different scenarios: when the string starts with '0' and when it starts with '1'.
+&    It also initializes a boolean variable flag to false. This variable is not used in the given code and can be ignored.
+&    The code then enters a loop that iterates through each character in the string S. The loop variable i represents the index of the current character being examined.
+&    Inside the loop, there are two conditions based on i%2, which checks if i is an even or odd number. This is used to handle different positions in the string.
+&    If i is even (i.e., divisible by 2), it checks the character at index i in the string S. If it is '1', it means a flip is required to make it alternating in the first scenario, so flips1 is incremented by 1. If it is '0', it means a flip is required to make it alternating in the second scenario, so flips2 is incremented by 1.
+&    If i is odd, the same logic is applied, but the roles of flips1 and flips2 are reversed.
+&    After iterating through the entire string, the code returns the minimum value between flips1 and flips2, which represents the minimum number of flips required to make the string S alternating.
+
+* O(N) T.C | O(1) S.C
+ */
+int minFlips (string S)
+{
+    // your code here
+    int flips1 = 0;
+    int flips2 = 0;
+    bool flag = false;
+    
+    for(int i = 0; i < S.length(); i++){
+        if(i%2==0){
+            if(S[i]=='1')
+            flips1++;
+        }
+        else{
+            if(S[i]=='0')
+                flips1++;
+        }
+        if(i%2==0){
+            if(S[i]=='0')
+            flips2++;
+        }
+        else{
+            if(S[i]=='1')
+                flips2++;
+        }
+        
+    }
+    
+    return min(flips1,flips2);
+    
+}

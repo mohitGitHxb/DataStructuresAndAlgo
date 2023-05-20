@@ -117,6 +117,31 @@ vector<int> naivePatternSearch(const string &s,const string &pat){
         
     }
     return result;
+    
+    /* 
+
+&    The code uses a loop to iterate through the text string from index 0 up to txt.length() - pat.length(). This ensures that the remaining portion of the text is at least the length of the pattern, so there is a possibility of finding a match.
+
+&    Within the loop, it checks if the substring of txt starting from index i and of length pat.length() is equal to the pattern string pat. It does this by using the substr function to extract the substring and then comparing it with pat using the == operator.
+
+&    If a match is found, it means the pattern is present at index i in the text. So, it adds i+1 to the ans vector to store the index where the pattern starts. Note that i+1 is used because the problem statement might require the index to be 1-based instead of 0-based.
+
+&    After the loop, it checks if any matches were found. If the ans vector is not empty, it means at least one match was found. In that case, it directly returns the ans vector.
+
+&    If no matches were found, it means the pattern is not present in the text. In that case, it adds -1 to the ans vector to indicate that no match was found, and then returns the ans vector.
+
+@ Simplified version of Naive pattern matching
+     */
+
+                vector<int> ans;
+            for(int i = 0; i <= s.length() - pat.length(); i++){
+                if(pat == s.substr(i,pat.length()))
+                    ans.push_back(i+1);
+            }
+            if(!ans.empty())
+                return ans;
+            ans.push_back(-1);
+            return ans;
 }
 
 //^ 8 Rabin Karp algorithm
@@ -196,6 +221,29 @@ return false;
 } 
 
 //^ 9 Z algorithm using longest prefix substring
+/* 
+&    The getZarr function is used to calculate the Z-array, which stores the length of the longest substring starting from each position that is also a prefix of the given string. It takes two parameters: zarr (reference to a vector to store the Z-array values) and str (the input string).
+
+&    The algorithm initializes the variables L and R to keep track of the left and right boundaries of a Z-box (a substring with the same prefix as the given string). It also initializes k to track the index difference from the left boundary.
+
+&    The algorithm iterates through the characters of the string starting from the second character (i = 1) up to the last character (i < n). For each i, it performs the following steps:
+
+&    a. If L is greater than R, it means there is no Z-box that covers the current position i. So, it sets L and R to i and increments R until the characters at positions R-L and R are equal. It then calculates the Z-array value for position i as R-L and decrements R by 1.
+
+&    b. If L is less than or equal to R, it means there is an existing Z-box that covers the current position i. In this case, it calculates k as i - L. If the Z-array value at index k is less than R-i+1, it means the Z-box extends to position i without reaching R. So, it directly assigns the Z-array value of k to zarr[i]. Otherwise, it sets L to i and increments R until the characters at positions R-L and R are equal. It then calculates the Z-array value for position i as R-L and decrements R by 1.
+
+&    The Zalgo function is the main function that uses the Z-array to find all occurrences of a pattern in a given text. It takes two parameters: pat (the pattern string) and txt (the text string).
+
+&    It concatenates the pattern string, a special character ('$' in this case), and the text string to form the concat string.
+
+&    It initializes an empty vector res to store the indices where the pattern is found.
+
+&    It calls the getZarr function to calculate the Z-array for the concat string.
+
+&    It iterates through the Z-array and checks if the Z-array value at index i is equal to the length of the pattern. If it is, it means a match is found at position i - pat.length(), and it adds this index to the res vector.
+
+&    Finally, it returns the res vector containing the indices where the pattern is found in the text.
+ */
 class Zalgorithm{
     public:
     void getZarr(vector<int> &zarr,string str){

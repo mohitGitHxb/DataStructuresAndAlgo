@@ -416,7 +416,21 @@ class PermutationsString
 {
     private:
     /* 
-    
+        The function findPermutationUtil is a recursive helper function that takes three parameters: s (a reference to the input string), index (the current index for swapping elements), and st (a reference to a set to store unique permutations).
+
+    The function first checks if the current index is equal to the size of the string s. If it is, it means all elements have been fixed, and a permutation is complete. So, it inserts the current permutation s into the set st to store unique permutations.
+
+    If the current index is not equal to the size of the string, it means there are more elements to consider in the permutation. In that case, it enters a loop starting from index up to the length of the string s.
+
+    Within the loop, it performs the following steps:
+
+    a. It swaps the character at index i with the character at index index using the swap function. This is done to generate different permutations by fixing one character at a time and permuting the remaining characters.
+
+    b. It calls the findPermutationUtil function recursively with index+1 to process the next index and generate permutations for the remaining characters.
+
+    c. After the recursive call, it swaps the characters back to their original positions to backtrack and explore other possibilities. This ensures that the original string s is restored before the next iteration of the loop.
+
+    Once the loop finishes executing for all indices, the function returns.
     *O(N*N!) T.C
      */
 	public:
@@ -460,7 +474,7 @@ class PermutationsString
          */
 };
 
-//^ 13 longest pallindromic subtring
+//^ 13 longest palindromic substring
 /* 
 ~ Method 1: Naive
 & Generate all possible subsequences of the string and check if they are pallindrome or not
@@ -474,13 +488,14 @@ class PermutationsString
 & while str[low] == str[high] and low is greater equal to 0 and high is less than string length | check if the size (high-low+1) becomes greater than previous length (denoted by end)
 
 & if it exceeds end then update end and start = low | low-- and high++
-& at the end our desired pallindromic substring is from [start to start+end-1]
+& at the end our desired palindromic substring is from [start to start+end-1]
 * O(N*substringLen) T.C | O(N) space;
  */
 string longestPalindrome(const string &s) {
         string ans = "";
         int low,high;
         int start=0,end=1;
+        
         for(int i = 1; i < s.length(); i++){
             low = i - 1;
             high = i;

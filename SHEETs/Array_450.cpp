@@ -1587,7 +1587,25 @@ int minSwap(vector<int>& arr, int k){
 double MedianOfArrays(vector<int>& arr, vector<int>& brr)
     {
         /*
-        & for algorithm watch yt video bruh
+        &     The function takes two vectors of integers, arr and brr, as input.
+   & If the size of brr is smaller than the size of arr, the function swaps the arrays and calls itself recursively. This ensures that arr is always the smaller array.
+    &   Initialize variables n1 and n2 to store the sizes of arr and brr respectively.
+    &   Set the beginning index begin to 0 and the ending index end to n1. These indices define the range of elements in arr that will be considered for partitioning.
+   & Enter a while loop that continues as long as begin is less than or equal to end.
+   & Calculate the partition indices i1 and i2 using binary search. The index i1 represents the partition between the left and right parts of arr, and i2 represents the partition between the left and right parts of brr.
+   & Determine the minimum and maximum elements on the left and right sides of the partitions:
+   &     min1 stores the minimum element in the right part of arr (INT_MAX if the partition i1 is at the end of arr).
+   &     min2 stores the minimum element in the right part of brr (INT_MAX if the partition i2 is at the end of brr).
+   &     max1 stores the maximum element in the left part of arr (INT_MIN if the partition i1 is at the beginning of arr).
+    &    max2 stores the maximum element in the left part of brr (INT_MIN if the partition i2 is at the beginning of brr).
+   & Check if the current partitions satisfy the condition for finding the median of the combined array:
+   &     If max1 <= min2 and max2 <= min1, it means the elements on the left side of both arrays are smaller than the elements on the right side, indicating a valid partition.
+   &     In this case, calculate the maximum and minimum elements among max1, max2, min1, and min2.
+   &     If the total number of elements in both arrays is even ((n1 + n2) % 2 == 0), return the average of the maximum and minimum values as the median.
+   &     If the total number of elements is odd, return the maximum value as the median.
+   & If the current partitions do not satisfy the condition, adjust the partitions by updating end or begin based on the comparisons max1 > min2 and max2 > min1.
+   & Repeat steps 6-9 until a valid partition is found or the search range is exhausted.
+    If no valid partition is found, return 0.0 as the median.
         * O(min(logN,logM)) T.C | O(1) space using binary search 
           */
         if(brr.size() < arr.size())return MedianOfArrays(brr,arr);

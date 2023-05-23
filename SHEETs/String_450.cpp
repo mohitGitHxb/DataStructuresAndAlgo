@@ -851,11 +851,6 @@ int ans = s[0].length(), n = s.size();
         return s[0].substr(0, ans);
     }
 };
-int main(){
-    string str = "RiCantSnipe";
-    duplicatesInString(str);
-    return 0;
-}
 
 //^ 23 Minimum number of flips to make the binary string an alternating sequence
 /* 
@@ -898,4 +893,9 @@ int minFlips (string S)
     
     return min(flips1,flips2);
     
+}
+int main(){
+    string str = "RiCantSnipe";
+    duplicatesInString(str);
+    return 0;
 }

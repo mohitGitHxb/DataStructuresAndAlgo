@@ -894,6 +894,40 @@ int minFlips (string S)
     return min(flips1,flips2);
     
 }
+
+//^ Print all anagrams from a vector of strings
+/* 
+&The code uses an unordered map mp to store the sorted version of each word as the key and the original word as the value. This map acts as a hash table where anagrams will have the same sorted key, allowing us to group them together efficiently.
+
+Here's how the code works:
+
+@    Create an empty vector of vector of strings ans to store the grouped anagrams.
+@    Create an unordered map mp with the key as a sorted version of a word and the value as a vector of strings.
+@    Iterate over each word in string_list.
+@    Make a copy of the current word into temp.
+@    Sort the characters of the current word in ascending order using sort(). This sorted version will be used as the key in the map.
+@    Add the original word temp to the vector value corresponding to the sorted key in the map.
+@    After processing all the words, iterate over each key-value pair in the map.
+@    Append the vector value (which contains all anagrams of a particular key) to the ans vector.
+@    Return the ans vector containing grouped anagrams.
+
+& The code effectively groups the anagrams together by sorting the characters of each word and using the sorted version as the key in the map. Anagrams will have the same sorted key, allowing them to be grouped together in the output. The time complexity of this code is O(N * M * log M), where N is the number of words and M is the average length of the words.
+ */
+    vector<vector<string> > Anagrams(vector<string>& string_list) {
+        
+        vector<vector<string>> ans;
+        unordered_map<string,vector<string>> mp;
+        for(auto &it : string_list){
+            string temp = it;
+            sort(it.begin(),it.end());
+            mp[it].push_back(temp);
+        }
+        
+        for(auto &k : mp)
+            ans.push_back(k.second);
+        return ans;
+    }
+
 int main(){
     string str = "RiCantSnipe";
     duplicatesInString(str);

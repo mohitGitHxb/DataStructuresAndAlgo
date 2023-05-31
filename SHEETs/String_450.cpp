@@ -895,7 +895,7 @@ int minFlips (string S)
     
 }
 
-//^ Print all anagrams from a vector of strings
+//^ 24 Print all anagrams from a vector of strings
 /* 
 &The code uses an unordered map mp to store the sorted version of each word as the key and the original word as the value. This map acts as a hash table where anagrams will have the same sorted key, allowing us to group them together efficiently.
 
@@ -928,6 +928,158 @@ Here's how the code works:
         return ans;
     }
 
+//^ 25 Recursively print all sentences that can be formed from list of word lists
+/* 
+&The code uses a Depth-First Search (DFS) approach to generate all possible sentences formed from a 2D array of strings. The algorithm can be explained as follows:
+
+&1. Define a recursive function `dfs` that takes the following parameters:
+   - `list`: The input 2D array of strings.
+   - `row`: The current row index.
+   - `col`: The current column index.
+   - `res`: A reference to the vector that stores the resulting sentences.
+   - `temp`: A reference to the vector that stores the current sentence being constructed.
+
+&2. In the `dfs` function:
+   - Check if the current row index (`row`) is equal to the number of rows in the `list` (indicating that we have processed all rows) or if the current column index (`col`) is equal to the number of columns in the first row of `list` (indicating that we have processed all columns in the current row).
+     - If so, it means we have completed constructing a sentence, so we add the current `temp` vector to the `res` vector.
+     - Return from the function.
+
+&3. Iterate over the elements in the current column of the current row (`list[row][i]`):
+   - Check if the element is not an empty string (`list[row][i] != ""`).
+     - If so, it means we can include this word in the current sentence. Push the word to the `temp` vector.
+     - Recursively call the `dfs` function with `row+1` to move to the next row and `i` to stay in the same column.
+     - After the recursive call, remove the last word from the `temp` vector using `temp.pop_back()` to backtrack and explore other possibilities.
+
+&4. Define the `sentences` function that takes the input 2D array `list` as a parameter:
+   - Create an empty vector of vector of strings `res` to store the resulting sentences.
+   - Create an empty vector of strings `temp` to store the current sentence being constructed.
+   - Call the `dfs` function with the initial parameters `0` for the row index, `0` for the column index, `res` as a reference, and `temp` as a reference.
+   - Return the resulting `res` vector.
+
+&The algorithm recursively explores all possible combinations of words in the 2D array `list` using DFS. At each step, it adds a word to the `temp` vector, explores further by moving to the next row, and backtracks when necessary to explore other possibilities. This process continues until all rows and columns have been processed, resulting in a list of all possible sentences formed from the 2D array of strings.
+
+* O(row*exp(col)) T.C & S.C
+ */
+
+class SentenceFormation{
+    public:
+       void dfs(vector<vector<string>> &list,int row,int col,vector<vector<string>> &res,vector<string> &temp){
+        if(row == list.size() || col == list.front().size()){
+            res.push_back(temp);
+            return;
+        }
+        for(int i = 0; i < list.front().size(); i++){
+            if(list[row][i]!=""){
+                temp.push_back(list[row][i]);
+                dfs(list,row+1,i,res,temp);
+                temp.pop_back();
+            }
+        }
+    }
+    vector<vector<string>> sentences(vector<vector<string>>&list){
+        //Write your code here
+        vector<vector<string>> res(list.size());
+        vector<string> temp;
+        dfs(list,0,0,res,temp);
+        return res;
+    }
+};
+
+//^ 26 Generate all ip addresses
+/* 
+&    Create an empty vector of strings called ans to store the generated IP addresses.
+
+&    Start four nested loops, each ranging from 1 to 3. These loops represent the four parts of an IP address: a, b, c, and d.
+
+&    Check if the sum of a, b, c, and d is equal to the size of the input string s. This ensures that the total number of digits used in the IP address matches the length of the input string.
+
+&    Inside the if statement, convert the substrings of s corresponding to a, b, c, and d into integers using stoi function. These represent the values of the four parts of the IP address.
+
+&    Check if each part A, B, C, and D is less than or equal to 255. This is to ensure that each part falls within the valid range for an IP address.
+
+&    If the conditions in step 5 are satisfied, create a temporary string called temp by concatenating the four parts of the IP address with periods in between: to_string(A) + "." + to_string(B) + "." + to_string(C) + "." + to_string(D).
+
+&    Check if the length of the temp string is equal to the length of the input string s plus 3. This ensures that no extra digits are added to the IP address.
+
+&    If the condition in step 7 is satisfied, add the temp string to the ans vector.
+
+&    Repeat steps 3 to 8 for all combinations of a, b, c, and d.
+
+    Finally, return the ans vector containing all the valid IP addresses generated.
+ */
+vector<string> generateIPAddresses(string s){
+ vector<string>ans;
+        for(int a=1;a<=3;a++)
+         for(int b=1;b<=3;b++)
+          for(int c=1;c<=3;c++)
+           for(int d=1;d<=3;d++)
+           if(a+b+c+d==s.size()){
+               int A=stoi(s.substr(0,a));
+               int B=stoi(s.substr(a,b));
+               int C=stoi(s.substr(a+b,c));
+               int D=stoi(s.substr(a+b+c,d));
+               string temp;
+               if(A<=255 && B<=255 && C<=255 &&D<=255){
+                   temp=to_string(A)+"."+to_string(B)+"."+to_string(C)+"."+to_string(D);
+               if(temp.size()==s.size()+3)
+               ans.push_back(temp);
+               }
+           }
+           return ans;
+}
+
+//^ 27 Smallest distinct window
+/* 
+&    Create an empty unordered_map called mp to keep track of the count of each character in the string.
+
+&    Initialize variables i, j, count, and ans. i and j represent the start and end indices of the current window being considered. count keeps track of the number of distinct characters found in the current window. ans stores the minimum window length found so far.
+
+&    Iterate over the string using the variable j as the end pointer of the window.
+
+&    Check if the character str[j] is encountered for the first time in the current window. If so, increment count as it indicates the discovery of a new distinct character.
+
+&    Update the count of str[j] in the mp map.
+
+&    Check if count is equal to the size of the map, which means all distinct characters have been found in the current window.
+
+&    If the condition in step 6 is satisfied, enter a nested while loop. In this loop, update the minimum window length (ans) by calculating the length between i and j + 1.
+
+&    Move the start pointer i towards the right, eliminating characters from the window until the count of str[i] becomes 1. This ensures that we maintain the minimum window length while still having all distinct characters.
+
+&    Continue this process until the window no longer contains all distinct characters.
+
+&    Move the end pointer j towards the right to consider the next character.
+
+&    Repeat steps 4 to 10 until the end of the string is reached.
+
+&    Finally, return the ans variable, which holds the length of the smallest window that contains all distinct characters.
+
+* O(256.N) T.C || O(256) S.C
+ */
+int findSubString(string &str)
+    {
+        // Your code goes here   
+        unordered_map<char,int> mp;
+        for(int i = 0; i < str.size(); i++){
+            mp[str[i]] = 0;
+        }
+        int i =0, j = 0,count=0,ans=INT_MAX;
+        while(j < str.length()){
+            if(mp[str[j]] == 0){
+                count++;
+            }
+            mp[str[j]]++;
+            if(count == mp.size()){
+                while(i < str.length() && mp[str[i]]>1){
+                    mp[str[i++]]--;
+                }
+                
+                ans = min(ans,j - i + 1);
+            }
+            j++;
+        }
+        return ans;
+    }
 int main(){
     string str = "RiCantSnipe";
     duplicatesInString(str);

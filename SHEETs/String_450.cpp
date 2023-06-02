@@ -2,15 +2,18 @@
 using namespace std;
 
 //^ 1 Reverse the string;
-void reverseString(string &s){
+void reverseString(string &s)
+{
     reverse(s.begin(), s.end());
 }
 
 //^ 2 Palindrome string
-bool checkPalindrome(string &s){
+bool checkPalindrome(string &s)
+{
     int low = 0, high = s.length() - 1;
-    while(low < high){
-        if(s[low]!= s[high])
+    while (low < high)
+    {
+        if (s[low] != s[high])
             return false;
         low++;
         high--;
@@ -19,23 +22,26 @@ bool checkPalindrome(string &s){
 }
 
 //^ 3 Duplicate character in a string
-void duplicatesInString(string &s){
+void duplicatesInString(string &s)
+{
     vector<int> hash(255);
-    for(int i = 0; i < s.length(); i++){
+    for (int i = 0; i < s.length(); i++)
+    {
         hash[s[i]]++;
     }
     string ans = "";
-    for(int i = 0; i < 255; i++){
-        if(hash[i] > 0){
+    for (int i = 0; i < 255; i++)
+    {
+        if (hash[i] > 0)
+        {
             ans.push_back((char)hash[i]);
         }
     }
     cout << ans;
-
 }
 
 //^ 4 Why strings are immutable in java
-/* 
+/*
 
 & In Java, strings are immutable because the designers of the language wanted to ensure that strings were thread-safe and that they could be safely shared between multiple threads without any risk of data corruption or synchronization issues.
 
@@ -62,7 +68,7 @@ void duplicatesInString(string &s){
  */
 
 //^ 5 Check if a string is a rotation of other string
-/* 
+/*
 @ Method - 1:
 & Create a vector which stores the indices of occurrence of chars according to rotated string
 & Then just traverse the original string [i + index]%length (to keep ptr in range)
@@ -72,53 +78,57 @@ void duplicatesInString(string &s){
 & Just concatenate the original string to itself and use find method
 * O(N) T.C | O(1) S.C
  */
-bool rotateString(string A, string B) {                
+bool rotateString(string A, string B)
+{
     return A.size() == B.size() && (A + A).find(B) != string::npos;
-}   
+}
 
 //^ 6 Check if two strings are anagram or not
-/* 
-& Just create a count array which uses ascii values as indicies 
+/*
+& Just create a count array which uses ascii values as indicies
 & For string s, each occurrence of a char increases count by 1
 & For string t, each occurrence of a char decreases count by 1
 & If s , t are anagrams then the count array should remain zero
 * O(N) T.C | O(N) S.C
  */
-bool isAnagram(string s,string t){
-    if(s.length() != t.length())return false;
+bool isAnagram(string s, string t)
+{
+    if (s.length() != t.length())
+        return false;
     vector<int> charMap(UCHAR_MAX);
-    for(int i = 0; s.length(); i++){
+    for (int i = 0; s.length(); i++)
+    {
         charMap[s[i]]++;
         charMap[t[i]]--;
     }
     for (int i = 0; i < charMap.size(); i++)
     {
-        if(charMap[i] != 0)
-        return false;
+        if (charMap[i] != 0)
+            return false;
     }
     return true;
-    
 }
 
 //^ 7 Pattern Searching in Strings Naive Method
-vector<int> naivePatternSearch(const string &s,const string &pat){
+vector<int> naivePatternSearch(const string &s, const string &pat)
+{
     vector<int> result;
-    for(int i=0; i<=s.length() - pat.length();i++){
+    for (int i = 0; i <= s.length() - pat.length(); i++)
+    {
         int j;
-        for ( j = 0; j < pat.length(); j++)
+        for (j = 0; j < pat.length(); j++)
         {
-            if(s[i + j]!= pat[j])
-            break;
+            if (s[i + j] != pat[j])
+                break;
         }
         if (j == pat.length())
         {
             result.push_back(j);
         }
-        
     }
     return result;
-    
-    /* 
+
+    /*
 
 &    The code uses a loop to iterate through the text string from index 0 up to txt.length() - pat.length(). This ensures that the remaining portion of the text is at least the length of the pattern, so there is a possibility of finding a match.
 
@@ -133,20 +143,21 @@ vector<int> naivePatternSearch(const string &s,const string &pat){
 @ Simplified version of Naive pattern matching
      */
 
-                vector<int> ans;
-            for(int i = 0; i <= s.length() - pat.length(); i++){
-                if(pat == s.substr(i,pat.length()))
-                    ans.push_back(i+1);
-            }
-            if(!ans.empty())
-                return ans;
-            ans.push_back(-1);
-            return ans;
+    vector<int> ans;
+    for (int i = 0; i <= s.length() - pat.length(); i++)
+    {
+        if (pat == s.substr(i, pat.length()))
+            ans.push_back(i + 1);
+    }
+    if (!ans.empty())
+        return ans;
+    ans.push_back(-1);
+    return ans;
 }
 
 //^ 8 Rabin Karp algorithm
 
-/* 
+/*
 &     Compute the hash value of the pattern using a rolling hash function. A rolling hash function calculates the hash value of a string by using the hash value of the previous string and the difference between the characters that are being added and removed from the string.
 
 &     Compute the hash value of the first window of the larger string using the same rolling hash function.
@@ -183,45 +194,45 @@ vector<int> naivePatternSearch(const string &s,const string &pat){
 
  */
 
-bool search(string pat, string txt, int q) 
-{ 
-	// Your code here
+bool search(string pat, string txt, int q)
+{
+    // Your code here
     const int d = 256;
-int m = pat.length();
-	int n = txt.length();
-	int h = 1,p=0,t=0;
-	for(int i=0;i<m-1;i++)
-	 h = (h*d)%q;
-	 for(int i=0;i<m;i++)
-	 {
-	     p = (p*d+pat[i])%q;
-	     t = (t*d+txt[i])%q;
-	 }
-	 for(int i=0;i<=n-m;i++)
-	 {
-	     if(t==p)
-	     {
-	         int j;
-	         for(j=0;j<m;j++)
-	         {
-	             if(pat[j]!=txt[i+j])
-	                   break;
-	         }
-	         if(j==m)
-	         return true;
-	     }
-	      if(i<n-m)
-	     {
-	      t = (d*(t-txt[i]*h)+txt[i+m])%q;
-	         if(t<0)
-	         t = t+q;
-	     }
-	 }
-return false;	
-} 
+    int m = pat.length();
+    int n = txt.length();
+    int h = 1, p = 0, t = 0;
+    for (int i = 0; i < m - 1; i++)
+        h = (h * d) % q;
+    for (int i = 0; i < m; i++)
+    {
+        p = (p * d + pat[i]) % q;
+        t = (t * d + txt[i]) % q;
+    }
+    for (int i = 0; i <= n - m; i++)
+    {
+        if (t == p)
+        {
+            int j;
+            for (j = 0; j < m; j++)
+            {
+                if (pat[j] != txt[i + j])
+                    break;
+            }
+            if (j == m)
+                return true;
+        }
+        if (i < n - m)
+        {
+            t = (d * (t - txt[i] * h) + txt[i + m]) % q;
+            if (t < 0)
+                t = t + q;
+        }
+    }
+    return false;
+}
 
 //^ 9 Z algorithm using longest prefix substring
-/* 
+/*
 &    The getZarr function is used to calculate the Z-array, which stores the length of the longest substring starting from each position that is also a prefix of the given string. It takes two parameters: zarr (reference to a vector to store the Z-array values) and str (the input string).
 
 &    The algorithm initializes the variables L and R to keep track of the left and right boundaries of a Z-box (a substring with the same prefix as the given string). It also initializes k to track the index difference from the left boundary.
@@ -244,56 +255,56 @@ return false;
 
 &    Finally, it returns the res vector containing the indices where the pattern is found in the text.
  */
-class Zalgorithm{
-    public:
-    void getZarr(vector<int> &zarr,string str){
+class Zalgorithm
+{
+public:
+    void getZarr(vector<int> &zarr, string str)
+    {
         int n = str.length();
-        int L,R,k;
+        int L, R, k;
         L = R = 0;
         for (int i = 1; i < n; i++)
         {
-            if(L > R){
+            if (L > R)
+            {
                 L = R = i;
-                while (R < n && str[R-L] == str[R]) 
+                while (R < n && str[R - L] == str[R])
                 {
                     R++;
                 }
-                zarr[i] = R-L;
+                zarr[i] = R - L;
                 R--;
-                
             }
             else
             {
                 k = i - L;
-                if(zarr[k] < R-i+1)
+                if (zarr[k] < R - i + 1)
                     zarr[i] = zarr[k];
                 else
                 {
                     L = i;
-                    while (R < n && str[R-L] == str[R])
+                    while (R < n && str[R - L] == str[R])
                     {
                         R++;
                     }
                     zarr[i] = R - L;
                     R--;
-                    
                 }
-                
             }
-            
         }
-        
     }
 
-    vector<int> Zalgo(string pat,string txt){
+    vector<int> Zalgo(string pat, string txt)
+    {
         vector<int> res;
         string concat = pat + '$' + txt;
         int l = concat.length();
 
         vector<int> Z(l);
-        getZarr(Z,concat);
-        for(int i = 0; i < l; i++){
-            if(Z[i] == pat.length())
+        getZarr(Z, concat);
+        for (int i = 0; i < l; i++)
+        {
+            if (Z[i] == pat.length())
                 res.push_back(i - pat.length());
         }
         return res;
@@ -301,9 +312,10 @@ class Zalgorithm{
 };
 
 //^ 10 KMP algorithm
-class KMP{
-    private:
-    /* 
+class KMP
+{
+private:
+    /*
 &    Build the prefix table: Create an array lps (longest prefix suffix) of length n (length of the pattern string) where lps[i] stores the length of the longest proper prefix of the pattern that is also a proper suffix of the first i characters of the pattern.
 
 & Initialize pointers: Initialize two pointers i and j to 0, where i points to the current character in the text string being compared and j points to the current character in the pattern string being compared.
@@ -320,29 +332,35 @@ class KMP{
 
 * O(N) T.C and O(M) S.C
      */
-    public:
-    void getLPSarray(string &pat,vector<int> &LPS){
+public:
+    void getLPSarray(string &pat, vector<int> &LPS)
+    {
         int len = 0;
         int i = 1;
         LPS[0] = 0;
-        while(i < pat.length()){
-            if(pat[i] == pat[len]){
+        while (i < pat.length())
+        {
+            if (pat[i] == pat[len])
+            {
                 LPS[i++] = ++len;
             }
-            else if(len == 0){
+            else if (len == 0)
+            {
                 LPS[i++] = 0;
             }
-            else{
+            else
+            {
                 len = LPS[len - 1];
             }
         }
     }
-    vector<int> KMPAlgo(string txt,string pat){
+    vector<int> KMPAlgo(string txt, string pat)
+    {
         vector<int> ans;
         vector<int> lps(pat.length());
-        getLPSarray(pat,lps);
-        int i = 0,j = 0;
-        while (i < txt.length()) 
+        getLPSarray(pat, lps);
+        int i = 0, j = 0;
+        while (i < txt.length())
         {
             if (pat[j] == txt[i])
             {
@@ -354,27 +372,26 @@ class KMP{
                 ans.push_back(i - j);
                 j = lps[j - 1];
             }
-            else if(i < txt.length() && pat[j] != txt[i])
+            else if (i < txt.length() && pat[j] != txt[i])
             {
-                if(j == 0)
+                if (j == 0)
                     i++;
                 else
                     j = lps[j - 1];
             }
-            
         }
-        
+
         return ans;
     }
 };
 
 //^ 11 Count and say string
-/* 
+/*
  @ 1.     1
  @ 2.     11
  @ 3.     21
  @ 4.     1211
- @ 5.     111221 
+ @ 5.     111221
  @ 6.     312211
  @ 7.     13112221
  @ 8.     1113213211
@@ -383,39 +400,41 @@ class KMP{
 
 & From the examples you can see, the (i+1)th sequence is the "count and say" of the ith sequence!
 
-~ approach/method: 
+~ approach/method:
 & First check for the base case which is countAndSay(1) = "1"
 & After this we'll recursively check for countAndSay(n-1); <-- This will return the string
 
-& create empty string res which will hold the answer. 
+& create empty string res which will hold the answer.
 & iterate over string obtained from the step 2 and append it to the res in this manner [frequency,character] make sure the counter always goes up;
 & if prev[i]!=prev[i+1] or i is pointing to the end of the string reset counter and add result to res
 & return res
  */
-  string countAndSay(int n) {
-        if(n == 1)
-            return "1";
-            string prev = countAndSay(n-1);
-            string res = "";
-            int counter = 0;
-            for(int i=0;i<prev.length();i++){
-                counter++;
-                if(i == prev.length()-1 || prev[i]!=prev[i+1]){
-                    string cnt = to_string(counter);
-                    // res.append(cnt);
-                    res += (cnt + prev[i]);
-                    counter = 0;
-                }
-            }
-            return res;
+string countAndSay(int n)
+{
+    if (n == 1)
+        return "1";
+    string prev = countAndSay(n - 1);
+    string res = "";
+    int counter = 0;
+    for (int i = 0; i < prev.length(); i++)
+    {
+        counter++;
+        if (i == prev.length() - 1 || prev[i] != prev[i + 1])
+        {
+            string cnt = to_string(counter);
+            // res.append(cnt);
+            res += (cnt + prev[i]);
+            counter = 0;
+        }
     }
-
+    return res;
+}
 
 //^ 12 Print all permutations of a string
 class PermutationsString
 {
-    private:
-    /* 
+private:
+    /*
         The function findPermutationUtil is a recursive helper function that takes three parameters: s (a reference to the input string), index (the current index for swapping elements), and st (a reference to a set to store unique permutations).
 
     The function first checks if the current index is equal to the size of the string s. If it is, it means all elements have been fixed, and a permutation is complete. So, it inserts the current permutation s into the set st to store unique permutations.
@@ -433,49 +452,51 @@ class PermutationsString
     Once the loop finishes executing for all indices, the function returns.
     *O(N*N!) T.C
      */
-	public:
-	    void findPermutationUtil(string &s , int index , set<string> &st){
-	        if(index == s.size()){
-	            st.insert(s);
-	            return;
-	        }
-	        for(int i=index;i<s.length();i++){
-	            swap(s[i],s[index]);
-	            findPermutationUtil(s,index+1,st);
-	            swap(s[i],s[index]);
-	        }
-	    }
-		vector<string>find_permutation(string S)
-		{
-		    vector<string> ans;
-		    if(S.size() == 0)
-		        return ans;
-            set<string> st;
-            findPermutationUtil(S,0,st);
-            for(auto &x : st)
-                ans.push_back(x);
-            return ans;
-            
-		}
-        /* 
-        ~ More concise code
-                vector<string>find_permutation(string S)
+public:
+    void findPermutationUtil(string &s, int index, set<string> &st)
+    {
+        if (index == s.size())
         {
-            vector<string>res;
-            // sort the string in lexicographically order
-            sort(S.begin(), S.end());
-            do
-            {
-                // keep adding while there is next permutation
-                res.push_back(S);
-            }while(next_permutation(S.begin(), S.end()));
-            return res;
+            st.insert(s);
+            return;
         }
-         */
+        for (int i = index; i < s.length(); i++)
+        {
+            swap(s[i], s[index]);
+            findPermutationUtil(s, index + 1, st);
+            swap(s[i], s[index]);
+        }
+    }
+    vector<string> find_permutation(string S)
+    {
+        vector<string> ans;
+        if (S.size() == 0)
+            return ans;
+        set<string> st;
+        findPermutationUtil(S, 0, st);
+        for (auto &x : st)
+            ans.push_back(x);
+        return ans;
+    }
+    /*
+    ~ More concise code
+            vector<string>find_permutation(string S)
+    {
+        vector<string>res;
+        // sort the string in lexicographically order
+        sort(S.begin(), S.end());
+        do
+        {
+            // keep adding while there is next permutation
+            res.push_back(S);
+        }while(next_permutation(S.begin(), S.end()));
+        return res;
+    }
+     */
 };
 
 //^ 13 longest palindromic substring
-/* 
+/*
 ~ Method 1: Naive
 & Generate all possible subsequences of the string and check if they are pallindrome or not
 !O(N!) T.C
@@ -491,58 +512,67 @@ class PermutationsString
 & at the end our desired palindromic substring is from [start to start+end-1]
 * O(N*substringLen) T.C | O(N) space;
  */
-string longestPalindrome(const string &s) {
-        string ans = "";
-        int low,high;
-        int start=0,end=1;
-        
-        for(int i = 1; i < s.length(); i++){
-            low = i - 1;
-            high = i;
-            while(low>=0 && high < s.length() && s[low]==s[high]){
-                if(high - low + 1 > end){
-                    end = high - low + 1;
-                    start = low;
-                }
-                low--;
-                high++;
-            }
-            low = i - 1;
-            high = i + 1;
-            while(low>=0 && high < s.length() && s[low]==s[high]){
-                if(high - low + 1 > end){
-                    end = high - low + 1;
-                    start = low;
-                }
-                low--;
-                high++;
-            }
-        }
+string longestPalindrome(const string &s)
+{
+    string ans = "";
+    int low, high;
+    int start = 0, end = 1;
 
-        for(int i = start; i < (start+end); i++){
-            ans.push_back(s[i]);
+    for (int i = 1; i < s.length(); i++)
+    {
+        low = i - 1;
+        high = i;
+        while (low >= 0 && high < s.length() && s[low] == s[high])
+        {
+            if (high - low + 1 > end)
+            {
+                end = high - low + 1;
+                start = low;
+            }
+            low--;
+            high++;
         }
-        return ans;
+        low = i - 1;
+        high = i + 1;
+        while (low >= 0 && high < s.length() && s[low] == s[high])
+        {
+            if (high - low + 1 > end)
+            {
+                end = high - low + 1;
+                start = low;
+            }
+            low--;
+            high++;
+        }
     }
+
+    for (int i = start; i < (start + end); i++)
+    {
+        ans.push_back(s[i]);
+    }
+    return ans;
+}
 
 //^ 14 Print all subsequences of a string
 //* O(2*N) T.C
-void printAllSubsequences(int index,string &temp,string &str){
-    if(index>= str.size()){
+void printAllSubsequences(int index, string &temp, string &str)
+{
+    if (index >= str.size())
+    {
         cout << temp << "\n";
         return;
     }
     //& Adding char into a temporary string to take this char into account
     temp.push_back(str[index]);
     //& Generating all subsequences including this character
-    printAllSubsequences(index+1,temp,str);
+    printAllSubsequences(index + 1, temp, str);
     //& removing this character (excluding this character) and generating all subsequences
     temp.pop_back();
-    printAllSubsequences(index+1,temp,str);
+    printAllSubsequences(index + 1, temp, str);
 }
 
 //^ 15 Split the binary string into substrings with equal number of 0s and 1s
-/* 
+/*
 
 & Initialize count = 0 and traverse the string character by character and keep track of the number of 0s and 1s so far,
 & whenever the count of 0s and 1s become equal increment the count. As in the given question, if it is not possible to split string then on that time count of 0s must not be equal to count of 1s then return -1 else print the value of count after the traversal of the complete string.
@@ -550,14 +580,19 @@ void printAllSubsequences(int index,string &temp,string &str){
 *O(N) T.C | O(1) S.C
  */
 
-int split01(const string &str){
+int split01(const string &str)
+{
     int count = 0;
     int counter = 0;
     int i = 0;
-    while(i < str.length()){
-        if(str[i] == '0')counter++;
-        else counter--;
-        if(counter == 0){
+    while (i < str.length())
+    {
+        if (str[i] == '0')
+            counter++;
+        else
+            counter--;
+        if (counter == 0)
+        {
             count++;
         }
     }
@@ -565,120 +600,127 @@ int split01(const string &str){
 }
 
 //^ 16 Balanced brackets
-class BalancedBrackets{
-/* 
-& isMatching function cares only about comparing two brackets
-& Create a stack of characters it will keep track of opening and closing brackets
-& if str[i] is a opening bracket => add it to the stack
-& else check if stack is empty (false case) else if str[i] and stack.top() is not a match pair (false case) else just pop the element
+class BalancedBrackets
+{
+    /*
+    & isMatching function cares only about comparing two brackets
+    & Create a stack of characters it will keep track of opening and closing brackets
+    & if str[i] is a opening bracket => add it to the stack
+    & else check if stack is empty (false case) else if str[i] and stack.top() is not a match pair (false case) else just pop the element
 
-& check if stack is empty(true)
+    & check if stack is empty(true)
 
-*O(N) T.C | O(N) S.C
+    *O(N) T.C | O(N) S.C
 
- */
+     */
 public:
-    bool isMatching(char a,char b){
-    return ((a=='('&&b==')'))||((a=='{'&&b=='}'))||((a=='['&&b==']'));
-    }
-    bool isParenthesis(const string &str){
-        if(str.empty())return false;
-        stack<char> s;
-   for (int i = 0; i < str.length(); i++)
+    bool isMatching(char a, char b)
     {
-        if(str.at(i)=='('||str.at(i)=='{'||str.at(i)=='['){
-            s.push(str[i]);
-        }
-        else{
-            if(s.empty())
-                return false;
-            else if(isMatching(s.top(),str[i])==false)
-                return false;
-            else 
-                s.pop();
-        }
+        return ((a == '(' && b == ')')) || ((a == '{' && b == '}')) || ((a == '[' && b == ']'));
     }
-    return s.empty();
+    bool isParenthesis(const string &str)
+    {
+        if (str.empty())
+            return false;
+        stack<char> s;
+        for (int i = 0; i < str.length(); i++)
+        {
+            if (str.at(i) == '(' || str.at(i) == '{' || str.at(i) == '[')
+            {
+                s.push(str[i]);
+            }
+            else
+            {
+                if (s.empty())
+                    return false;
+                else if (isMatching(s.top(), str[i]) == false)
+                    return false;
+                else
+                    s.pop();
+            }
+        }
+        return s.empty();
     }
-
 };
 
 //^ 17 count of number of string in a 2D character array
-class CharacterCount{
-    private:
-    /* 
-&    Step 1– Traverse matrix character by character and take one character as string start 
-&    Step 2– For each character find the string in all the four directions recursively 
-&    Step 3– If a string found, we increase the count 
-&    Step 4– When we are done with one character as start, we repeat the same process for the next character 
-&    Step 5– Calculate the sum of count for each character 
+class CharacterCount
+{
+private:
+    /*
+&    Step 1– Traverse matrix character by character and take one character as string start
+&    Step 2– For each character find the string in all the four directions recursively
+&    Step 3– If a string found, we increase the count
+&    Step 4– When we are done with one character as start, we repeat the same process for the next character
+&    Step 5– Calculate the sum of count for each character
 &    Step 6– Final count will be the answer
     * O(n*m)^2 T.C || O(n*m)
      */
-    public:
+public:
     int internalSearch(string needle, int row,
-				int col, string hay[],
-				int row_max, int col_max, int xx)
-{
-	int found = 0;
+                       int col, string hay[],
+                       int row_max, int col_max, int xx)
+    {
+        int found = 0;
 
-	if (row >= 0 && row <= row_max && col >= 0 &&
-		col <= col_max && needle[xx] == hay[row][col])
-	{
-		char match = needle[xx];
-		xx += 1;
+        if (row >= 0 && row <= row_max && col >= 0 &&
+            col <= col_max && needle[xx] == hay[row][col])
+        {
+            char match = needle[xx];
+            xx += 1;
 
-		hay[row][col] = 0;
+            hay[row][col] = 0;
 
-		if (needle[xx] == 0)
-		{
-			found = 1;
-		}
-		else
-		{
+            if (needle[xx] == 0)
+            {
+                found = 1;
+            }
+            else
+            {
 
-			// through Backtrack searching
-			// in every directions
-			found += internalSearch(needle, row,
-									col + 1, hay,
-									row_max, col_max,xx);
-			found += internalSearch(needle, row, col - 1,
-									hay, row_max, col_max,xx);
-			found += internalSearch(needle, row + 1, col,
-									hay, row_max, col_max,xx);
-			found += internalSearch(needle, row - 1, col,
-									hay, row_max, col_max,xx);
-		}
-		hay[row][col] = match;
-	}
-	return found;
-}
+                // through Backtrack searching
+                // in every directions
+                found += internalSearch(needle, row,
+                                        col + 1, hay,
+                                        row_max, col_max, xx);
+                found += internalSearch(needle, row, col - 1,
+                                        hay, row_max, col_max, xx);
+                found += internalSearch(needle, row + 1, col,
+                                        hay, row_max, col_max, xx);
+                found += internalSearch(needle, row - 1, col,
+                                        hay, row_max, col_max, xx);
+            }
+            hay[row][col] = match;
+        }
+        return found;
+    }
 
-// Function to search the string in 2d array
-int searchString(string needle, int row, int col,
-				string str[], int row_count,
-								int col_count)
-{
-	int found = 0;
-	int r, c;
+    // Function to search the string in 2d array
+    int searchString(string needle, int row, int col,
+                     string str[], int row_count,
+                     int col_count)
+    {
+        int found = 0;
+        int r, c;
 
-	for (r = 0; r < row_count; ++r)
-	{
-		for (c = 0; c < col_count; ++c)
-		{
-			found += internalSearch(needle, r, c, str,
-									row_count - 1,
-									col_count - 1, 0);
-		}
-	}
-	return found;
-}
+        for (r = 0; r < row_count; ++r)
+        {
+            for (c = 0; c < col_count; ++c)
+            {
+                found += internalSearch(needle, r, c, str,
+                                        row_count - 1,
+                                        col_count - 1, 0);
+            }
+        }
+        return found;
+    }
 };
 
 //^ 18 Find the string in grid (not in zig-zag form). The 8 directions are, horizontally left, horizontally right, vertically up, vertically down, and 4 diagonal directions.
 
-class StringsInGrid {
-    /* 
+class StringsInGrid
+{
+    /*
 % Uses DFS algorithm
 &    Here's a step-by-step explanation of the code:
 
@@ -696,81 +738,98 @@ class StringsInGrid {
 
 @    Return the matrix vector.
 
-*O(N*M*Constant) T.C | O(1) S.C 
+*O(N*M*Constant) T.C | O(1) S.C
      */
 private:
-vector<vector<int>> d={{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1}};
+    vector<vector<int>> d = {{1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}};
+
 public:
-    bool patternStarts(int row,int col,vector<vector<char>> &grid,string &word,vector<int> &v,int idx){
-        if(idx == word.length())return true;
-        if(row < 0 || col < 0 || row >= grid.size() || col >= grid.front().size() || grid[row][col]!=word[idx])
+    bool patternStarts(int row, int col, vector<vector<char>> &grid, string &word, vector<int> &v, int idx)
+    {
+        if (idx == word.length())
+            return true;
+        if (row < 0 || col < 0 || row >= grid.size() || col >= grid.front().size() || grid[row][col] != word[idx])
             return false;
-        return patternStarts(row+v[0],col+v[1],grid,word,v,idx+1);
+        return patternStarts(row + v[0], col + v[1], grid, word, v, idx + 1);
     }
-	vector<vector<int>>searchWord(vector<vector<char>> &grid, string &word){
-	    // Code here
-	    vector<vector<int>> matrix;
-	    for(int i = 0; i < grid.size(); i++){
-	        for(int j = 0 ;j < grid.front().size(); j++){
-	            if(grid[i][j] == word[0]){
-	                for(auto &it : d){
-	                    if(patternStarts(i,j,grid,word,it,0)){
-	                        matrix.push_back({i,j});
-	                        break;
-	                    }
-	                }
-	            }
-	        }
-	    }
-	    sort(matrix.begin(),matrix.end());
-	    return matrix;
-	}
+    vector<vector<int>> searchWord(vector<vector<char>> &grid, string &word)
+    {
+        // Code here
+        vector<vector<int>> matrix;
+        for (int i = 0; i < grid.size(); i++)
+        {
+            for (int j = 0; j < grid.front().size(); j++)
+            {
+                if (grid[i][j] == word[0])
+                {
+                    for (auto &it : d)
+                    {
+                        if (patternStarts(i, j, grid, word, it, 0))
+                        {
+                            matrix.push_back({i, j});
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        sort(matrix.begin(), matrix.end());
+        return matrix;
+    }
 };
 
 //^ 19 Roman number to integer conversion
-/* 
+/*
 & Just create a hashmap of roman no. and their respective integer values
 & Whenever a smaller roman number is encountered before a larger roman number perform subtraction
 & else if a larger roman number is encountered just add the roman number
 
 *O(N) T.C | O(1) S.C (switch case can be used)
  */
-int romanToDecimal(string &str) {
-    unordered_map<char,int> mp;
-        mp['I'] = 1;
-        mp['V'] = 5;
-        mp['X'] = 10;
-        mp['L'] = 50;
-        mp['C'] = 100;
-        mp['D'] = 500;
-        mp['M'] = 1000;
-        int ans = 0;
-        for(int i = str.length() - 1; i >=0 ; i--){
-            if(i < str.length()-1 && mp[str[i]]<mp[str[i+1]]){
-                ans -= mp[str[i]];
-            }   
-            else{
-                ans += mp[str[i]];
-            }
+int romanToDecimal(string &str)
+{
+    unordered_map<char, int> mp;
+    mp['I'] = 1;
+    mp['V'] = 5;
+    mp['X'] = 10;
+    mp['L'] = 50;
+    mp['C'] = 100;
+    mp['D'] = 500;
+    mp['M'] = 1000;
+    int ans = 0;
+    for (int i = str.length() - 1; i >= 0; i--)
+    {
+        if (i < str.length() - 1 && mp[str[i]] < mp[str[i + 1]])
+        {
+            ans -= mp[str[i]];
         }
-        return ans;
+        else
+        {
+            ans += mp[str[i]];
+        }
     }
+    return ans;
+}
 
 //^ 20 Longest Common Prefix
-class LongestCommonPrefix{
-    private:
+class LongestCommonPrefix
+{
+private:
     /*
 
  & The longest common prefix is common to all the strings. So, we can fix one string and check the common prefix of this string with other strings. The minimum such length is found and the answer is the substring of the fixed string starting from 0 to the length of the above such minimum.
-Here, I have fixed 0th string and checked other strings with this. 
+Here, I have fixed 0th string and checked other strings with this.
      */
 
-    public:
-    string longestCommonPrefix(vector<string>& s) {
-int ans = s[0].length(), n = s.size();
-        for(int i=1; i<n; i++){
+public:
+    string longestCommonPrefix(vector<string> &s)
+    {
+        int ans = s[0].length(), n = s.size();
+        for (int i = 1; i < n; i++)
+        {
             int j = 0;
-            while(j<s[i].length() && s[i][j]==s[0][j])j++;
+            while (j < s[i].length() && s[i][j] == s[0][j])
+                j++;
             ans = min(ans, j);
         }
         return s[0].substr(0, ans);
@@ -778,41 +837,44 @@ int ans = s[0].length(), n = s.size();
 };
 
 //^ 21 Second most frequent string
-/* 
+/*
 & Use unordered_map to store string and its frequency
 & find the most frequent string
 & find the second most frequent string
 
 *O(N) T.C | O(N) S.C
  */
-    string secFrequent (string arr[], int n)
+string secFrequent(string arr[], int n)
+{
+    // code here.
+    unordered_map<string, int> mp;
+    for (int i = 0; i < n; i++)
     {
-        //code here.
-        unordered_map<string,int> mp;
-        for(int i = 0; i < n; i++){
-            mp[arr[i]]++;
-        }
-        int mostRepeated=-1;
-        for(auto &x : mp){
-            mostRepeated = max(x.second,mostRepeated);
-        }
-        int secondRepeated = -1;
-        string ans;
-        for(auto &x : mp){
-            if(secondRepeated!=mostRepeated && x.second!=mostRepeated){
-                  if(secondRepeated<x.second)
-                {
-                    secondRepeated = x.second;
-                  ans = x.first;
-                }
-            }
-              
-        }
-        return ans;
+        mp[arr[i]]++;
     }
+    int mostRepeated = -1;
+    for (auto &x : mp)
+    {
+        mostRepeated = max(x.second, mostRepeated);
+    }
+    int secondRepeated = -1;
+    string ans;
+    for (auto &x : mp)
+    {
+        if (secondRepeated != mostRepeated && x.second != mostRepeated)
+        {
+            if (secondRepeated < x.second)
+            {
+                secondRepeated = x.second;
+                ans = x.first;
+            }
+        }
+    }
+    return ans;
+}
 
 //^ 22 Longest common prefix
-/* 
+/*
 & The comparision function is defined to compare two strings and return their common prefix. It takes two string arguments a and b by reference, initializes two integer variables i and j to 0, and creates an empty string res to store the common prefix.
 
 & It then enters a while loop and compares the characters at index i of string a and index j of string b. If the characters are the same and the index values are within the bounds of the strings, it appends the character to the res string, increments both i and j, and continues. If the characters at i and j are not the same, it breaks out of the loop.
@@ -825,27 +887,34 @@ int ans = s[0].length(), n = s.size();
 
 & Finally, the function returns a substring of the first string in the vector, starting from index 0 and ending at index ans. This substring represents the longest common prefix of all the strings in the vector.
  */
-class LongestCommonPrefix {
+class LongestCommonPrefix
+{
 public:
-    string comparision(string &a,string &b){
+    string comparision(string &a, string &b)
+    {
         int i = 0;
         int j = 0;
-        string res="";
-        while(a[i] == b[j] && i < a.length() && j < b.length()){
+        string res = "";
+        while (a[i] == b[j] && i < a.length() && j < b.length())
+        {
             res.push_back(a[i]);
             i++;
             j++;
-            if(a[i]!=b[i]){
+            if (a[i] != b[i])
+            {
                 break;
             }
         }
         return res;
     }
-    string longestCommonPrefix(vector<string>& s) {
-int ans = s[0].length(), n = s.size();
-        for(int i=1; i<n; i++){
+    string longestCommonPrefix(vector<string> &s)
+    {
+        int ans = s[0].length(), n = s.size();
+        for (int i = 1; i < n; i++)
+        {
             int j = 0;
-            while(j<s[i].length() && s[i][j]==s[0][j])j++;
+            while (j < s[i].length() && s[i][j] == s[0][j])
+                j++;
             ans = min(ans, j);
         }
         return s[0].substr(0, ans);
@@ -853,7 +922,7 @@ int ans = s[0].length(), n = s.size();
 };
 
 //^ 23 Minimum number of flips to make the binary string an alternating sequence
-/* 
+/*
 &    It initializes two variables flips1 and flips2 to keep track of the number of flips required for two different scenarios: when the string starts with '0' and when it starts with '1'.
 &    It also initializes a boolean variable flag to false. This variable is not used in the given code and can be ignored.
 &    The code then enters a loop that iterates through each character in the string S. The loop variable i represents the index of the current character being examined.
@@ -864,39 +933,42 @@ int ans = s[0].length(), n = s.size();
 
 * O(N) T.C | O(1) S.C
  */
-int minFlips (string S)
+int minFlips(string S)
 {
     // your code here
     int flips1 = 0;
     int flips2 = 0;
     bool flag = false;
-    
-    for(int i = 0; i < S.length(); i++){
-        if(i%2==0){
-            if(S[i]=='1')
-            flips1++;
-        }
-        else{
-            if(S[i]=='0')
+
+    for (int i = 0; i < S.length(); i++)
+    {
+        if (i % 2 == 0)
+        {
+            if (S[i] == '1')
                 flips1++;
         }
-        if(i%2==0){
-            if(S[i]=='0')
-            flips2++;
+        else
+        {
+            if (S[i] == '0')
+                flips1++;
         }
-        else{
-            if(S[i]=='1')
+        if (i % 2 == 0)
+        {
+            if (S[i] == '0')
                 flips2++;
         }
-        
+        else
+        {
+            if (S[i] == '1')
+                flips2++;
+        }
     }
-    
-    return min(flips1,flips2);
-    
+
+    return min(flips1, flips2);
 }
 
 //^ 24 Print all anagrams from a vector of strings
-/* 
+/*
 &The code uses an unordered map mp to store the sorted version of each word as the key and the original word as the value. This map acts as a hash table where anagrams will have the same sorted key, allowing us to group them together efficiently.
 
 Here's how the code works:
@@ -913,23 +985,25 @@ Here's how the code works:
 
 & The code effectively groups the anagrams together by sorting the characters of each word and using the sorted version as the key in the map. Anagrams will have the same sorted key, allowing them to be grouped together in the output. The time complexity of this code is O(N * M * log M), where N is the number of words and M is the average length of the words.
  */
-    vector<vector<string> > Anagrams(vector<string>& string_list) {
-        
-        vector<vector<string>> ans;
-        unordered_map<string,vector<string>> mp;
-        for(auto &it : string_list){
-            string temp = it;
-            sort(it.begin(),it.end());
-            mp[it].push_back(temp);
-        }
-        
-        for(auto &k : mp)
-            ans.push_back(k.second);
-        return ans;
+vector<vector<string>> Anagrams(vector<string> &string_list)
+{
+
+    vector<vector<string>> ans;
+    unordered_map<string, vector<string>> mp;
+    for (auto &it : string_list)
+    {
+        string temp = it;
+        sort(it.begin(), it.end());
+        mp[it].push_back(temp);
     }
 
+    for (auto &k : mp)
+        ans.push_back(k.second);
+    return ans;
+}
+
 //^ 25 Recursively print all sentences that can be formed from list of word lists
-/* 
+/*
 &The code uses a Depth-First Search (DFS) approach to generate all possible sentences formed from a 2D array of strings. The algorithm can be explained as follows:
 
 &1. Define a recursive function `dfs` that takes the following parameters:
@@ -961,32 +1035,38 @@ Here's how the code works:
 * O(row*exp(col)) T.C & S.C
  */
 
-class SentenceFormation{
-    public:
-       void dfs(vector<vector<string>> &list,int row,int col,vector<vector<string>> &res,vector<string> &temp){
-        if(row == list.size() || col == list.front().size()){
+class SentenceFormation
+{
+public:
+    void dfs(vector<vector<string>> &list, int row, int col, vector<vector<string>> &res, vector<string> &temp)
+    {
+        if (row == list.size() || col == list.front().size())
+        {
             res.push_back(temp);
             return;
         }
-        for(int i = 0; i < list.front().size(); i++){
-            if(list[row][i]!=""){
+        for (int i = 0; i < list.front().size(); i++)
+        {
+            if (list[row][i] != "")
+            {
                 temp.push_back(list[row][i]);
-                dfs(list,row+1,i,res,temp);
+                dfs(list, row + 1, i, res, temp);
                 temp.pop_back();
             }
         }
     }
-    vector<vector<string>> sentences(vector<vector<string>>&list){
-        //Write your code here
+    vector<vector<string>> sentences(vector<vector<string>> &list)
+    {
+        // Write your code here
         vector<vector<string>> res(list.size());
         vector<string> temp;
-        dfs(list,0,0,res,temp);
+        dfs(list, 0, 0, res, temp);
         return res;
     }
 };
 
 //^ 26 Generate all ip addresses
-/* 
+/*
 &    Create an empty vector of strings called ans to store the generated IP addresses.
 
 &    Start four nested loops, each ranging from 1 to 3. These loops represent the four parts of an IP address: a, b, c, and d.
@@ -1007,29 +1087,32 @@ class SentenceFormation{
 
     Finally, return the ans vector containing all the valid IP addresses generated.
  */
-vector<string> generateIPAddresses(string s){
- vector<string>ans;
-        for(int a=1;a<=3;a++)
-         for(int b=1;b<=3;b++)
-          for(int c=1;c<=3;c++)
-           for(int d=1;d<=3;d++)
-           if(a+b+c+d==s.size()){
-               int A=stoi(s.substr(0,a));
-               int B=stoi(s.substr(a,b));
-               int C=stoi(s.substr(a+b,c));
-               int D=stoi(s.substr(a+b+c,d));
-               string temp;
-               if(A<=255 && B<=255 && C<=255 &&D<=255){
-                   temp=to_string(A)+"."+to_string(B)+"."+to_string(C)+"."+to_string(D);
-               if(temp.size()==s.size()+3)
-               ans.push_back(temp);
-               }
-           }
-           return ans;
+vector<string> generateIPAddresses(string s)
+{
+    vector<string> ans;
+    for (int a = 1; a <= 3; a++)
+        for (int b = 1; b <= 3; b++)
+            for (int c = 1; c <= 3; c++)
+                for (int d = 1; d <= 3; d++)
+                    if (a + b + c + d == s.size())
+                    {
+                        int A = stoi(s.substr(0, a));
+                        int B = stoi(s.substr(a, b));
+                        int C = stoi(s.substr(a + b, c));
+                        int D = stoi(s.substr(a + b + c, d));
+                        string temp;
+                        if (A <= 255 && B <= 255 && C <= 255 && D <= 255)
+                        {
+                            temp = to_string(A) + "." + to_string(B) + "." + to_string(C) + "." + to_string(D);
+                            if (temp.size() == s.size() + 3)
+                                ans.push_back(temp);
+                        }
+                    }
+    return ans;
 }
 
 //^ 27 Smallest distinct window
-/* 
+/*
 &    Create an empty unordered_map called mp to keep track of the count of each character in the string.
 
 &    Initialize variables i, j, count, and ans. i and j represent the start and end indices of the current window being considered. count keeps track of the number of distinct characters found in the current window. ans stores the minimum window length found so far.
@@ -1057,30 +1140,91 @@ vector<string> generateIPAddresses(string s){
 * O(256.N) T.C || O(256) S.C
  */
 int findSubString(string &str)
+{
+    // Your code goes here
+    unordered_map<char, int> mp;
+    for (int i = 0; i < str.size(); i++)
     {
-        // Your code goes here   
-        unordered_map<char,int> mp;
-        for(int i = 0; i < str.size(); i++){
-            mp[str[i]] = 0;
-        }
-        int i =0, j = 0,count=0,ans=INT_MAX;
-        while(j < str.length()){
-            if(mp[str[j]] == 0){
-                count++;
-            }
-            mp[str[j]]++;
-            if(count == mp.size()){
-                while(i < str.length() && mp[str[i]]>1){
-                    mp[str[i++]]--;
-                }
-                
-                ans = min(ans,j - i + 1);
-            }
-            j++;
-        }
-        return ans;
+        mp[str[i]] = 0;
     }
-int main(){
+    int i = 0, j = 0, count = 0, ans = INT_MAX;
+    while (j < str.length())
+    {
+        if (mp[str[j]] == 0)
+        {
+            count++;
+        }
+        mp[str[j]]++;
+        if (count == mp.size())
+        {
+            while (i < str.length() && mp[str[i]] > 1)
+            {
+                mp[str[i++]]--;
+            }
+
+            ans = min(ans, j - i + 1);
+        }
+        j++;
+    }
+    return ans;
+}
+
+//^ 28 Minimum number of characters to be added to make the string palindrome
+class MinChar
+{
+public:
+    /*
+&         If the length of the string str is less than or equal to 1, it is already a palindrome, so the function returns 0.
+
+&     Initialize variables countOfChars to keep track of the count of characters needed to make the string a palindrome, i to represent the start index, j to represent the end index, and temp to store the initial value of j.
+
+&     Enter a while loop that continues as long as i is less than j.
+
+&     Check if the characters at indices i and j are equal. If they are equal, move i one step forward and j one step backward to continue checking the next pair of characters.
+
+&     If the characters at indices i and j are not equal, it means that one additional character is required to make the string a palindrome. Increment the countOfChars variable to track this.
+
+&     Reset i to 0, j to temp - 1, and decrement temp by 1. This step effectively moves the end pointer j one step back, allowing the algorithm to check if the substring starting from i and ending at j (inclusive) can be made into a palindrome by adding characters at the beginning.
+
+ &    Repeat steps 4 to 6 until i becomes greater than or equal to j, indicating that all necessary characters have been added.
+
+&     Return the final value of countOfChars, which represents the minimum number of characters required to make the string a palindrome.
+
+& The algorithm essentially compares characters from the start and end of the string and increments the count whenever a mismatch is encountered. It then resets the pointers and continues from the next position to find additional mismatches. By repeating this process, it determines the minimum number of characters needed to make the string a palindrome.
+
+! O(N^2) | O(1) S.C
+     */
+    int minChar(string str)
+    {
+
+        if (str.size() <= 1)
+        {
+            return 0;
+        }
+        int countOfChars = 0;
+        int i = 0;
+        int j = str.length() - 1;
+        int temp = j;
+        while (i < j)
+        {
+            if (str[i] == str[j])
+            {
+                i++;
+                j--;
+            }
+            else
+            {
+                countOfChars++;
+                i = 0;
+                j = temp - 1;
+                temp--;
+            }
+        }
+        return countOfChars;
+    }
+};
+int main()
+{
     string str = "RiCantSnipe";
     duplicatesInString(str);
     return 0;

@@ -92,6 +92,65 @@ This optimized implementation eliminates the need for extra space to store the F
     return current;
     }
 };
+
+//^ 2 Count the number of ways to reach nth stair 
+/* 
+~ Shortcut trick to find whether the problem is a 1d DP problem
+& Includes words like ["count all ways","minimum way to reach x","maximum way to reach"]
+? Try to represent the problem in terms of index
+? Do all possible processes/stuffs on that index according to the given problem statement
+! sum of all processes/stuffs --> count all ways to ...
+! min(all processes/stuffs) --> minimum way to reach
+! max(all processes/stuffs) --> maximum way to reach
+ */
+
+class ClimbStairs{
+    vector<int> dp;
+    const int mod = 1e9+7;
+    public:
+    ClimbStairs(int n){
+        dp.resize(n+1,-1);
+    }
+
+    int countWays_Recursive(int n){
+        if( n < 0 )return 0;
+        if(n == 0)return 1;
+        return countWays_Recursive(n-1)%mod + countWays_Recursive(n-2)%mod;
+    }
+
+    int countWays_Memoization(vector<int> &dp,int n){
+        if( n < 0 )return 0;
+        if(n == 0)return 1;
+        if (dp[n]!=-1)
+        {
+            return dp[n]%mod;
+        }
+        dp[n] = (countWays_Memoization(dp,n-1)%mod + countWays_Memoization(dp,n-2)%mod)%mod;
+    }
+
+    int countWays_Tabulation(vector<int> &dp,int n){
+        dp[0] = dp[1] = 1;
+        for (int i = 2; i <= n; i++)
+        {
+            dp[i] = dp[i-2]%mod + dp[i-1]%mod;
+        }
+        return dp[n]%mod;
+    }
+
+    int countWays_optimized(int n){
+        int curr = 0;
+        int prev1 = 1;
+        int prev2 = 1;
+        for (int i = 2; i <= n; i++)
+        {
+            curr = prev1%mod + prev2%mod;
+            prev2 = prev1;
+            prev1 = curr;
+        }
+        return prev1%mod;
+        
+    }
+};
 int main(int argc, char const *argv[])
 {
     

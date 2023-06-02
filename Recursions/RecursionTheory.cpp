@@ -900,6 +900,66 @@ vector<string> graycode(int n)
         }
         return vec;
     }
+
+//^ Backtracking portion --> 
+
+class Nqueens{
+    private:
+    /* 
+    Given an NxN chess board 
+    Rules : Each row and column must contain one queen
+            No queens should be attacked
+     */
+    public:
+    bool isValidPosition(int row, int col,vector<string> &board,int N){
+        int dupRow = row,dupCol = col;
+        while(row >= 0 && col >= 0){
+            if(board[row][col] == 'Q')return false;
+            row--;
+            col--;
+        }
+        col = dupCol;
+        row = dupRow;
+        while(col>=0){
+            if(board[row][col] == 'Q')return false;
+            col--;
+        }
+        row = dupRow;
+        col = dupCol;
+        while(row < N && col >= 0){
+            if(board[row][col] == 'Q')return false;
+            row++;
+            col--;
+        }
+        return true;
+    }
+    void solve(int col,vector<string> &board,vector<vector<string>> &ans,int N){
+        if(col == N){
+            ans.push_back(board);
+            return;
+        }
+
+        for(int row = 0; row < N; row++){
+            if(isValidPosition(row,col,board,N)){
+                board[row][col] = 'Q';
+                solve(col+1,board,ans,N);
+                board[row][col] = '.';
+            }
+        }
+    }
+    vector<vector<string>> solveQueens(int N){
+        vector<vector<string>> ans;
+        vector<string> board(N);
+        string s(N,'.');
+        for(int i = 0; i < N; i++){
+            board[i] = s;
+        }
+
+        solve(0,board,ans,N);
+        return ans;
+    }
+
+};
 int main()
 {
 

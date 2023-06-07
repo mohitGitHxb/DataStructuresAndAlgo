@@ -299,18 +299,19 @@ string skipChar(string &s, string &ans)
 
 //^ Permutations of a string
 
-void printPermutations(string s,int idx=0){
-    if(idx == s.size()){
+void printPermutations(string s, int idx = 0)
+{
+    if (idx == s.size())
+    {
         cout << s << "\n";
         return;
-     }
-     for (int j = idx; j < s.length(); j++)
-     {
-        swap(s.at(idx),s.at(j));
-        printPermutations(s,idx+1);
-        swap(s[idx],s[j]);
-     }
-     
+    }
+    for (int j = idx; j < s.length(); j++)
+    {
+        swap(s.at(idx), s.at(j));
+        printPermutations(s, idx + 1);
+        swap(s[idx], s[j]);
+    }
 }
 
 //^ Print all subsequence O(2^N * N) time and O(N) space
@@ -740,7 +741,7 @@ void getMazePath(int x, int y, int destinationHorizontal, int destinationVertica
     // ? diagonal moves , 'i' denotes move size or jump size
     for (int i = 1; i <= destinationVertical - y && i <= destinationHorizontal - x; i++)
     {
-        getMazePath(x + i, y + i, destinationHorizontal, destinationVertical,temp + "d" + to_string(i));
+        getMazePath(x + i, y + i, destinationHorizontal, destinationVertical, temp + "d" + to_string(i));
     }
 }
 
@@ -769,7 +770,7 @@ void possibleWay(vector<string> &ans, int target, string &s)
 }
 
 //^ Special Keyboard
-/* 
+/*
 
 
 @ A few important points to note are
@@ -781,47 +782,51 @@ void possibleWay(vector<string> &ans, int target, string &s)
 @ If one loop from N-3 to 1 and choose each of these values for the break-point, and @ compute that optimal string they would produce. Once the loop ends, you will have @ the maximum of the optimal lengths for various breakpoints, thereby giving the @ optimal length for N keystrokes.
  */
 
+long long int optimalKeys(int N)
+{
+    // code here
+    int x, y;
 
-long long int optimalKeys(int N){
-        // code here
-     int x,y;
+    if (N < 6)
+    {
+        return N;
+    }
 
-if(N<6){return N;}
+    else
+    {
+        x = 4 * optimalKeys(N - 5);
 
-else{x=4*optimalKeys(N-5);
+        y = 3 * optimalKeys(N - 4);
 
-y=3*optimalKeys(N-4);
-
-return max(x,y);
+        return max(x, y);
+    }
 }
-}
-
 
 //^ Unique partitions
 
 //! Brute force (similar problem as dice throw just replace '6' with given number) O(2^N) time complexity
 /* void solve(vector<int> &temp , int target , set<vector<int>> &s,int givenNum){
-	     if(target<0)return;
-	     if(target == 0){
-	       //  sort(temp.rbegin(),temp.rend()); 
-	       vector<int> v = temp;
-	       sort(v.begin(),v.end(),greater<int>());
-	         s.emplace(v);
-	         return;
-	     }
-	     else{
-	         for(int i=1;i<=givenNum && i<=target;i++){
-	             temp.push_back(i);
-	             solve(temp,target - i,s,givenNum);
-	             temp.pop_back();
-	         }
-	     }
-	 }
-	
+         if(target<0)return;
+         if(target == 0){
+           //  sort(temp.rbegin(),temp.rend());
+           vector<int> v = temp;
+           sort(v.begin(),v.end(),greater<int>());
+             s.emplace(v);
+             return;
+         }
+         else{
+             for(int i=1;i<=givenNum && i<=target;i++){
+                 temp.push_back(i);
+                 solve(temp,target - i,s,givenNum);
+                 temp.pop_back();
+             }
+         }
+     }
+
     vector<vector<int>> UniquePartitions(int n) {
-	vector<vector<int>> result;
-	vector<int> temp;
-	set<vector<int>> s;
+    vector<vector<int>> result;
+    vector<int> temp;
+    set<vector<int>> s;
         // Code here
         solve(temp,n,s,n);
     auto it = s.rbegin();
@@ -832,42 +837,46 @@ return max(x,y);
 } */
 
 //* Optimized version of above problem without using set
-void solve(int index,vector<int> &ds,int tar,vector<vector<int>> &ans,vector<int> &arr){
-	    
-	    //base case
-	    if(index==arr.size()){
-	        if(tar==0){
-	            ans.push_back(ds);
-	        }
-	        return;
-	    }
-	    
-	    //rec case
-	    if(arr[index]<=tar){
-	        ds.push_back(arr[index]);
-	        solve(index,ds,tar-arr[index],ans,arr);
-	        ds.pop_back();
-	    }
-	  
-	    solve(index+1,ds,tar,ans,arr);
-	}
-	
-    vector<vector<int>> UniquePartitions(int n) {
-        // Code here
-        
-        vector<vector<int>> res;
-        vector<int> arr(n);
-        for(int i=0;i<n;i++){
-            arr[i] = n-i;
+void solve(int index, vector<int> &ds, int tar, vector<vector<int>> &ans, vector<int> &arr)
+{
+
+    // base case
+    if (index == arr.size())
+    {
+        if (tar == 0)
+        {
+            ans.push_back(ds);
         }
-        
-        vector<int> ds;
-        solve(0,ds,n,res,arr);
-        
-        return res;
+        return;
     }
 
+    // rec case
+    if (arr[index] <= tar)
+    {
+        ds.push_back(arr[index]);
+        solve(index, ds, tar - arr[index], ans, arr);
+        ds.pop_back();
+    }
 
+    solve(index + 1, ds, tar, ans, arr);
+}
+
+vector<vector<int>> UniquePartitions(int n)
+{
+    // Code here
+
+    vector<vector<int>> res;
+    vector<int> arr(n);
+    for (int i = 0; i < n; i++)
+    {
+        arr[i] = n - i;
+    }
+
+    vector<int> ds;
+    solve(0, ds, n, res, arr);
+
+    return res;
+}
 
 //^ gray code generate
 
@@ -888,77 +897,328 @@ void solve(int index,vector<int> &ds,int tar,vector<vector<int>> &ans,vector<int
 
 //* Optimized version of above function
 vector<string> graycode(int n)
+{
+    vector<string> vec;
+    int num = pow(2, n);
+    for (int i = 0; i < num; i++)
     {
-        vector <string> vec;
-        int num = pow(2, n);
-        for(int i=0; i<num; i++){
-            string str = "";
-            int gray_num = i^(i>>1); //~ XOR the number itself with its 1 right shift to get its gray code (Digital Electronics BRUH)
-            str = bitset<16>(gray_num).to_string();
-            str = str.substr(16-n, n);
-            vec.push_back(str);
-        }
-        return vec;
+        string str = "";
+        int gray_num = i ^ (i >> 1); //~ XOR the number itself with its 1 right shift to get its gray code (Digital Electronics BRUH)
+        str = bitset<16>(gray_num).to_string();
+        str = str.substr(16 - n, n);
+        vec.push_back(str);
     }
+    return vec;
+}
 
-//^ Backtracking portion --> 
+//^ Backtracking portion -->
 
-class Nqueens{
-    private:
-    /* 
-    Given an NxN chess board 
+class Nqueens
+{
+private:
+    /*
+    Given an NxN chess board
     Rules : Each row and column must contain one queen
             No queens should be attacked
      */
-    public:
-    bool isValidPosition(int row, int col,vector<string> &board,int N){
-        int dupRow = row,dupCol = col;
-        while(row >= 0 && col >= 0){
-            if(board[row][col] == 'Q')return false;
-            row--;
-            col--;
+public:
+    /*     bool isValidPosition(int row, int col, vector<string> &board, int N)
+        {
+            int dupRow = row, dupCol = col;
+            while (row >= 0 && col >= 0)
+            {
+                if (board[row][col] == 'Q')
+                    return false;
+                row--;
+                col--;
+            }
+            col = dupCol;
+            row = dupRow;
+            while (col >= 0)
+            {
+                if (board[row][col] == 'Q')
+                    return false;
+                col--;
+            }
+            row = dupRow;
+            col = dupCol;
+            while (row < N && col >= 0)
+            {
+                if (board[row][col] == 'Q')
+                    return false;
+                row++;
+                col--;
+            }
+            return true;
         }
-        col = dupCol;
-        row = dupRow;
-        while(col>=0){
-            if(board[row][col] == 'Q')return false;
-            col--;
+        void solve(int col, vector<string> &board, vector<vector<string>> &ans, int N)
+        {
+            if (col == N)
+            {
+                ans.push_back(board);
+                return;
+            }
+
+            for (int row = 0; row < N; row++)
+            {
+                if (isValidPosition(row, col, board, N))
+                {
+                    board[row][col] = 'Q';
+                    solve(col + 1, board, ans, N);
+                    board[row][col] = '.';
+                }
+            }
         }
-        row = dupRow;
-        col = dupCol;
-        while(row < N && col >= 0){
-            if(board[row][col] == 'Q')return false;
-            row++;
-            col--;
-        }
-        return true;
-    }
-    void solve(int col,vector<string> &board,vector<vector<string>> &ans,int N){
-        if(col == N){
+        vector<vector<string>> solveQueens(int N)
+        {
+            vector<vector<string>> ans;
+            vector<string> board(N);
+            string s(N, '.');
+            for (int i = 0; i < N; i++)
+            {
+                board[i] = s;
+            }
+
+            solve(0, board, ans, N);
+            return ans;
+        } */
+
+    /*
+
+& This code solves the N-Queens problem, which is to find all possible arrangements of N queens on an NxN chessboard such that no two queens threaten each other. Each queen should be placed in a separate row, column, or diagonal.
+
+& The code uses a backtracking algorithm to explore all possible placements of queens on the chessboard. It maintains three arrays `leftRow`, `upperDiagonal`, and `lowerDiagonal` to keep track of the availability of rows, upper diagonals, and lower diagonals respectively. Initially, all elements in these arrays are set to 0, indicating that they are available for queen placement.
+
+& The `solve` function is a recursive function that takes the current column `col`, the chessboard configuration `board`, the resulting solutions `ans`, and the arrays `leftRow`, `upperDiagonal`, and `lowerDiagonal`. It explores all possible row positions for the queen in the current column. If a valid position is found, the queen is placed, and the corresponding elements in the arrays are updated to mark the row, upper diagonal, and lower diagonal as occupied. Then, the function recursively calls itself for the next column. Once all columns are filled (i.e., `col == n`), a valid solution is found, and the chessboard configuration is added to the `ans` vector.
+
+& If a queen cannot be placed in a row due to conflicts, the function backtracks by undoing the previous placement and restoring the array values. This allows the algorithm to explore other possible configurations.
+
+& The `solveNQueens` function initializes the chessboard configuration, creates the arrays, and calls the `solve` function to find all valid solutions. It returns the resulting vector of chessboard configurations.
+
+& The intuition behind the code is to systematically explore all possible placements of queens using backtracking. By maintaining arrays to track the availability of rows and diagonals, the algorithm avoids invalid configurations where queens threaten each other. The recursive nature of the algorithm allows it to efficiently explore all possible configurations and find all valid solutions.
+
+* O(N!) T.C | O(N) Space
+     */
+    void solve(int col, vector<string> &board, vector<vector<string>> &ans, vector<int> &leftRow, vector<int> &upperDiagonal, vector<int> &lowerDiagonal, int n)
+    {
+
+        if (col == n)
+        {
             ans.push_back(board);
             return;
         }
-
-        for(int row = 0; row < N; row++){
-            if(isValidPosition(row,col,board,N)){
+        for (int row = 0; row < n; row++)
+        {
+            if (leftRow[row] == 0 && lowerDiagonal[row + col] == 0 && upperDiagonal[(n - 1) + (col - row)] == 0)
+            {
                 board[row][col] = 'Q';
-                solve(col+1,board,ans,N);
+                leftRow[row] = 1;
+                lowerDiagonal[row + col] = 1;
+                upperDiagonal[n - 1 + col - row] = 1;
+                solve(col + 1, board, ans, leftRow, upperDiagonal, lowerDiagonal, n);
                 board[row][col] = '.';
+                leftRow[row] = 0;
+                lowerDiagonal[row + col] = 0;
+                upperDiagonal[n - 1 + col - row] = 0;
             }
         }
     }
-    vector<vector<string>> solveQueens(int N){
+
+    vector<vector<string>> solveNQueens(int n)
+    {
         vector<vector<string>> ans;
-        vector<string> board(N);
-        string s(N,'.');
-        for(int i = 0; i < N; i++){
+        vector<string> board(n);
+        string s(n, '.');
+        for (int i = 0; i < n; i++)
+        {
             board[i] = s;
         }
-
-        solve(0,board,ans,N);
+        vector<int> leftRow(n, 0), upperDiagonal(2 * n - 1, 0), lowerDiagonal(2 * n - 1, 0);
+        solve(0, board, ans, leftRow, upperDiagonal, lowerDiagonal, n);
         return ans;
     }
+};
 
+//^ Rat in a maze
+class RatInAMaze
+{
+public:
+    /*
+&     The solve function is the recursive helper function that explores all possible paths from the current position (row, col) to the destination (n-1, n-1). It takes the current position, the matrix, the size of the matrix, the list of valid paths ans, the current path path, and a matrix vis to keep track of visited positions.
+
+& The base case of the recursion is when the current position is at the bottom-right corner of the matrix (row == n-1 and col == n-1). In this case, the current path path is added to the list of valid paths ans, and the function returns.
+
+& The recursive calls are made in four directions: down (D), left (L), right (R), and up (U). For each direction, the code checks if it is within the boundaries of the matrix, if the position is not visited (vis[row][col] == false), and if the position represents a valid path (m[row][col] == 1).
+
+& If the above conditions are satisfied, the code marks the current position as visited (vis[row][col] = 1), appends the corresponding direction to the current path (path.push_back()), and makes a recursive call to explore the next position in that direction. After the recursive call, the code removes the appended direction from the current path (path.pop_back()) and resets the visited status of the current position (vis[row][col] = 0).
+
+& The findPath function initializes the visited matrix vis and the empty list of valid paths ans. It then checks if the top-left corner of the matrix (0, 0) represents a valid path (m[0][0] == 1). If it does, it calls the solve function to find all possible paths from the start position (0, 0) to the destination position (n-1, n-1). Finally, it returns the list of valid paths ans.
+
+& In summary, this code uses backtracking to explore all possible paths in a matrix from the top-left corner to the bottom-right corner, considering only valid paths represented by 1s in the matrix. The time complexity of this code depends on the number of valid paths and can be exponential in the worst case.
+     */
+    void solve(int row, int col, vector<vector<int>> &m, int n, vector<string> &ans, string &path, vector<vector<int>> &vis)
+    {
+        if (row == n - 1 && col == n - 1)
+        {
+            ans.push_back(path);
+            return;
+        }
+
+        if (row + 1 < n && vis[row + 1][col] == false && m[row + 1][col] == 1)
+        {
+            vis[row][col] = 1;
+            path.push_back('D');
+            solve(row + 1, col, m, n, ans, path, vis);
+            path.pop_back();
+            vis[row][col] = 0;
+        }
+        if (col - 1 >= 0 && vis[row][col - 1] == false && m[row][col - 1] == 1)
+        {
+            vis[row][col] = 1;
+            path.push_back('L');
+            solve(row, col - 1, m, n, ans, path, vis);
+            path.pop_back();
+            vis[row][col] = 0;
+        }
+        if (col + 1 < n && vis[row][col + 1] == false && m[row][col + 1] == 1)
+        {
+            vis[row][col] = 1;
+            path.push_back('R');
+            solve(row, col + 1, m, n, ans, path, vis);
+            path.pop_back();
+            vis[row][col] = 0;
+        }
+        if (row - 1 >= 0 && vis[row - 1][col] == false && m[row - 1][col] == 1)
+        {
+            vis[row][col] = 1;
+            path.push_back('U');
+            solve(row - 1, col, m, n, ans, path, vis);
+            path.pop_back();
+            vis[row][col] = 0;
+        }
+    }
+    vector<string> findPath(vector<vector<int>> &m, int n)
+    {
+        vector<vector<int>> vis(n, vector<int>(n, 0));
+        vector<string> ans;
+        string path = "";
+        if (m[0][0] == 1)
+        {
+            solve(0, 0, m, n, ans, path, vis);
+        }
+        return ans;
+    }
+};
+
+class PalindromePartitioner
+{
+    /*
+ &    This code solves the problem of partitioning a string into all possible palindromic substrings. The function `partition` takes a string `s` as input and returns a 2D vector `res` containing all possible partitions.
+
+& The main logic is implemented in the `func` function, which is a recursive backtracking function. It takes the current index `idx`, the input string `s`, a vector `path` to store the current partition, and the result vector `res` to store all valid partitions.
+
+& The base case is when the `idx` reaches the end of the string, indicating that we have formed a complete partition. In this case, we add the current `path` to the `res` vector and return.
+
+& In the recursive case, we iterate from the `idx` to the end of the string. For each index `i`, we check if the substring from `idx` to `i` is a palindrome using the `isPalindrome` function. If it is a palindrome, we add it to the `path`, recursively call `func` for the next index `i+1`, and then remove the added substring from the `path` using `path.pop_back()`. This backtracking step allows us to explore all possible partitions.
+
+& The `isPalindrome` function checks if a substring of `s` from index `idx` to `i` is a palindrome. It compares the characters at corresponding indices from both ends of the substring and returns `false` if any characters are different. If all characters are the same, it returns `true`, indicating a palindrome.
+
+& The intuition behind this approach is to generate all possible partitions by exploring all possible palindromic substrings in the input string. By using backtracking, we backtrack to the previous partition when we have exhausted all possibilities for the current partition.
+
+& The time complexity of this code is O(n * 2^n), where n is the length of the input string `s`. This is because there can be 2^n possible partitions, and for each partition, we need to check if each substring is a palindrome, which takes O(n) time. The space complexity is O(n) for the recursive call stack and the result vector `res`.
+     */
+public:
+    vector<vector<string>> partition(string &s)
+    {
+        vector<vector<string>> res;
+        vector<string> path;
+        func(0, s, path, res);
+        return res;
+    }
+
+    void func(int idx, string &s, vector<string> &path, vector<vector<string>> &res)
+    {
+        if (idx == s.size())
+        {
+            res.push_back(path);
+            return;
+        }
+        for (int i = idx; i < s.size(); i++)
+        {
+            if (isPalindrome(s, idx, i))
+            {
+                path.push_back(s.substr(idx, i + 1 - idx));
+                func(i + 1, s, path, res);
+                path.pop_back();
+            }
+        }
+    }
+    bool isPalindrome(string &s, int idx, int i)
+    {
+        while (idx <= i)
+        {
+            if (s[idx++] != s[i--])
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+class Sudoku
+{
+public:
+    bool isValidConfig(vector<vector<char>> &board, int row, int col, char c)
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            if (board[i][col] == c)
+                return false;
+            if (board[row][i] == c)
+                return false;
+            if (board[3 * (row / 3) + i / 3][3 * (col / 3) + i % 3] == c)
+                return false;
+        }
+        return true;
+    }
+
+    bool solve(vector<vector<char>> &board)
+    {
+        for (int i = 0; i < board.size(); i++)
+        {
+            for (int j = 0; j < board[i].size(); j++)
+            {
+                if (board[i][j] == '.')
+                {
+                    for (char c = '1'; c <= '9'; c++)
+                    {
+                        if (isValidConfig(board, i, j, c))
+                        {
+                            board[i][j] = c;
+                            if (solve(board))
+                            {
+
+                                cout << "Found a match!\n";
+                                return true;
+                            }
+                            else
+                            {
+
+                                board[i][j] = '.';
+                                cout << "no match!\n";
+                            }
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+            return true;
+    }
+    void solveSudoku(vector<vector<char>> &board)
+    {
+        solve(board);
+    }
 };
 int main()
 {
@@ -984,7 +1244,6 @@ int main()
     // possibleWay(ds,6,s);
     // getMazePath(1, 1, 3, 3,s);
     printPermutations("ABA");
-
 
     return 0;
 }

@@ -515,17 +515,17 @@ node *insertSorted(node *head, int x)
 
 /* middle element of the linked list single traversal
    ❇ Slow and fast pointers  */
-// void middleOf_v2(node * head){
-//     node* slow = head;
-//     node* fast = head;
-//     if(head==NULL)return;
-//     while (fast!=NULL && fast->next != NULL)
-//     {
-//         slow = slow->next;
-//         fast= fast->next->next;
-//     }
-//     cout << (slow->data);
-// }
+void middleOf_v2(node * head){
+    node* slow = head;
+    node* fast = head;
+    if(head==NULL)return;
+    while (fast!=NULL && fast->next != NULL)
+    {
+        slow = slow->next;
+        fast= fast->next->next;
+    }
+    cout << (slow->data);
+}
 
 /* nth node from the end of the list */
 // void nthNodeFromEnd(node* head , int Nd){
@@ -546,25 +546,25 @@ node *insertSorted(node *head, int x)
 // }
 
 /* using two pointers nth node from the end of the list */
-// void nthNodeFromEnd_v2(node *head, int Nd)
-// {
-//     if (head == NULL)
-//         return;
-//     node *first = head;
-//     for (int i = 0; i < Nd; i++)
-//     {
-//         if (first == NULL)
-//             return;
-//         first = first->next;
-//     }
-//     node *second = head;
-//     while (first != NULL)
-//     {
-//         second = second->next;
-//         first = first->next;
-//     }
-//     cout << second->data;
-// }
+void nthNodeFromEnd_v2(node *head, int Nd)
+{
+    if (head == NULL)
+        return;
+    node *first = head;
+    for (int i = 0; i < Nd; i++)
+    {
+        if (first == NULL)
+            return;
+        first = first->next;
+    }
+    node *second = head;
+    while (first != NULL)
+    {
+        second = second->next;
+        first = first->next;
+    }
+    cout << second->data;
+}
 
 /* reverse a linked list O(n) time and space
  */
@@ -584,82 +584,82 @@ node *insertSorted(node *head, int x)
 // }
 
 // efficient solution w/ single traversal and O(1) space...
-//  node* reverseList(node* head){
-//      if(head==NULL)return NULL;
-//      if(head->next == NULL)return head;
-//      node * curr = head;
-//      node* prev = NULL;
-//      while (curr != NULL)
-//      {
-//          node* next = curr->next; /* creating 'next' so that we don't lose the remaining linked list
-//                                      pointers (curr,prev) are changed in way so that the links b/w nodes are reversed */
-//          curr->next = prev;
-//          prev = curr;
-//          curr = next;
-//      }
-//      return prev;
-//  }
+ node* reverseList(node* head){
+     if(head==NULL)return NULL;
+     if(head->next == NULL)return head;
+     node * curr = head;
+     node* prev = NULL;
+     while (curr != NULL)
+     {
+         node* next = curr->next; /* creating 'next' so that we don't lose the remaining linked list
+                                     pointers (curr,prev) are changed in way so that the links b/w nodes are reversed */
+         curr->next = prev;
+         prev = curr;
+         curr = next;
+     }
+     return prev;
+ }
 
 // recursive function for reversing a linked list...
-//  node* rReverseList(node* head){
-//      if(head==NULL)return NULL;
-//      if(head->next == NULL)return head;
-//      else{
-//          node* rest_head = rReverseList(head->next);
-//          node* rest_tail = head->next;
-//          rest_tail->next = head;
-//          head->next = NULL;
-//          return rest_head;
-//      }
-//  }
+ node* rReverseList(node* head){
+     if(head==NULL)return NULL;
+     if(head->next == NULL)return head;
+     else{
+         node* rest_head = rReverseList(head->next);
+         node* rest_tail = head->next;
+         rest_tail->next = head;
+         head->next = NULL;
+         return rest_head;
+     }
+ }
 
 /* remove duplicates from sorted linked lists */
-// node *removeDup(node *head)
-// {
-//     if (head == NULL)
-//         return NULL;
-//     else if (head->next == NULL)
-//         return head;
-//     node *curr = head;
-//     while (curr != NULL && curr->next != NULL)
-//     {
-//         if (curr->data == curr->next->data)
-//         {
-//             node *temp = curr->next;
-//             curr->next = curr->next->next;
-//             delete temp;
-//         }
-//         else
-//         {
-//             curr = curr->next;
-//         }
-//     }
-//     return head;
-// };
+node *removeDup(node *head)
+{
+    if (head == NULL)
+        return NULL;
+    else if (head->next == NULL)
+        return head;
+    node *curr = head;
+    while (curr != NULL && curr->next != NULL)
+    {
+        if (curr->data == curr->next->data)
+        {
+            node *temp = curr->next;
+            curr->next = curr->next->next;
+            delete temp;
+        }
+        else
+        {
+            curr = curr->next;
+        }
+    }
+    return head;
+};
 
 /* reverse a linked list in groups O(n) O(n/k)*/
 // Recursive solution:
-//  node* reverseListInGroups(node* head , int k){
-//      if(head==NULL)return NULL;
-//      if(head->next == NULL)return head;
-//      node* curr = head;
-//      node* prev = NULL ,*next = NULL;
-//      unsigned int count  = 0;
-//      while (curr!=NULL && count<k)
-//      {
-//          /* code */
-//          next = curr->next;
-//          curr->next = prev;
-//          prev = curr;
-//          curr = next;
-//          count++;
-//      }
-//      if((next!=NULL)){
-//          node* restHead = reverseListInGroups(next,k);
-//          head->next = restHead;
-//      }
-//      return prev;
-//  }
+ node* reverseListInGroups(node* head , int k){
+     if(head==NULL)return NULL;
+     if(head->next == NULL)return head;
+     node* curr = head;
+     node* prev = NULL ,*next = NULL;
+     unsigned int count  = 0;
+     while (curr!=NULL && count<k)
+     {
+         /* code */
+         next = curr->next;
+         curr->next = prev;
+         prev = curr;
+         curr = next;
+         count++;
+     }
+     if((next!=NULL)){
+         node* restHead = reverseListInGroups(next,k);
+         head->next = restHead;
+     }
+     return prev;
+ }
 
 // iterative solution
 //

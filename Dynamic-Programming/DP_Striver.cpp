@@ -122,7 +122,21 @@ public:
     {
         dp.resize(n + 1, -1);
     }
+    /* 
+        & This code implements a recursive function countWays_Recursive to calculate the number of ways to reach a given step n using either 1 or 2 steps at a time. The function returns the count of possible ways modulo a specified value mod.
 
+& The function countWays_Recursive takes an integer n as input.
+
+& The base cases are handled as follows:
+~ If the value of n is less than 0, indicating an invalid step, the function returns 0.
+~ If the value of n is 0, indicating that the destination step has been reached, the function returns 1, as there is one way to reach that step (by not taking any step).
+
+& The function recursively calls itself twice:
+~ countWays_Recursive(n - 1) % mod represents the count of ways to reach the step n - 1 using 1 or 2 steps at a time.
+~ countWays_Recursive(n - 2) % mod represents the count of ways to reach the step n - 2 using 1 or 2 steps at a time.
+
+& The results of the recursive calls are summed up, and the modulo operation with mod is performed to calculate the total count of ways to reach the step n.
+     */
     int countWays_Recursive(int n)
     {
         if (n < 0)
@@ -131,7 +145,25 @@ public:
             return 1;
         return countWays_Recursive(n - 1) % mod + countWays_Recursive(n - 2) % mod;
     }
+/* 
+&- The code implements a function countWays_Memoization that uses memoization to calculate the number of ways to reach a given step n using either 1 or 2 steps at a time. The function returns the count of possible ways modulo a specified value mod.
 
+&- The function countWays_Memoization takes a reference to a vector dp and an integer n as inputs.
+
+&- The vector dp is used to store the computed results for each step to avoid redundant calculations.
+
+&- The base cases are handled as follows:
+~ If the value of n is less than 0, indicating an invalid step, the function returns 0.
+~ If the value of n is 0, indicating that the destination step has been reached, the function returns 1, as there is one way to reach that step (by not taking any step).
+
+&- Before proceeding with the recursive calls, the function checks if the result for the current step n is already computed and stored in the dp vector. If it is, the function returns the stored result (dp[n] % mod).
+
+&- If the result for the current step n is not computed yet, the function recursively calls itself twice:
+~ countWays_Memoization(dp, n - 1) % mod represents the count of ways to reach the step n - 1 using 1 or 2 steps at a time.
+~ countWays_Memoization(dp, n - 2) % mod represents the count of ways to reach the step n - 2 using 1 or 2 steps at a time.
+
+&- The results of the recursive calls are summed up, and the modulo operation with mod is performed to calculate the total count of ways to reach the step n. The result is stored in the dp vector at the index n for future use.
+ */
     int countWays_Memoization(vector<int> &dp, int n)
     {
         if (n < 0)
@@ -145,6 +177,29 @@ public:
         dp[n] = (countWays_Memoization(dp, n - 1) % mod + countWays_Memoization(dp, n - 2) % mod) % mod;
     }
 
+/*  
+&- The code implements a function countWays_Tabulation that uses tabulation to calculate the number of ways to reach a given step n using either 1 or 2 steps at a time. The function returns the count of possible ways modulo a specified value mod.
+
+&- The function countWays_Tabulation takes a reference to a vector dp and an integer n as inputs.
+
+&- The vector dp is used as a table to store the computed results for each step.
+
+&- The base cases are handled as follows:
+~ dp[0] = dp[1] = 1 indicates that there is one way to reach step 0 and step 1.
+
+&- The function uses a loop to iteratively calculate the results for each step starting from 2 up to n.
+~ dp[i] = dp[i - 2] % mod + dp[i - 1] % mod represents the count of ways to reach step i by summing up the counts for reaching step i - 2 and step i - 1 using 1 or 2 steps at a time.
+
+&- Finally, the function returns dp[n] % mod, which represents the count of ways to reach the step n modulo mod.
+
+? Now, let's see how this code can be derived from the previous memoization code:
+
+?    Initialize dp[0] = dp[1] = 1 to store the base case results.
+?    Replace the memoization check in the previous code with the assignment statement: dp[n] = dp[n - 2] % mod + dp[n - 1] % mod.
+?    Return dp[n] % mod as the final result.
+
+? By making these changes, we transform the memoization code into the tabulation code. The tabulation code directly fills up the dp table by iteratively computing the results for each step, whereas the memoization code stores the computed results in the dp table on-demand during recursive calls.
+*/
     int countWays_Tabulation(vector<int> &dp, int n)
     {
         dp[0] = dp[1] = 1;
@@ -154,7 +209,29 @@ public:
         }
         return dp[n] % mod;
     }
+    /* 
+    @ The optimization process involves using only three variables (curr, prev1, prev2) instead of an array or vector to store the counts, reducing the space complexity to constant O(1) space. By updating the variables in each iteration, we avoid the overhead of maintaining a separate array or vector, resulting in an optimized implementation.
+    &- The function countWays_optimized takes an integer n as input.
 
+&- Three variables are used to track the counts:
+~ curr stores the current count of ways to reach the current step.
+~ prev1 stores the count of ways to reach the previous step.
+~ prev2 stores the count of ways to reach the step before the previous step.
+
+&- The base cases are handled as follows:
+~ prev1 = prev2 = 1 indicates that there is one way to reach step 0 and step 1.
+
+&- The function uses a loop to iteratively calculate the counts for each step starting from 2 up to n.
+~ curr = prev1 % mod + prev2 % mod calculates the count of ways to reach the current step i by summing up the counts for reaching the previous step i - 1 and the step before the previous step i - 2.
+
+&- In each iteration of the loop, the values of prev1 and prev2 are updated:
+~ prev2 = prev1 assigns the value of prev1 to prev2, which updates the count for the step before the previous step.
+~ prev1 = curr assigns the current count curr to prev1, which updates the count for the previous step.
+
+&- After the loop completes, the final count of ways to reach the step n is stored in prev1.
+
+&- Finally, the function returns prev1 % mod, which represents the count of ways to reach the step n modulo mod.
+     */
     int countWays_optimized(int n)
     {
         int curr = 0;
@@ -183,15 +260,11 @@ public:
         {
             int cost1 = INT_MAX, cost2 = INT_MAX;
             cost1 = findMinCost(idx - 1, arr, pathCost) + abs(arr[idx] - arr[idx - 1]);
-            // cout << "cost1 after recur : " << cost1 <<" - " << idx << endl;
             if (idx - 2 >= 0)
             {
                 cost2 = findMinCost(idx - 2, arr, pathCost) + abs(arr[idx] - arr[idx - 2]);
             }
-            // cout << "cost2 after recur : " << cost2 << " - " << idx << endl;
-            // cout << "Current PathCost : " << pathCost << endl;
             pathCost = min(cost1, cost2);
-            // cout << "Current minPathCost : " << pathCost << endl;
             return pathCost;
         }
     }

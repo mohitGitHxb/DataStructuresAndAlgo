@@ -8,7 +8,8 @@
         "initializer_list": "cpp",
         "regex": "cpp",
         "utility": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "functional": "cpp"
     },
     "cSpell.words": [
         "getnode",

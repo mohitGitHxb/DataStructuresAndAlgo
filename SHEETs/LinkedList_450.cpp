@@ -262,6 +262,34 @@ public:
         return true;
     }
 };
+
+void detectAndRemoveLoop(SingleNode *head)
+{
+    if (!head)
+        return;
+    SingleNode *s = head;
+    SingleNode *f = head;
+    while (f and f->next)
+    {
+        s = s->next;
+        f = f->next->next;
+        if (f == s)
+        {
+            s = head;
+            while (s != f)
+            {
+                s = s->next;
+                f = f->next;
+            }
+            while (f->next != s)
+            {
+                f = f->next;
+            }
+            f->next = NULL;
+        }
+    }
+    return;
+}
 int main(int argc, char const *argv[])
 {
     /* code */

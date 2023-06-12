@@ -122,7 +122,7 @@ public:
     {
         dp.resize(n + 1, -1);
     }
-    /* 
+    /*
         & This code implements a recursive function countWays_Recursive to calculate the number of ways to reach a given step n using either 1 or 2 steps at a time. The function returns the count of possible ways modulo a specified value mod.
 
 & The function countWays_Recursive takes an integer n as input.
@@ -145,25 +145,25 @@ public:
             return 1;
         return countWays_Recursive(n - 1) % mod + countWays_Recursive(n - 2) % mod;
     }
-/* 
-&- The code implements a function countWays_Memoization that uses memoization to calculate the number of ways to reach a given step n using either 1 or 2 steps at a time. The function returns the count of possible ways modulo a specified value mod.
+    /*
+    &- The code implements a function countWays_Memoization that uses memoization to calculate the number of ways to reach a given step n using either 1 or 2 steps at a time. The function returns the count of possible ways modulo a specified value mod.
 
-&- The function countWays_Memoization takes a reference to a vector dp and an integer n as inputs.
+    &- The function countWays_Memoization takes a reference to a vector dp and an integer n as inputs.
 
-&- The vector dp is used to store the computed results for each step to avoid redundant calculations.
+    &- The vector dp is used to store the computed results for each step to avoid redundant calculations.
 
-&- The base cases are handled as follows:
-~ If the value of n is less than 0, indicating an invalid step, the function returns 0.
-~ If the value of n is 0, indicating that the destination step has been reached, the function returns 1, as there is one way to reach that step (by not taking any step).
+    &- The base cases are handled as follows:
+    ~ If the value of n is less than 0, indicating an invalid step, the function returns 0.
+    ~ If the value of n is 0, indicating that the destination step has been reached, the function returns 1, as there is one way to reach that step (by not taking any step).
 
-&- Before proceeding with the recursive calls, the function checks if the result for the current step n is already computed and stored in the dp vector. If it is, the function returns the stored result (dp[n] % mod).
+    &- Before proceeding with the recursive calls, the function checks if the result for the current step n is already computed and stored in the dp vector. If it is, the function returns the stored result (dp[n] % mod).
 
-&- If the result for the current step n is not computed yet, the function recursively calls itself twice:
-~ countWays_Memoization(dp, n - 1) % mod represents the count of ways to reach the step n - 1 using 1 or 2 steps at a time.
-~ countWays_Memoization(dp, n - 2) % mod represents the count of ways to reach the step n - 2 using 1 or 2 steps at a time.
+    &- If the result for the current step n is not computed yet, the function recursively calls itself twice:
+    ~ countWays_Memoization(dp, n - 1) % mod represents the count of ways to reach the step n - 1 using 1 or 2 steps at a time.
+    ~ countWays_Memoization(dp, n - 2) % mod represents the count of ways to reach the step n - 2 using 1 or 2 steps at a time.
 
-&- The results of the recursive calls are summed up, and the modulo operation with mod is performed to calculate the total count of ways to reach the step n. The result is stored in the dp vector at the index n for future use.
- */
+    &- The results of the recursive calls are summed up, and the modulo operation with mod is performed to calculate the total count of ways to reach the step n. The result is stored in the dp vector at the index n for future use.
+     */
     int countWays_Memoization(vector<int> &dp, int n)
     {
         if (n < 0)
@@ -177,29 +177,29 @@ public:
         dp[n] = (countWays_Memoization(dp, n - 1) % mod + countWays_Memoization(dp, n - 2) % mod) % mod;
     }
 
-/*  
-&- The code implements a function countWays_Tabulation that uses tabulation to calculate the number of ways to reach a given step n using either 1 or 2 steps at a time. The function returns the count of possible ways modulo a specified value mod.
+    /*
+    &- The code implements a function countWays_Tabulation that uses tabulation to calculate the number of ways to reach a given step n using either 1 or 2 steps at a time. The function returns the count of possible ways modulo a specified value mod.
 
-&- The function countWays_Tabulation takes a reference to a vector dp and an integer n as inputs.
+    &- The function countWays_Tabulation takes a reference to a vector dp and an integer n as inputs.
 
-&- The vector dp is used as a table to store the computed results for each step.
+    &- The vector dp is used as a table to store the computed results for each step.
 
-&- The base cases are handled as follows:
-~ dp[0] = dp[1] = 1 indicates that there is one way to reach step 0 and step 1.
+    &- The base cases are handled as follows:
+    ~ dp[0] = dp[1] = 1 indicates that there is one way to reach step 0 and step 1.
 
-&- The function uses a loop to iteratively calculate the results for each step starting from 2 up to n.
-~ dp[i] = dp[i - 2] % mod + dp[i - 1] % mod represents the count of ways to reach step i by summing up the counts for reaching step i - 2 and step i - 1 using 1 or 2 steps at a time.
+    &- The function uses a loop to iteratively calculate the results for each step starting from 2 up to n.
+    ~ dp[i] = dp[i - 2] % mod + dp[i - 1] % mod represents the count of ways to reach step i by summing up the counts for reaching step i - 2 and step i - 1 using 1 or 2 steps at a time.
 
-&- Finally, the function returns dp[n] % mod, which represents the count of ways to reach the step n modulo mod.
+    &- Finally, the function returns dp[n] % mod, which represents the count of ways to reach the step n modulo mod.
 
-? Now, let's see how this code can be derived from the previous memoization code:
+    ? Now, let's see how this code can be derived from the previous memoization code:
 
-?    Initialize dp[0] = dp[1] = 1 to store the base case results.
-?    Replace the memoization check in the previous code with the assignment statement: dp[n] = dp[n - 2] % mod + dp[n - 1] % mod.
-?    Return dp[n] % mod as the final result.
+    ?    Initialize dp[0] = dp[1] = 1 to store the base case results.
+    ?    Replace the memoization check in the previous code with the assignment statement: dp[n] = dp[n - 2] % mod + dp[n - 1] % mod.
+    ?    Return dp[n] % mod as the final result.
 
-? By making these changes, we transform the memoization code into the tabulation code. The tabulation code directly fills up the dp table by iteratively computing the results for each step, whereas the memoization code stores the computed results in the dp table on-demand during recursive calls.
-*/
+    ? By making these changes, we transform the memoization code into the tabulation code. The tabulation code directly fills up the dp table by iteratively computing the results for each step, whereas the memoization code stores the computed results in the dp table on-demand during recursive calls.
+    */
     int countWays_Tabulation(vector<int> &dp, int n)
     {
         dp[0] = dp[1] = 1;
@@ -209,7 +209,7 @@ public:
         }
         return dp[n] % mod;
     }
-    /* 
+    /*
     @ The optimization process involves using only three variables (curr, prev1, prev2) instead of an array or vector to store the counts, reducing the space complexity to constant O(1) space. By updating the variables in each iteration, we avoid the overhead of maintaining a separate array or vector, resulting in an optimized implementation.
     &- The function countWays_optimized takes an integer n as input.
 
@@ -593,6 +593,96 @@ public:
         }
 
         return prev[3];
+    }
+};
+
+class UniquePaths
+{
+public:
+    int uniquePaths(int row, int col, vector<vector<int>> &grid, string &path)
+    {
+        if (row == 0 && col == 0)
+        {
+            cout << path << "\n";
+            return 1;
+        }
+        int left = 0, right = 0;
+        if (row - 1 >= 0)
+        {
+            path.push_back('R');
+            left = uniquePaths(row - 1, col, grid, path);
+            path.pop_back();
+        }
+        if (col - 1 >= 0)
+        {
+            path.push_back('D');
+            right = uniquePaths(row, col - 1, grid, path);
+            path.pop_back();
+        }
+        return (left + right);
+    }
+
+    int uniquePaths_memoized(int row, int col, vector<vector<int>> &dp)
+    {
+        if (row == 0 && col == 0)
+            return 1;
+        int left = 0, right = 0;
+        if (row - 1 >= 0)
+        {
+            if (dp[row - 1][col] != -1)
+                left = dp[row - 1][col];
+            else
+                left = uniquePaths_memoized(row - 1, col, dp);
+        }
+        if (col - 1 >= 0)
+        {
+            if (dp[row][col - 1] != -1)
+                right = dp[row][col - 1];
+            else
+                right = uniquePaths_memoized(row, col - 1, dp);
+        }
+        return dp[row][col] = (left + right);
+    }
+    int uniquePaths_tabulation(int row, int col, vector<vector<int>> &dp)
+    {
+        dp[0][0] = 1;
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < col; j++)
+            {
+                if (i == 0 && j == 0)
+                    continue;
+                int left = (i - 1 >= 0) ? dp[i - 1][j] : 0;
+                int right = (j - 1 >= 0) ? dp[i][j - 1] : 0;
+                dp[i][j] = left + right;
+            }
+        }
+       
+        return dp[row - 1][col - 1];
+    }
+    int uniquePaths_optimized(int row, int col)
+    {
+        vector<int> prevRow(col, 0);
+        for (int i = 0; i < row; i++)
+        {
+            vector<int> temp(col, 0);
+            for (int j = 0; j < col; j++)
+            {
+                if (i == 0 && j == 0)
+                    temp[j] = 1;
+                else
+                {
+                    int left = 0, right = 0;
+                    if (i > 0)
+                        right = prevRow[j];
+                    if (j > 0)
+                        left = temp[j - 1];
+                    temp[j] = left + right;
+                }
+            }
+            prevRow = temp;
+        }
+        return prevRow[col - 1];
     }
 };
 int main(int argc, char const *argv[])

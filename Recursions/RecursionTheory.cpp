@@ -1167,6 +1167,35 @@ public:
 };
 class Sudoku
 {
+private:
+    /*
+    &- The code implements a Sudoku solver using a backtracking algorithm. It includes two functions: isValidConfig and solve.
+
+    &- The isValidConfig function checks whether placing a character c at a specific position (row, col) on the Sudoku board is a valid configuration or not.
+
+    &- The function iterates over three checks to validate the configuration:
+    ~ It checks if c already exists in the same column. If it does, it returns false.
+    ~ It checks if c already exists in the same row. If it does, it returns false.
+    ~ It checks if c already exists in the 3x3 sub-grid to which the position (row, col) belongs. If it does, it returns false.
+
+    &- If none of the checks fail, it returns true, indicating that the configuration is valid.
+
+    &- The solve function performs the backtracking algorithm to solve the Sudoku puzzle recursively.
+
+    &- It iterates over each cell of the Sudoku board using two nested loops.
+    ~ If the cell contains a '.' (empty cell), it proceeds to fill in a valid number from '1' to '9'.
+    ~ It checks each number from '1' to '9' and calls the isValidConfig function to determine if it is a valid configuration at the current cell position.
+    ~ If a valid configuration is found, it places the number c in the current cell (board[i][j] = c).
+    ~ It then recursively calls the solve function to continue solving the puzzle.
+    ~- If solve returns true, it means a solution is found, and it returns true to the previous recursive call, propagating the solution.
+    ~- If solve returns false, it means the current configuration did not lead to a valid solution, so it backtracks by resetting the current cell to '.' (board[i][j] = '.') and continues with the next number.
+
+    &- If no empty cell is found (i.e., the entire board is filled), it returns true to indicate a solution is found.
+
+    &- If all possibilities are exhausted and no solution is found, it returns false.
+
+    * O(9^NxN) T.C | O(NxN) S.C
+     */
 public:
     bool isValidConfig(vector<vector<char>> &board, int row, int col, char c)
     {
@@ -1222,6 +1251,44 @@ public:
 };
 
 //^ Kth permutation of a number 1 -> N
+/*
+& Initialize variables:
+
+~    Set fact to 1 to store the factorial value.
+~    Create an empty vector numbers to store the numbers to be permuted.
+~    Initialize an empty string ans to store the final permutation.
+
+& Generate initial permutation:
+
+~    Iterate from 1 to n-1 (excluding n itself).
+~    Update fact by multiplying it with the current iteration value.
+~    Add the current iteration value to the numbers vector.
+
+& Add the last number:
+
+~    Add n to the numbers vector.
+~    This completes the generation of the initial permutation.
+
+& Adjust k for 0-based indexing:
+
+~    Decrement k by 1 since the code uses 0-based indexing for calculations.
+
+& Generate the permutation:
+
+~    Enter an infinite loop (break condition inside).
+~    Append the character representation of numbers[k / fact] to the ans string.
+~    Remove the element at index k / fact from the numbers vector.
+~    If the numbers vector is empty, break the loop.
+
+& Update k and fact for the next iteration:
+
+~    Update k by taking the remainder of k divided by fact.
+~    Reduce fact by dividing it by the size of the numbers vector.
+
+& Return the final permutation stored in ans.
+
+& The code generates the kth permutation of the numbers from 1 to n using a factorial-based approach. It calculates the permutation by determining the digit at each position iteratively based on the remaining available numbers.
+ */
 string getPermutation(int n, int k)
 {
     int fact = 1;

@@ -8,7 +8,7 @@ struct SingleNode
     SingleNode(int x = 0)
     {
         val = x;
-        next = nullptr;
+        next = NULL;
     }
 };
 //^ 1 Reverse a linked list both iterative and recursive
@@ -23,7 +23,7 @@ public:
     // {
     //     vector<int> temp;
     //     SingleNode *curr = head;
-    //     while (curr != nullptr)
+    //     while (curr != NULL)
     //     {
     //         temp.push_back(curr->val);
     //         curr = curr->next;
@@ -31,7 +31,7 @@ public:
     //     reverse(temp.begin(), temp.end());
     //     curr = head;
     //     int i = 0;
-    //     while (curr != nullptr)
+    //     while (curr != NULL)
     //     {
     //         curr->val = temp[i++];
     //         curr = curr->next;
@@ -44,10 +44,10 @@ public:
      */
     SingleNode *reverseList(SingleNode *head)
     {
-        if (!head || head->next == nullptr)
+        if (!head || head->next == NULL)
             return head;
-        SingleNode *temp = nullptr;
-        while (head != nullptr)
+        SingleNode *temp = NULL;
+        while (head != NULL)
         {
             SingleNode *next = head->next;
             head->next = temp;
@@ -175,6 +175,7 @@ public:
     }
 };
 
+//^ 3 detect loops
 class detectLoopLinkedList
 {
 private:
@@ -263,6 +264,7 @@ public:
     }
 };
 
+//^ 4 Detect and remove loop
 void detectAndRemoveLoop(SingleNode *head)
 {
     if (!head)
@@ -289,6 +291,137 @@ void detectAndRemoveLoop(SingleNode *head)
         }
     }
     return;
+}
+
+//^ 5 Merge two sorted linked lists
+SingleNode *mergeList(SingleNode *list1, SingleNode *list2)
+{
+
+    SingleNode *head, *tail;
+    if (!list1)
+        return list2;
+    if (!list2)
+        return list1;
+
+    if (list1->val <= list2->val)
+    {
+        head = list1;
+        tail = list1;
+        list1 = list1->next;
+    }
+    else
+    {
+        head = list2;
+        tail = list2;
+        list2 = list2->next;
+    }
+
+    while (list1 != NULL && list2 != NULL)
+    {
+        if (list1->val <= list2->val)
+        {
+            tail->next = list1;
+            tail = list1;
+            list1 = list1->next;
+        }
+        else
+        {
+            tail->next = list2;
+            tail = list2;
+            list2 = list2->next;
+        }
+    }
+    if (list1 == NULL)
+        tail->next = list2;
+    else
+        tail->next = list1;
+    return head;
+}
+//^ 6 Rotate Singly Linked list by K
+/*
+&1. Check if the rotation count k is 0 or if the head of the linked list is NULL. If either condition is true, there is no need to rotate the list, so return the head as it is.
+
+&2. Initialize a pointer curr to the head of the linked list and a pointer tail to NULL. These pointers will be used to traverse the list and keep track of the new tail after rotation.
+
+&3. Start a loop that runs k times to traverse k nodes in the linked list. In each iteration, update tail to curr and move curr to the next node.
+
+&4. After the loop, check if curr is NULL or if it is pointing to the head of the list. If either condition is true, it means the rotation count is greater than or equal to the length of the list, resulting in no effective rotation. In this case, return the head as it is.
+
+&5. Set the next pointer of tail to NULL, effectively disconnecting the rotated portion from the rest of the list.
+
+&6. Update tail to the current value of curr. Now, tail points to the last node of the original list, which will be the new tail after rotation.
+
+&7. Traverse the remaining portion of the list by moving curr to the next node until curr->next becomes NULL. This will bring curr to the last node of the original list.
+
+&8. Connect the original head (which is now at the end) to the next pointer of curr, effectively making it the new head of the rotated list.
+
+&9. Return tail, which is the new head of the rotated list.
+
+~The algorithm rotates the linked list by k positions by adjusting the pointers in the list. It first traverses k nodes to find the new tail and disconnects the rotated portion from the rest of the list. Then, it moves to the end of the original list and connects it with the original head to form the rotated list.
+* O(N) T.C | O(1) S.C
+ */
+SingleNode *rotate(SingleNode *head, int k)
+{
+    // Your code here
+    if (k == 0 || !head)
+        return head;
+    SingleNode *curr = head;
+    SingleNode *tail = NULL;
+    while (k--)
+    {
+        tail = curr;
+        curr = curr->next;
+    }
+    if (!curr || curr == head)
+        return head;
+    tail->next = NULL;
+    tail = curr;
+    while (curr->next != NULL)
+    {
+        curr = curr->next;
+    }
+    curr->next = head;
+    return tail;
+}
+//^ 7 First Node in a loop
+/*
+& 1)Temp,slowPointer and fastPointer, both set to the head of the linked list.
+
+& 2)Move slowPointer one node at a time and fastPointer two nodes at a time.
+
+& 3)If fastPointer becomes null, then there is no loop in the linked list and return -1.
+
+& 4)If fastPointer and slowPointer meet, then there is a loop in the linked list.
+
+& 5) Move slowPointer and temp one node at a time. The point where they meet is the first node of the loop. Return the data of the first node of the loop.
+
+~ This approach will have a time complexity of O(n) and space complexity of O(1).
+ */
+int findFirstNode(SingleNode *head)
+{
+    // your code here
+    if (!head)
+        return -1;
+    SingleNode *fast = head;
+    SingleNode *slow = head;
+    while (fast && fast->next)
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast)
+        {
+            break;
+        }
+    }
+    if (slow != fast)
+        return -1;
+    slow = head;
+    while (slow != fast)
+    {
+        slow = slow->next;
+        fast = fast->next;
+    }
+    return fast->val;
 }
 int main(int argc, char const *argv[])
 {

@@ -599,6 +599,32 @@ public:
 class UniquePaths
 {
 public:
+    /*
+    @ Recursion approach
+    &- The code includes a function called uniquePaths that takes the current row (row), current column (col), the grid, and a string path as input.
+
+    &- The base case of the recursion is when the function reaches the top-left corner of the grid (row == 0 and col == 0).
+    ~ In this case, it prints the current path using cout << path << "\n".
+    ~ It returns 1 to indicate that a unique path has been found.
+
+    &- The function initializes two variables left and right to keep track of the number of unique paths.
+    ~ left represents the number of unique paths when moving leftwards (decreasing the row).
+    ~ right represents the number of unique paths when moving downwards (decreasing the column).
+
+    &- If there is a valid move to the left (i.e., row - 1 >= 0), the function considers that move:
+    ~ It appends 'R' (representing a rightward movement) to the path string.
+    ~ It recursively calls the uniquePaths function with the updated row (row - 1), the same column (col), the grid, and the updated path.
+    ~ After the recursive call, it removes the last character from the path string using path.pop_back() to backtrack.
+
+    &- If there is a valid move downwards (i.e., col - 1 >= 0), the function considers that move:
+    ~ It appends 'D' (representing a downward movement) to the path string.
+    ~ It recursively calls the uniquePaths function with the same row (row), the updated column (col - 1), the grid, and the updated path.
+    ~ After the recursive call, it removes the last character from the path string using path.pop_back() to backtrack.
+
+    &- Finally, the function returns the sum of left and right, representing the total number of unique paths found so far.
+
+    ! O(M^N) T.C | O(M+N) S.C
+     */
     int uniquePaths(int row, int col, vector<vector<int>> &grid, string &path)
     {
         if (row == 0 && col == 0)
@@ -621,7 +647,30 @@ public:
         }
         return (left + right);
     }
+    /*
+    @ Memoization
+    &- The code includes a function called uniquePaths_memoized that takes the current row (row), current column (col), and the memoization table (dp) as input.
 
+&- The base case of the recursion is when the function reaches the top-left corner of the grid (row == 0 and col == 0).
+~ In this case, it returns 1 to indicate that a unique path has been found.
+
+&- The function initializes two variables left and right to keep track of the number of unique paths when moving leftwards (decreasing the row) and downwards (decreasing the column), respectively.
+
+&- If there is a valid move to the left (i.e., row - 1 >= 0), the function considers that move:
+~ It checks if the value for the left cell (dp[row - 1][col]) is already computed and stored in the memoization table (dp).
+~ If the value is available in the memoization table, it assigns it to left.
+~ Otherwise, it recursively calls the uniquePaths_memoized function with the updated row (row - 1), the same column (col), and the memoization table (dp).
+
+&- If there is a valid move downwards (i.e., col - 1 >= 0), the function considers that move:
+~ It checks if the value for the cell below (dp[row][col - 1]) is already computed and stored in the memoization table (dp).
+~ If the value is available in the memoization table, it assigns it to right.
+~ Otherwise, it recursively calls the uniquePaths_memoized function with the same row (row), the updated column (col - 1), and the memoization table (dp).
+
+&- Finally, the function assigns the sum of left and right to the current cell in the memoization table (dp[row][col]).
+~ This value represents the total number of unique paths to reach the current cell.
+~ It also returns the computed value.
+* O(MxN) T.C || O(MxN) + O(M+N) S.C
+     */
     int uniquePaths_memoized(int row, int col, vector<vector<int>> &dp)
     {
         if (row == 0 && col == 0)
@@ -643,6 +692,27 @@ public:
         }
         return dp[row][col] = (left + right);
     }
+    /*
+    @ Tabulation
+    &- The code includes a function called uniquePaths_tabulation that takes the number of rows (row), number of columns (col), and the DP table (dp) as input.
+
+&- The function initializes the top-left cell in the DP table (dp[0][0]) to 1 since there is only one way to reach that cell.
+
+&- It then iterates through each cell in the grid using two nested loops:
+~ The outer loop represents the rows, ranging from 0 to row - 1.
+~ The inner loop represents the columns, ranging from 0 to col - 1.
+
+&- At each cell (i, j), the function checks if it's the top-left corner. If so, it skips the current iteration using the continue statement since the top-left corner is already initialized.
+
+&- For each non-top-left cell, the function computes the number of unique paths to reach that cell by summing the number of paths from the cell above (dp[i - 1][j]) and the cell to the left (dp[i][j - 1]).
+~ The variables left and right store the number of paths from the above and left cells, respectively.
+~ If there is no cell above (i - 1 < 0), left is set to 0.
+~ If there is no cell to the left (j - 1 < 0), right is set to 0.
+~ The number of paths to reach the current cell (dp[i][j]) is then computed as the sum of left and right.
+
+&- After filling in the DP table, the function returns the value at the bottom-right corner (dp[row - 1][col - 1]), which represents the total number of unique paths to reach that corner.
+* O(M*N) T.C | O(MxN) S.C
+     */
     int uniquePaths_tabulation(int row, int col, vector<vector<int>> &dp)
     {
         dp[0][0] = 1;
@@ -657,9 +727,31 @@ public:
                 dp[i][j] = left + right;
             }
         }
-       
+
         return dp[row - 1][col - 1];
     }
+    /*
+    @ Space Optimization
+    &- The code includes a function called uniquePaths_optimized that takes the number of rows (row) and number of columns (col) as input.
+
+&- The function initializes the prevRow vector with col number of zeros. This vector represents the previous row in the grid.
+
+&- The algorithm iterates through each row in the grid using the outer loop:
+~ It creates a temp vector with col number of zeros to store the number of paths for the current row.
+~ The inner loop iterates through each column in the grid.
+~ For each cell (i, j), the algorithm checks if it's the top-left corner. If so, it sets the value in temp at index j to 1, representing the only possible path to reach the top-left corner.
+
+&- For each non-top-left cell, the algorithm computes the number of unique paths to reach that cell by summing the number of paths from the cell above (prevRow[j]) and the cell to the left (temp[j - 1]).
+~ The variables left and right store the number of paths from the left and above cells, respectively.
+~ If there is no cell above (i > 0), right is set to 0.
+~ If there is no cell to the left (j > 0), left is set to 0.
+~ The number of paths to reach the current cell (temp[j]) is then computed as the sum of left and right.
+
+&- After processing each column in the current row, the temp vector becomes the new prevRow vector for the next row.
+
+&- Once the algorithm completes iterating through all rows, it returns the value at the last index of the prevRow vector (prevRow[col - 1]), representing the total number of unique paths to reach the bottom-right corner.
+* O(M*N) T.C | O(N) S.C
+     */
     int uniquePaths_optimized(int row, int col)
     {
         vector<int> prevRow(col, 0);
@@ -683,6 +775,437 @@ public:
             prevRow = temp;
         }
         return prevRow[col - 1];
+    }
+    //^ Same problem as above but this time we have obstacles
+    int uniquePaths2(int i, int j, vector<vector<int>> &grid)
+    {
+        if (i >= 0 && j >= 0 && grid[i][j] == -1)
+            return 0;
+        if (i == 0 && j == 0)
+        {
+            return 1;
+        }
+        if (i < 0 || j < 0)
+        {
+            return 0;
+        }
+        int up = uniquePaths2(i - 1, j, grid);
+        int left = uniquePaths2(i, j - 1, grid);
+        return up + left;
+    }
+
+    int uniquePaths2_memoized(int i, int j, vector<vector<int>> &grid, vector<vector<int>> &dp)
+    {
+        if (i >= 0 && j >= 0 && grid[i][j] == -1)
+        {
+            return 0;
+        }
+        if (i == 0 && j == 0)
+        {
+            return 1;
+        }
+        if (i < 0 || j < 0)
+        {
+            return 0;
+        }
+        if (dp[i][j] != -1)
+            return dp[i][j];
+        int up = uniquePaths2_memoized(i - 1, j, grid, dp);
+        int left = uniquePaths2_memoized(i, j - 1, grid, dp);
+        return dp[i][j] = up + left;
+    }
+
+    int uniquePaths2_tabulation(vector<vector<int>> &grid, vector<vector<int>> &dp)
+    {
+        dp[0][0] = 1;
+        for (int i = 0; i < grid.size(); i++)
+        {
+            for (int j = 0; j < grid[i].size(); j++)
+            {
+                if (grid[i][j] == -1)
+                    dp[i][j] = 0;
+                if (i == 0 && j == 0)
+                    dp[i][j] = 1;
+                int left = (i - 1 >= 0) ? dp[i - 1][j] : 0;
+                int right = (j - 1 >= 0) ? dp[i][j - 1] : 0;
+                dp[i][j] = left + right;
+            }
+        }
+
+        return dp[grid.size() - 1][grid.back().size() - 1];
+    }
+    int uniquePaths2_optimized(vector<vector<int>> &grid)
+    {
+        vector<int> prev(grid.front().size());
+        for (int i = 0; i < grid.size(); i++)
+        {
+            vector<int> curr(grid.at(i).size());
+            for (int j = 0; j < grid[i].size(); j++)
+            {
+                if (grid[i][j] == 1)
+                    curr[j] = 0;
+                else if (i == 0 && j == 0)
+                    curr[j] = 1;
+                else
+                {
+
+                    int up = (i - 1 >= 0) ? prev[j] : 0;
+                    int left = (j - 1 >= 0) ? curr[j - 1] : 0;
+                    curr[j] = left + up;
+                }
+            }
+            prev = curr;
+        }
+        return prev.back();
+    }
+};
+
+class MinimumPathSum
+{
+public:
+    /*
+    @ Recursion
+    &- The code includes a function called minimumPathSum that takes the current row (r), current column (c), and a matrix (mat) as input.
+
+    &- The base case of the recursion is when the algorithm reaches the top-left corner of the grid (r == 0 and c == 0). In this case, it simply returns the value at the top-left cell of the matrix (mat[0][0]).
+
+    &- Another base case is when the algorithm goes out of bounds of the grid (r < 0 or c < 0). In this case, it returns a large value (10e7) to ensure it doesn't affect the minimum calculation in the subsequent recursive calls.
+
+    &- The algorithm recursively explores two directions: left and up. It calculates the minimum path sum for each direction by adding the value of the current cell (mat[r][c]) to the minimum path sum of the previous cell in that direction. The minimum path sum is computed by recursively calling the minimumPathSum function with updated row and column indices.
+
+    &- Finally, the algorithm returns the minimum sum among the two paths, obtained using the min function.
+
+    !The time complexity of this recursive approach can be quite high because it explores all possible paths from the top-left corner to the bottom-right corner. In the worst case, where the grid size is m x n, the number of recursive calls can be exponential, leading to a time complexity of O(2^(m+n)).
+
+    !The space complexity of the recursive approach depends on the depth of the recursive calls, which is determined by the maximum distance from the top-left corner to any cell in the grid. In the worst case, the depth of the recursive calls can be m + n, resulting in a space complexity of O(m + n) for the call stack.
+     */
+    int minimumPathSum(int r, int c, vector<vector<int>> &mat)
+    {
+        if (r == 0 && c == 0)
+        {
+            return mat[0][0];
+        }
+        if (r < 0 || c < 0)
+        {
+            return 10e7;
+        }
+        int left = mat[r][c] + minimumPathSum(r, c - 1, mat);
+        int up = mat[r][c] + minimumPathSum(r - 1, c, mat);
+        return min(left, up);
+    }
+    /*
+    @
+    &- The code includes a function called minimumPathSum_memoized that takes the current row (r), current column (c), the matrix (mat), and a memoization array (dp) as input.
+
+&- The base cases and recursive logic are similar to the previous implementation. The function checks if the current cell has already been computed and stored in the dp array. If it has, it simply returns the stored value, avoiding redundant computations.
+
+&- If the current cell's value has not been computed, the function calculates the minimum path sum for the current cell by adding the value of the current cell (mat[r][c]) to the minimum path sum of the previous cell in the left and up directions. The minimum path sum is computed by recursively calling the minimumPathSum_memoized function with updated row and column indices.
+
+&- Finally, the minimum path sum for the current cell is stored in the dp array before being returned.
+
+* The time complexity of this memoized approach is significantly improved compared to the previous recursive approach. Since each cell's value is computed only once and stored in the dp array, the number of computations is reduced. In the worst case, where the grid size is m x n, the time complexity is O(m * n).
+
+* The space complexity of this approach is O(m * n) as well. It is determined by the size of the dp array, which has the same dimensions as the input grid. The memoization array stores the minimum path sum for each cell, reducing the need for redundant computations.
+     */
+    int minimumPathSum_memoized(int r, int c, vector<vector<int>> &mat, vector<vector<int>> &dp)
+    {
+        if (r == 0 && c == 0)
+        {
+            return mat[0][0];
+        }
+        if (r < 0 || c < 0)
+        {
+            return 10e7;
+        }
+        if (dp[r][c] != 10e7)
+            return dp[r][c];
+        int left = mat[r][c] + minimumPathSum(r, c - 1, mat);
+        int up = mat[r][c] + minimumPathSum(r - 1, c, mat);
+        return dp[r][c] = min(left, up);
+    }
+
+    /*
+    @ Tabulation
+    &- The code includes a function called minimumPathSum_tabulation that takes the number of rows (r), number of columns (c), the matrix (mat), and a tabulation array (dp) as input.
+
+&- The function uses nested loops to iterate through each cell in the matrix. For each cell, it calculates the minimum path sum by considering the minimum of the path sum from the left and the path sum from above. The minimum path sum is computed by adding the current cell's value to the minimum path sum of the previous cells.
+
+&- The first cell (top-left corner) is treated as a special case. Its minimum path sum is equal to its own value since there are no previous cells.
+
+&- The calculated minimum path sum for each cell is stored in the dp array.
+
+&- Finally, the function returns the minimum path sum stored in the bottom-right cell of the dp array.
+
+*  The time complexity of this tabulation approach is O(r * c) since it iterates through each cell once to fill the dp array.
+
+*  The space complexity of this approach is also O(r * c) since it uses the dp array to store the minimum path sums for each cell. The space required is proportional to the size of the input matrix.
+     */
+    int minimumPathSum_tabulation(int r, int c, vector<vector<int>> &mat, vector<vector<int>> &dp)
+    {
+        for (int i = 0; i < r; i++)
+        {
+            for (int j = 0; j < c; j++)
+            {
+                if (i == 0 && j == 0)
+                {
+                    dp[0][0] = mat[0][0];
+                    continue;
+                }
+                int left = 10e7, up = 10e7;
+                if (j - 1 >= 0)
+                {
+                    left = mat[i][j] + dp[i][j - 1];
+                }
+                if (i - 1 >= 0)
+                {
+                    up = mat[i][j] + dp[i - 1][j];
+                }
+                dp[i][j] = min(left, up);
+            }
+        }
+        return dp[r - 1][c - 1];
+    }
+    /*
+    @ Space optimization
+    &- The code includes a function called minimumPathSum_optimized that takes the number of rows (r), number of columns (c), and the matrix (mat) as input.
+
+&- The function initializes a vector prev with size equal to the number of columns (c). This vector represents the minimum path sums for the previous row.
+
+&- It then uses nested loops to iterate through each cell in the matrix. For each cell, it calculates the minimum path sum by considering the minimum of the path sum from the left (using the current row's temp vector) and the path sum from above (using the previous row's prev vector). The minimum path sum is computed by adding the current cell's value to the minimum path sum of the adjacent cells.
+
+&- The first cell (top-left corner) is treated as a special case. Its minimum path sum is equal to its own value since there are no previous cells.
+
+&- The calculated minimum path sum for each cell is stored in the temp vector.
+
+&- After iterating through all cells in a row, the prev vector is updated with the values from the temp vector, representing the minimum path sums for the current row.
+
+&- Finally, the function returns the last element of the prev vector, which represents the minimum path sum for the bottom-right cell of the matrix.
+
+* The time complexity of this optimized approach is O(r * c) since it iterates through each cell once to calculate the minimum path sum.
+
+* The space complexity of this approach is O(c) since it only uses two vectors (prev and temp) of size equal to the number of columns (c). The space required is proportional to the number of columns in the input matrix.
+     */
+    int minimumPathSum_optimized(int r, int c, vector<vector<int>> &mat)
+    {
+        vector<int> prev(c);
+        for (int i = 0; i < r; i++)
+        {
+            vector<int> temp(c);
+            for (int j = 0; j < c; j++)
+            {
+                if (i == 0 && j == 0)
+                {
+                    temp[0] = mat[0][0];
+                    continue;
+                }
+                int left = 10e7, up = 10e7;
+                if (j - 1 >= 0)
+                {
+                    left = mat[i][j] + temp[j - 1];
+                }
+                if (i - 1 >= 0)
+                {
+                    up = mat[i][j] + prev[j];
+                }
+                temp[j] = min(left, up);
+            }
+            prev = temp;
+        }
+        return prev.back();
+    }
+};
+
+class TriangleSum
+{
+
+public:
+    /*
+    @ Recursion
+
+    ! O(2^N) T.C | O(N) S.C
+     */
+    int minimumTriangleSum(int r, int c, vector<vector<int>> &triangle)
+    {
+        if (r == triangle.size() - 1)
+        {
+            return triangle.back().at(c);
+        }
+        int down = 10e7, downright = 10e7;
+        if (r + 1 < triangle.size())
+            down = triangle[r][c] + minimumTriangleSum(r + 1, c, triangle);
+        downright = triangle[r][c] + minimumTriangleSum(r + 1, c + 1, triangle);
+        return min(down, downright);
+    }
+    /*
+    @ Memoization
+
+    *O(N^2) T.C | O(N) + O(N^2) S.C
+     */
+
+    int minimumTriangleSum_memo(int r, int c, vector<vector<int>> &triangle, vector<vector<int>> &dp)
+    {
+        if (r == triangle.size() - 1)
+        {
+            return triangle.back().at(c);
+        }
+        int down = 10e7, downright = 10e7;
+        if (dp[r][c] != -1)
+        {
+            return dp[r][c];
+        }
+        if (r + 1 < triangle.size())
+            down = triangle[r][c] + minimumTriangleSum_memo(r + 1, c, triangle, dp);
+        downright = triangle[r][c] + minimumTriangleSum_memo(r + 1, c + 1, triangle, dp);
+        return dp[r][c] = min(down, downright);
+    }
+    /*
+    @ Tabulation
+    * O(N^2) T.C | O(N^2) S.C
+     */
+    int minimumTriangleSum_tabulation(int r, int c, vector<vector<int>> &triangle, vector<vector<int>> &dp)
+    {
+        for (int i = 0; i < triangle.size(); i++)
+            dp[triangle.size() - 1][i] = triangle.back()[i];
+        for (int i = triangle.size() - 2; i >= 0; i--)
+        {
+            for (int j = i; j >= 0; i--)
+            {
+                int down = triangle[i][j] + dp[i + 1][j];
+                int downright = triangle[i][j] + dp[i + 1][j + 1];
+                dp[i][j] = min(down, downright);
+            }
+        }
+        return dp[0][0];
+    }
+    /*
+    @ Space optimization
+    * O(N^2) T.C | O(N) S.C
+     */
+    int minimumTriangleSum_optimized(int r, int c, vector<vector<int>> &triangle)
+    {
+        vector<int> front(triangle.back().size()), curr(triangle.front().size());
+        for (int i = 0; i < triangle.size(); i++)
+            front[i] = triangle.back()[i];
+        for (int i = triangle.size() - 2; i >= 0; i--)
+        {
+            for (int j = i; j >= 0; i--)
+            {
+                int down = triangle[i][j] + front[j];
+                int downright = triangle[i][j] + front[j + 1];
+                curr[j] = min(down, downright);
+            }
+            front = curr;
+        }
+        return front.front();
+    }
+};
+
+//^ Maximum falling path sum
+class MaximumSum
+{
+public:
+    /*
+    @ Recursion
+    ! O(3^N) T.C | O(N) S.C
+     */
+    int maximumSum(vector<vector<int>> &mat, int i, int j)
+    {
+        if (j < 0 || j >= mat.front().size())
+        {
+            return -10e7;
+        }
+        if (i == 0)
+            return mat.front().at(j);
+        int up = mat[i][j] + maximumSum(mat, i - 1, j);
+        int rightDiagonal = mat[i][j] + maximumSum(mat, i - 1, j + 1);
+        int leftDiagonal = mat[i][j] + maximumSum(mat, i - 1, j - 1);
+        return max(up, max(leftDiagonal, rightDiagonal));
+    }
+    int maximumSum_memo(vector<vector<int>> &mat, int i, int j, vector<vector<int>> &dp)
+    {
+        if (j < 0 || j >= mat.front().size())
+        {
+            return -10e7;
+        }
+        if (i == 0)
+            return mat.front().at(j);
+        if (dp[i][j] != -10e7)
+            return dp[i][j];
+        int up = mat[i][j] + maximumSum_memo(mat, i - 1, j, dp);
+        int rightDiagonal = mat[i][j] + maximumSum_memo(mat, i - 1, j + 1, dp);
+        int leftDiagonal = mat[i][j] + maximumSum_memo(mat, i - 1, j - 1, dp);
+        return dp[i][j] = max(up, max(leftDiagonal, rightDiagonal));
+    }
+    /*
+    @ Tabulation
+    *O(N*M) T.C | O(N*M) S.C
+     */
+    int maximumSum_tabulation(vector<vector<int>> &mat, vector<vector<int>> &dp)
+    {
+        for (int i = 0; i < mat.back().size(); i++)
+        {
+            dp.front().at(i) = mat.front().at(i);
+        }
+
+        for (int i = 1; i < mat.size(); i++)
+        {
+            for (int j = 0; j < mat[i].size(); j++)
+            {
+                int up = mat[i][j] + dp[i - 1][j];
+                int leftDiagonal = (j >= 1) ? (mat[i][j] + dp[i - 1][j - 1]) : -10e7;
+                int rightDiagonal = (j < mat[i].size() - 1) ? (mat[i][j] + dp[i - 1][j + 1]) : -10e7;
+
+                dp[i][j] = max(up, max(leftDiagonal, rightDiagonal));
+            }
+        }
+
+        int ans = -10e7;
+        for (int i = 0; i < mat[0].size(); i++)
+        {
+            ans = max(ans, dp.back()[i]);
+        }
+        return ans;
+    }
+    /*
+    @ Space optimization
+    *O(N*M) T.C | O(M) S.C
+    If we closely look the relation,
+
+dp[i][j] = matrix[i][j] + max(dp[i-1][j],dp[i-1][j-1], dp[i-1][j+1]))
+
+We see that we only need the previous row, in order to calculate dp[i][j]. Therefore we can space optimize it.
+
+Initially, we can take a dummy row ( say prev). We initialize this row to the input matrix’s first row( as done in tabulation).
+
+Now the current row(say cur) only needs the prev row’s value inorder to calculate dp[i][j].
+     */
+    int maximumSum_optimized(vector<vector<int>> &mat)
+    {
+        vector<int> prevRow(mat.size()), cur(mat.size());
+        for (int i = 0; i < mat.back().size(); i++)
+        {
+            prevRow.at(i) = mat.front().at(i);
+        }
+
+        for (int i = 1; i < mat.size(); i++)
+        {
+            for (int j = 0; j < mat[i].size(); j++)
+            {
+                int up = mat[i][j] + prevRow[j];
+                int leftDiagonal = (j >= 1) ? (mat[i][j] + prevRow[j - 1]) : -10e7;
+                int rightDiagonal = (j < mat[i].size() - 1) ? (mat[i][j] + prevRow[j + 1]) : -10e7;
+
+                cur[j] = max(up, max(leftDiagonal, rightDiagonal));
+            }
+            prevRow = cur;
+        }
+
+        int ans = -10e7;
+        for (int i = 0; i < mat[0].size(); i++)
+        {
+            ans = max(ans, prevRow[i]);
+        }
+        return ans;
     }
 };
 int main(int argc, char const *argv[])

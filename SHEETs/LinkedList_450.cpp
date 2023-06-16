@@ -423,6 +423,72 @@ int findFirstNode(SingleNode *head)
     }
     return fast->val;
 }
+
+//^ 8 Intersection Point in Y shaped linked list
+class FindIntersectionPoint
+{
+public:
+/* 
+@ Hashing Solution
+
+! O(N+M) T.C | O(max(N,M)) S.C
+ */
+    int intersectPoint(SingleNode *head1, SingleNode *head2)
+    {
+        // Your Code Here
+        if (!head1 || !head2)
+            return -1;
+        unordered_set<SingleNode *> hs;
+        while (head1 != NULL)
+        {
+            hs.insert(head1);
+            head1 = head1->next;
+        }
+        while (head2 != NULL)
+        {
+            if (hs.find(head2) != hs.end())
+            {
+                return head2->val;
+            }
+            head2 = head2->next;
+        }
+        return -1;
+    }
+    /* 
+    @ Optimized version
+    * O(M+N) T.C | O(1) S.C
+     */
+    int intersectPoint_v2(SingleNode* head1, SingleNode* head2){
+    // Your Code Here
+    int cnt1 = 0;
+    int cnt2 = 0;
+    SingleNode *temp1 = head1;
+    SingleNode *temp2 = head2;
+    while(temp1 != NULL){
+        cnt1++;
+        temp1 = temp1->next;
+    }
+    while(temp2 != NULL){
+        cnt2++;
+        temp2 = temp2->next;
+    }
+    temp1 = head1;
+    temp2 = head2;
+    while(temp1 != NULL && cnt1 > cnt2){
+        cnt1--;
+        temp1 = temp1->next;
+    }
+    while(temp2 != NULL && cnt2 > cnt1){
+        cnt2--;
+        temp2 = temp2->next;
+    }
+    while(temp1 != temp2){
+        temp1 = temp1->next;
+        temp2 = temp2->next;
+    }
+    return temp1->val;
+}
+};
 int main(int argc, char const *argv[])
 {
     /* code */

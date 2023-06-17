@@ -265,7 +265,7 @@ public:
 };
 
 //^ 4 Detect and remove loop
-/* 
+/*
 ~ The intuition behind this code is to use two pointers, one slow and one fast, to detect the loop in the linked list. The slow pointer moves one step at a time, while the fast pointer moves two steps at a time. If there is a loop, the fast pointer will eventually catch up with the slow pointer. Once a loop is detected, the starting node of the loop is found by resetting the slow pointer to the head and moving both pointers one step at a time until they meet again. Finally, the last node of the loop is found by moving the fast pointer until its next node is the same as the slow pointer. By breaking the link of the last node, the loop is removed from the linked list.
 
 * O(N) T.C | O(1) S.C
@@ -299,7 +299,7 @@ void detectAndRemoveLoop(SingleNode *head)
 }
 
 //^ 5 Merge two sorted linked lists
-/* 
+/*
 
 ! O(N) Space solution : use a temporary array to store the elements of list1 and list2 then sort it or use merge function of merge sort!
 
@@ -315,7 +315,7 @@ void detectAndRemoveLoop(SingleNode *head)
 & 7. If list2 is NULL, it means all nodes from list2 have been merged. Append the remaining nodes from list1 to the merged list (tail->next = list1).
 & 8. Return head, which is the head of the merged list.
 
-* O(N) T.C 
+* O(N) T.C
  */
 SingleNode *mergeList(SingleNode *list1, SingleNode *list2)
 {
@@ -559,6 +559,132 @@ SingleNode *removeDuplicates(SingleNode *head)
     }
     return head;
 }
+
+//^ 11 Common elements in a sorted linked list
+class CommonElements
+{
+public:
+    /*
+    @ Naive Approach
+ & - Map m is initialized to store the count of each value in both linked lists.
+ & - Traverse head1 and increment the count of each value in m.
+ & - Traverse head2 and increment the count of each value in m.
+ & - Initialize a new node ans with a value of 0.
+ & - Initialize a pointer cur to ans.
+ & - Traverse m and for each element with a count greater than or equal to 2:
+
+     ~    Calculate t as i.second/2.
+     ~    Repeat the following steps t times:
+     ~        Create a new node temp with the value i.first.
+     ~        Append temp to cur->next.
+     ~        Move cur to the newly added node.
+             & - Delete the first node (initialized with 0) by freeing the memory allocated to it.
+             & - Return the merged linked list starting from ans->next.
+
+ ~ The intuition behind this code is to use a map to store the count of each value in the linked lists. By traversing the map, we can identify the duplicate elements and create a new merged linked list by adding them the required number of times. The use of division by 2 ensures that the duplicates are added an equal number of times from both lists. The final merged linked list is returned by excluding the initial placeholder node.
+    ! O((N+M)log(N+M)) T.C | O(N+M) S.C
+     */
+
+    SingleNode *FindIntersection(SingleNode *head1, SingleNode *head2)
+    {
+        map<int, int> m;
+        // Store all the value of node in map
+        while (head1 != NULL)
+        {
+            m[head1->val]++;
+            head1 = head1->next;
+        }
+
+        while (head2 != NULL)
+        {
+            m[head2->val]++;
+            head2 = head2->next;
+        }
+
+        // make new node as ans and initially store 0 in it.
+        SingleNode *ans = new SingleNode(0);
+
+        SingleNode *cur = ans;
+
+        // traverse the map and extract all the element greater than 1.
+        for (auto i : m)
+        {
+            if (i.second >= 2)
+            {
+
+                // if there are same duplicate element in both the lists then we will store the element   i.second/2 number of times
+
+                int t = i.second / 2;
+
+                while (t--)
+                {
+                    SingleNode *temp = new SingleNode(i.first);
+                    cur->next = temp;
+                    cur = cur->next;
+                }
+            }
+        }
+
+        // delete the first node as we stored 0 in ans node
+        cur = ans;
+        ans = ans->next;
+        free(cur);
+        return ans;
+    }
+    /* 
+    @ Using the same approach as merge 2 sorted LL
+    & - Initialize two pointers p1 and p2 to the heads of head1 and head2 respectively.
+& - Initialize head and tail pointers to NULL.
+& - Iterate while both p1 and p2 are not NULL:
+
+~        If p1->data is greater than p2->data, move p2 to the next node in the list with the smaller node value.
+~        If p2->data is greater than p1->data, move p1 to the next node in the list with the smaller node value.
+~        If p1->data is equal to p2->data, it means a node match is found:
+~                If head is NULL, create a new node with p1->data and assign it to both head and tail. This initializes the intersection list.
+~                If head is not NULL, append a new node with p1->data at the end of the intersection list (using the tail pointer).
+~                Move p1 and p2 to their respective next nodes.
+                & - Return the head of the intersection list.
+
+? The intuition behind this code is to iterate through both linked lists simultaneously using two pointers p1 and p2. By comparing the node values, we can identify the common nodes between the lists and construct a new linked list containing those common nodes. The algorithm ensures that the intersection list is built in ascending order.
+* O(M+N) T.C | O(1) S.C
+     */
+    SingleNode* findIntersection(SingleNode* head1, SingleNode* head2)
+{
+    SingleNode *p1=head1, *p2=head2;
+    SingleNode *head=NULL, *tail=NULL;
+    
+    while(p1 && p2)
+        if(p1->val > p2->val)
+            // nodes dont match
+            // moving to next node in list with smaller node
+            p2 = p2->next;
+        
+        else if(p2->val > p1->val)
+            // nodes dont match
+            // moving to next node in list with smaller node
+            p1 = p1->next;
+        
+        else
+        {
+            // nodes match
+            
+            if(head==NULL)
+                head = tail = new SingleNode(p1->val);
+                // creating new head for intersection list
+            else
+            {
+                // appending new node at the end
+                tail->next = new SingleNode(p1->val);
+                tail = tail->next;
+            }
+            p1 = p1->next;
+            p2 = p2->next;
+            // moving to next nodes in both lists
+        }
+    
+    return head;
+}
+};
 int main(int argc, char const *argv[])
 {
     /* code */

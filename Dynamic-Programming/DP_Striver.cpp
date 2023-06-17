@@ -1106,6 +1106,27 @@ class MaximumSum
 public:
     /*
     @ Recursion
+
+
+& This code includes a function called maximumSum that takes a 2D matrix (mat), a current row index (i), and a current column index (j) as input.
+
+& The function first checks if the current column index is out of bounds (less than 0 or greater than or equal to the number of columns in the first row of the matrix). If so, it returns a very small value (-10e7) indicating an invalid path.
+
+& If the current row index is 0 (indicating the first row), it returns the value of the corresponding cell in the first row. This is the base case for the recursion.
+
+& If the current row index is not 0, the function recursively calculates the maximum sum by considering three possible paths:
+
+~    Upward path: The function recursively calls maximumSum with the previous row index (i - 1) and the same column index (j). It adds the value of the current cell to the maximum sum of the upward path.
+
+~    Right diagonal path: The function recursively calls maximumSum with the previous row index (i - 1) and the next column index (j + 1). It adds the value of the current cell to the maximum sum of the right diagonal path.
+
+~    Left diagonal path: The function recursively calls maximumSum with the previous row index (i - 1) and the previous column index (j - 1). It adds the value of the current cell to the maximum sum of the left diagonal path.
+
+& Finally, the function returns the maximum value among the three calculated sums using the max function.
+
+? The recursive approach explores all possible paths from the top to the bottom of the matrix, considering the maximum sum at each step. It effectively evaluates the sum of all possible paths and returns the maximum sum achieved.
+
+? However, note that the given code does not perform any memoization or dynamic programming optimization, so it may have exponential time complexity and repeated calculations for overlapping subproblems. To optimize the solution, one could incorporate memoization or dynamic programming techniques to store and reuse intermediate results, reducing the time complexity to a more efficient leve
     ! O(3^N) T.C | O(N) S.C
      */
     int maximumSum(vector<vector<int>> &mat, int i, int j)
@@ -1121,6 +1142,32 @@ public:
         int leftDiagonal = mat[i][j] + maximumSum(mat, i - 1, j - 1);
         return max(up, max(leftDiagonal, rightDiagonal));
     }
+    /*
+    @ Memoization
+    & This code includes a function called maximumSum_memo that takes a 2D matrix (mat), a current row index (i), a current column index (j), and a memoization table (dp) as input.
+
+& The function first checks if the current column index is out of bounds (less than 0 or greater than or equal to the number of columns in the first row of the matrix). If so, it returns a very small value (-10e7) indicating an invalid path.
+
+& If the current row index is 0 (indicating the first row), it returns the value of the corresponding cell in the first row. This is the base case for the recursion.
+
+& Next, the function checks if the value for the current cell has already been calculated and stored in the memoization table (dp). If so, it directly returns the stored value instead of recomputing it.
+
+& If the value for the current cell has not been memoized, the function recursively calculates the maximum sum by considering three possible paths:
+
+~    Upward path: The function recursively calls maximumSum_memo with the previous row index (i - 1) and the same column index (j). It adds the value of the current cell to the maximum sum of the upward path.
+
+~    Right diagonal path: The function recursively calls maximumSum_memo with the previous row index (i - 1) and the next column index (j + 1). It adds the value of the current cell to the maximum sum of the right diagonal path.
+
+~    Left diagonal path: The function recursively calls maximumSum_memo with the previous row index (i - 1) and the previous column index (j - 1). It adds the value of the current cell to the maximum sum of the left diagonal path.
+
+& Finally, the function calculates the maximum sum among the three calculated sums using the max function and stores the result in the memoization table (dp) for future reference.
+
+& The function returns the memoized maximum sum for the current cell.
+
+~ By using memoization, the function avoids redundant calculations for overlapping subproblems. It stores the results of already computed subproblems in the memoization table, allowing them to be reused when needed, which improves the overall efficiency of the solution.
+
+* The time complexity of this memoized solution depends on the number of unique subproblems, which is determined by the size of the matrix. Therefore, the time complexity is O(r * c), where r is the number of rows and c is the number of columns in the matrix. The space complexity is also O(r * c) to store the memoization table.
+     */
     int maximumSum_memo(vector<vector<int>> &mat, int i, int j, vector<vector<int>> &dp)
     {
         if (j < 0 || j >= mat.front().size())
@@ -1138,6 +1185,16 @@ public:
     }
     /*
     @ Tabulation
+    & Initialize the first row of the memoization table (dp) with the values from the first row of the matrix.
+& Iterate over the remaining rows of the matrix starting from the second row.
+~ For each cell in the current row:
+~ Calculate the maximum sum considering three possible paths: upward, left diagonal, and right diagonal.
+- Upward path: Add the value of the current cell to the value of the corresponding cell in the previous row (dp[i - 1][j]).
+- Left diagonal path: If the current cell is not in the leftmost column, add the value of the current cell to the value of the cell in the previous row and previous column (dp[i - 1][j - 1]).
+- Right diagonal path: If the current cell is not in the rightmost column, add the value of the current cell to the value of the cell in the previous row and next column (dp[i - 1][j + 1]).
+~ Update the current cell in the memoization table (dp[i][j]) with the maximum value among the three paths calculated.
+& Find the maximum value in the last row of the memoization table (dp) and store it in the variable ans.
+& Return the value of ans, which represents the maximum sum.
     *O(N*M) T.C | O(N*M) S.C
      */
     int maximumSum_tabulation(vector<vector<int>> &mat, vector<vector<int>> &dp)
@@ -1169,15 +1226,15 @@ public:
     /*
     @ Space optimization
     *O(N*M) T.C | O(M) S.C
-    If we closely look the relation,
+ &   If we closely look the relation,
 
-dp[i][j] = matrix[i][j] + max(dp[i-1][j],dp[i-1][j-1], dp[i-1][j+1]))
+&dp[i][j] = matrix[i][j] + max(dp[i-1][j],dp[i-1][j-1], dp[i-1][j+1]))
 
-We see that we only need the previous row, in order to calculate dp[i][j]. Therefore we can space optimize it.
+&We see that we only need the previous row, in order to calculate dp[i][j]. Therefore we can space optimize it.
 
-Initially, we can take a dummy row ( say prev). We initialize this row to the input matrix’s first row( as done in tabulation).
+&Initially, we can take a dummy row ( say prev). We initialize this row to the input matrix’s first row( as done in tabulation).
 
-Now the current row(say cur) only needs the prev row’s value inorder to calculate dp[i][j].
+&Now the current row(say cur) only needs the prev row’s value inorder to calculate dp[i][j].
      */
     int maximumSum_optimized(vector<vector<int>> &mat)
     {
@@ -1206,6 +1263,126 @@ Now the current row(say cur) only needs the prev row’s value inorder to calcul
             ans = max(ans, prevRow[i]);
         }
         return ans;
+    }
+};
+
+//^ Cherry pickup 2 [3D DP]
+class Cherry
+{
+public:
+    /*
+    @ Recursion
+&     Express the problem in terms of indexes.
+
+& This question is slightly different from all the previous questions, here we are given two starting points from where Alice and Bob can move.
+
+& We are given an ‘N*M’ matrix. We need to define the function with four parameters  i1,j1,i2, and j2 to describe the positions of Alice and Bob at a time.
+& If we observe, initially Alice and Bob are at the first row, and they always move to the row below them every time, so they will always be in the same row. Therefore two different variables i1 and i2, to describe their positions are redundant. We can just use single parameter i, which tells us in which row of the grid both of them are.
+
+&Therefore, we can modify the function. It now takes three parameters: i,j1, and j2. f(i,j1,j2) will give us the maximum number of chocolates collected by Alice and Bob from their current positions to the last position.
+
+~ Base Case:
+
+&There will be the following base cases:
+
+~    When i == N-1, it means we are at the last row, so we need to return from here. Now it can happen that at the last row, both Alice and Bob are at the same cell, in this condition we will return only chocolates collected by Alice, mat[i][j1]( as question states that the chocolates cannot be doubly calculated), otherwise we return sum of chocolates collected by both, mat[i][j1] + mat[i][j1][j2].
+
+&At every cell, we have three options to go: to the bottom cell (↓), to the bottom-right cell(↘) or to the bottom-left cell(↙)
+
+&As we are moving to the bottom cell (↓), at max we will reach the last row, from &where we return, so we will never go out of the bounding index.
+
+&To move to the bottom-right cell(↘) or to the bottom-left cell(↙), it can happen that we may go out of bound as shown in the figure(below). So we need to handle it, we can return -1e9, whenever we go out of bound, in this way this path will not be selected by the calling function as we have to return the maximum chocolates.
+
+   ~ If j1<0 or j1>=M or j2<0 or j2>=M  , then we return -1e9
+
+&The pseudocode till this step will be:
+
+? Step 2: Try out all possible choices at a given index.
+
+& At every cell, we have three options to go: to the bottom cell (↓), to the bottom-right cell(↘) or to the bottom-left cell(↙)
+
+& Now, we need to understand that we want to move Alice and Bob together. Both of them can individually move three moves but say Alice moves to bottom-left, then Bob can have three different moves for Alice’s move, and so on. The following figures will help to understand this:
+
+& Hence we have a total of 9 different options at every f(i,j1,j2) to move Alice and Bob. Now we can manually write these 9 options or we can observe a pattern in them, first Alice moves to one side and Bob tries all three choices, then again Alice moves, then Bob, and so on. This pattern can be easily captured by using two nested loops that change the column numbers(j1 and j2).
+
+& Note: if (j1===j2), as discussed in the base case, we will only consider chocolates collected by one of them otherwise we will consider chocolates collected by both of them.
+
+& Step 3:  Take the maximum of all choices
+
+& As we have to find the maximum chocolates collected of all the possible paths, we will return the maximum of all the choices(the 9 choices of step 2). We will take a maxi variable( initialized to INT_MIN). We will update maxi to the maximum of the previous maxi and the answer of the current choice. At last, we will return maxi from our function as the answer.f
+     */
+
+    int maximumCherries(int i, int j1, int j2, vector<vector<int>> &mat)
+    {
+        if (j1 < 0 || j1 >= mat.front().size() || j2 < 0 || j2 >= mat.front().size())
+        {
+            return -10e7;
+        }
+        if (i == mat.size() - 1)
+        {
+            if (j1 != j2)
+            {
+                return mat[i][j1] + mat[i][j2];
+            }
+            else
+            {
+                return mat[i][j1];
+            }
+        }
+        int maxi = INT_MIN;
+        for (int dirR = -1; dirR <= 1; dirR++)
+        {
+            for (int dirC = -1; dirC <= 1; dirC++)
+            {
+                if (j1 == j2)
+                    int ans = mat[i][j1] + maximumCherries(i, j1 + dirR, j2 + dirC, mat);
+                else
+                {
+                    maxi = max(maxi, mat[i][j2] + maximumCherries(i, j1 + dirR, j2 + dirC, mat));
+                }
+            }
+        }
+        return maxi;
+    }
+
+    /*
+    @ Memoizaton
+
+    * O() T.C | O(NMM) S.C
+     */
+    int maximumCherries_memo(int i, int j1, int j2, vector<vector<int>> &mat, vector<vector<vector<int>>> &dp)
+    {
+        if (j1 < 0 || j1 >= mat.front().size() || j2 < 0 || j2 >= mat.front().size())
+        {
+            return -10e7;
+        }
+        if (i == mat.size() - 1)
+        {
+            if (j1 != j2)
+            {
+                return mat[i][j1] + mat[i][j2];
+            }
+            else
+            {
+                return mat[i][j1];
+            }
+        }
+        if (dp[i][j1][j2] != -1)
+            return dp[i][j1][j2];
+        int maxi = INT_MIN;
+        for (int dirR = -1; dirR <= 1; dirR++)
+        {
+            for (int dirC = -1; dirC <= 1; dirC++)
+            {
+                if (j1 == j2)
+                    int ans = mat[i][j1] + maximumCherries_memo(i, j1 + dirR, j2 + dirC, mat, dp);
+                else
+                {
+                    maxi = max(maxi, mat[i][j2] + maximumCherries_memo(i, j1 + dirR, j2 + dirC, mat, dp));
+                }
+            }
+        }
+        return dp[i][j1][j2] = maxi;
     }
 };
 int main(int argc, char const *argv[])

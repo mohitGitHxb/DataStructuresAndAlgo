@@ -265,6 +265,11 @@ public:
 };
 
 //^ 4 Detect and remove loop
+/* 
+~ The intuition behind this code is to use two pointers, one slow and one fast, to detect the loop in the linked list. The slow pointer moves one step at a time, while the fast pointer moves two steps at a time. If there is a loop, the fast pointer will eventually catch up with the slow pointer. Once a loop is detected, the starting node of the loop is found by resetting the slow pointer to the head and moving both pointers one step at a time until they meet again. Finally, the last node of the loop is found by moving the fast pointer until its next node is the same as the slow pointer. By breaking the link of the last node, the loop is removed from the linked list.
+
+* O(N) T.C | O(1) S.C
+ */
 void detectAndRemoveLoop(SingleNode *head)
 {
     if (!head)
@@ -294,6 +299,24 @@ void detectAndRemoveLoop(SingleNode *head)
 }
 
 //^ 5 Merge two sorted linked lists
+/* 
+
+! O(N) Space solution : use a temporary array to store the elements of list1 and list2 then sort it or use merge function of merge sort!
+
+& 1. Create two pointers, head and tail, and initialize them to NULL. These pointers will be used to build the merged linked list.
+& 2. Check if either list1 or list2 is NULL. If one of them is NULL, it means one of the lists is empty. In that case, return the non-empty list as the merged list.
+& 3. Compare the values of the first nodes of list1 and list2 to determine which one should be the head of the merged list. Set head and tail accordingly.
+& 4. Move the appropriate pointer (list1 or list2) to the next node, as it has been used to set the head of the merged list.
+& 5. Start a while loop that continues until either list1 or list2 becomes NULL. This loop is used to merge the remaining nodes of list1 and list2 in ascending order.
+& 5.1. Compare the values of the current nodes of list1 and list2.
+& 5.2. If the value of the node in list1 is less than or equal to the value in list2, append the node from list1 to the merged list (tail->next = list1), update tail to the appended node, and move list1 to the next node (list1 = list1->next).
+& 5.3. If the value of the node in list2 is greater than the value in list1, append the node from list2 to the merged list (tail->next = list2), update tail to the appended node, and move list2 to the next node (list2 = list2->next).
+& 6. Check if either list1 or list2 is NULL. If list1 is NULL, it means all nodes from list1 have been merged. Append the remaining nodes from list2 to the merged list (tail->next = list2).
+& 7. If list2 is NULL, it means all nodes from list2 have been merged. Append the remaining nodes from list1 to the merged list (tail->next = list1).
+& 8. Return head, which is the head of the merged list.
+
+* O(N) T.C 
+ */
 SingleNode *mergeList(SingleNode *list1, SingleNode *list2)
 {
 
@@ -339,6 +362,8 @@ SingleNode *mergeList(SingleNode *list1, SingleNode *list2)
 }
 //^ 6 Rotate Singly Linked list by K
 /*
+
+
 &1. Check if the rotation count k is 0 or if the head of the linked list is NULL. If either condition is true, there is no need to rotate the list, so return the head as it is.
 
 &2. Initialize a pointer curr to the head of the linked list and a pointer tail to NULL. These pointers will be used to traverse the list and keep track of the new tail after rotation.
@@ -428,11 +453,11 @@ int findFirstNode(SingleNode *head)
 class FindIntersectionPoint
 {
 public:
-/* 
-@ Hashing Solution
+    /*
+    @ Hashing Solution
 
-! O(N+M) T.C | O(max(N,M)) S.C
- */
+    ! O(N+M) T.C | O(max(N,M)) S.C
+     */
     int intersectPoint(SingleNode *head1, SingleNode *head2)
     {
         // Your Code Here
@@ -454,41 +479,86 @@ public:
         }
         return -1;
     }
-    /* 
+    /*
     @ Optimized version
     * O(M+N) T.C | O(1) S.C
      */
-    int intersectPoint_v2(SingleNode* head1, SingleNode* head2){
-    // Your Code Here
-    int cnt1 = 0;
-    int cnt2 = 0;
-    SingleNode *temp1 = head1;
-    SingleNode *temp2 = head2;
-    while(temp1 != NULL){
-        cnt1++;
-        temp1 = temp1->next;
+    int intersectPoint_v2(SingleNode *head1, SingleNode *head2)
+    {
+        // Your Code Here
+        int cnt1 = 0;
+        int cnt2 = 0;
+        SingleNode *temp1 = head1;
+        SingleNode *temp2 = head2;
+        while (temp1 != NULL)
+        {
+            cnt1++;
+            temp1 = temp1->next;
+        }
+        while (temp2 != NULL)
+        {
+            cnt2++;
+            temp2 = temp2->next;
+        }
+        temp1 = head1;
+        temp2 = head2;
+        while (temp1 != NULL && cnt1 > cnt2)
+        {
+            cnt1--;
+            temp1 = temp1->next;
+        }
+        while (temp2 != NULL && cnt2 > cnt1)
+        {
+            cnt2--;
+            temp2 = temp2->next;
+        }
+        while (temp1 != temp2)
+        {
+            temp1 = temp1->next;
+            temp2 = temp2->next;
+        }
+        return temp1->val;
     }
-    while(temp2 != NULL){
-        cnt2++;
-        temp2 = temp2->next;
-    }
-    temp1 = head1;
-    temp2 = head2;
-    while(temp1 != NULL && cnt1 > cnt2){
-        cnt1--;
-        temp1 = temp1->next;
-    }
-    while(temp2 != NULL && cnt2 > cnt1){
-        cnt2--;
-        temp2 = temp2->next;
-    }
-    while(temp1 != temp2){
-        temp1 = temp1->next;
-        temp2 = temp2->next;
-    }
-    return temp1->val;
-}
 };
+
+//^ 9 Find duplicates in a sorted linked list
+
+/*
+&1. Check if the linked list is empty (!head) or has only one node (!head->next). If either condition is true, there are no duplicates to remove, so return the head as it is.
+
+&2. Initialize a pointer x to the head of the linked list. This pointer will be used to iterate through the list.
+
+&3. Start a while loop that continues until the next node of x is NULL.
+
+&4. Inside the loop, check if the value (data) of the current node (x) is equal to the value of its next node (x->next). If they are equal, it means there is a duplicate.
+
+&5. To remove the duplicate, update the next pointer of the current node (x->next) to skip the duplicate node and point to the next node in the list (x->next->next).
+
+&6. If the values are not equal, move x to the next node (x = x->next), as there is no duplicate to remove at this point.
+
+&7. Repeat steps 3-6 until the end of the linked list is reached.
+
+&8. Return the modified linked list head after removing duplicates.
+
+~ The intuition behind this code is to traverse the linked list while comparing consecutive nodes. If duplicate values are found, the duplicate node is skipped by adjusting the next pointer of the current node to point to the next non-duplicate node. This way, only unique values remain in the linked list.
+ */
+SingleNode *removeDuplicates(SingleNode *head)
+{
+    // your code goes here
+    if (!head || !head->next)
+    {
+        return head;
+    }
+    SingleNode *x = head;
+    while (x->next)
+    {
+        if (x->val == x->next->val)
+            x->next = x->next->next;
+        else
+            x = x->next;
+    }
+    return head;
+}
 int main(int argc, char const *argv[])
 {
     /* code */

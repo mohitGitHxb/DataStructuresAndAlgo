@@ -1348,7 +1348,7 @@ public:
     /*
     @ Memoizaton
 
-    * O() T.C | O(NMM) S.C
+    * O(N*M*M) T.C | O(NMM) + O(N) S.C
      */
     int maximumCherries_memo(int i, int j1, int j2, vector<vector<int>> &mat, vector<vector<vector<int>>> &dp)
     {
@@ -1383,6 +1383,296 @@ public:
             }
         }
         return dp[i][j1][j2] = maxi;
+    }
+    /*
+    @ Tabulation
+    For the tabulation approach, it is better to understand what a cell in the 3D DP array means. As we had done in memoization, we will initialize a dp[] array of size [N][M][M].
+
+So now, when we say dp[2][0][3], what does it mean? It means that we are getting the value of the maximum chocolates collected by Alice and Bob, when Alice is at (2,0) and Bob is at (2,3).
+
+The below figure gives us a bit more clarity.
+
+Next, we need to initialize the base value conditions. In the recursive code, our base condition is when we reach the last row, therefore in our dp array, we will also initialize dp[n-1][][], i.e (the last plane of 3D Array) as the base condition. Dp[n-1][j1][j2] means Alice is at (n-1,j1) and Bob is at (n-1,j2). As this is the last row, its value will be equal to mat[i][j1], if (j1==j2) and mat[i][j1] + mat[i][j2] otherwise.
+
+Once we have filled the last plane, we can move to the second-last plane and so on, we will need three nested loops to do this traversal.
+
+The steps to convert to the tabular solution are given below:
+
+    Declare a dp[] array of size [N][M][M]
+    First, initialize the base condition values as explained above.
+    We will then move from dp[n-2][][] to dp[0][][]. We will set three nested loops to do this traversal.
+    Inside the three nested loops( say i,j1,j2 as loop variables), we will use the recursive relations, i.e we will again set two nested loops to try all the nine options.
+    The outer three loops are just for traversal, and the inner two loops that run for 9 times mainly decide, what should be the value of the cell. If you are getting confused, please see the code.
+    Inside the inner two nested loops, we will calculate an answer as we had done in the recursive relation, but this time using values from the next plane of the 3D DP Array( dp[i+1][x][y] instead of recursive calls, where x and y will vary according to inner 2 nested loops).
+    At last, we will set dp[i][j1][j2] as the maximum of all the 9 options.
+    After the outer three nested loops iteration has ended, we will return dp[0][0][m-1] as our answer.
+    * O(NM^2) | O(NMM) S.c
+     */
+
+    int maximumChocolates_tabulation(int n, int m, vector<vector<int>> &grid)
+    {
+        // Write your code here.
+        vector<vector<vector<int>>> dp(n, vector<vector<int>>(m,
+                                                              vector<int>(m, 0)));
+
+        for (int j1 = 0; j1 < m; j1++)
+        {
+            for (int j2 = 0; j2 < m; j2++)
+            {
+                if (j1 == j2)
+                    dp[n - 1][j1][j2] = grid[n - 1][j1];
+                else
+                    dp[n - 1][j1][j2] = grid[n - 1][j1] + grid[n - 1][j2];
+            }
+        }
+
+        // Outer Nested Loops for travering DP Array
+        for (int i = n - 2; i >= 0; i--)
+        {
+            for (int j1 = 0; j1 < m; j1++)
+            {
+                for (int j2 = 0; j2 < m; j2++)
+                {
+
+                    int maxi = INT_MIN;
+
+                    // Inner nested loops to try out 9 options
+                    for (int di = -1; di <= 1; di++)
+                    {
+                        for (int dj = -1; dj <= 1; dj++)
+                        {
+
+                            int ans;
+
+                            if (j1 == j2)
+                                ans = grid[i][j1];
+                            else
+                                ans = grid[i][j1] + grid[i][j2];
+
+                            if ((j1 + di < 0 || j1 + di >= m) ||
+                                (j2 + dj < 0 || j2 + dj >= m))
+
+                                ans += -1e9;
+                            else
+                                ans += dp[i + 1][j1 + di][j2 + dj];
+
+                            maxi = max(ans, maxi);
+                        }
+                    }
+                    dp[i][j1][j2] = maxi;
+                }
+            }
+        }
+
+        return dp[0][0][m - 1];
+    }
+    /*
+    @ Space optimization
+    If we look closely, to compute dp[i][j1][j2], we need values only from dp[i+1][][]. Therefore it is not necessary to store a three-dimensional array. Instead, we can store a two-dimensional array and update it as we move from one plane to the other in the 3D Array.
+
+The Steps to space optimize the tabulation approach are as follows:
+
+    Initially, we can take a dummy 2D Array ( say front). We initialize this 2D Array as we had done in the Tabulation Approach.
+    Next, we also initialize a 2D Array( say cur), which we will need in the traversal.
+    Now we set our three nested loops to traverse the 3D Array, from the second last plane.
+    Following the same approach as we did in the tabulation approach, we find the maximum number of chocolates collected at each cell. To calculate it we have all the values in our ‘front’ 2D Array.
+    Previously, we assigned dp[i][j1][j2] to maxi, now we will simply assign cur[j1][j2] to maxi.
+    Then whenever the plane of the 3D DP(the first parameter) is going to change, we assign the front to cur.
+
+At last, we will return front[0][m-1] as our answer
+     */
+    int maximumChocolates_optimized(int n, int m, vector<vector<int>> &grid)
+    {
+        // Write your code here.
+        vector<vector<int>> front(m, vector<int>(m, 0)), cur(m, vector<int>(m, 0));
+
+        for (int j1 = 0; j1 < m; j1++)
+        {
+            for (int j2 = 0; j2 < m; j2++)
+            {
+                if (j1 == j2)
+                    front[j1][j2] = grid[n - 1][j1];
+                else
+                    front[j1][j2] = grid[n - 1][j1] + grid[n - 1][j2];
+            }
+        }
+
+        // Outer Nested Loops for travering DP Array
+        for (int i = n - 2; i >= 0; i--)
+        {
+            for (int j1 = 0; j1 < m; j1++)
+            {
+                for (int j2 = 0; j2 < m; j2++)
+                {
+
+                    int maxi = INT_MIN;
+
+                    // Inner nested loops to try out 9 options
+                    for (int di = -1; di <= 1; di++)
+                    {
+                        for (int dj = -1; dj <= 1; dj++)
+                        {
+
+                            int ans;
+
+                            if (j1 == j2)
+                                ans = grid[i][j1];
+                            else
+                                ans = grid[i][j1] + grid[i][j2];
+
+                            if ((j1 + di < 0 || j1 + di >= m) ||
+                                (j2 + dj < 0 || j2 + dj >= m))
+
+                                ans += -1e9;
+                            else
+                                ans += front[j1 + di][j2 + dj];
+
+                            maxi = max(ans, maxi);
+                        }
+                    }
+                    cur[j1][j2] = maxi;
+                }
+            }
+            front = cur;
+        }
+
+        return front[0][m - 1];
+    }
+};
+
+//^ DP on subsequences and subsets
+class SubsetSum
+{
+private:
+public:
+    /*
+    @ Recursive
+    ! O(2^n) T.C || O(N) S.C
+     */
+    bool findSubsetSum(int idx, vector<int> &arr, int target)
+    {
+        if (target == 0)
+            return true;
+        if (idx == 0)
+            return arr[0] == target;
+        bool notPick = findSubsetSum(idx + 1, arr, target);
+        bool pick = (target >= arr[idx]) ? findSubsetSum(idx + 1, arr, target - arr[idx]) : false;
+        return pick || notPick;
+    }
+    /*
+    @ Memoization
+
+    * O(N*target) || O(N*target) + O(N) S.C
+     */
+
+    bool findSubsetSum_memo(int idx, vector<int> &arr, int target, vector<vector<int>> &dp)
+    {
+        if (target == 0)
+            return true;
+        if (idx == 0)
+            return arr[0] == target;
+        if (dp[idx][target] != -1)
+        {
+            return dp[idx][target];
+        }
+        bool notPick = findSubsetSum_memo(idx + 1, arr, target, dp);
+        bool pick = (target >= arr[idx]) ? findSubsetSum_memo(idx + 1, arr, target - arr[idx], dp) : false;
+        return dp[idx][target] = pick || notPick;
+    }
+    /*
+    @ Tabulation
+  &      Initialize the first column of the DP table dp as true. This is because for any index i, an empty subset (with no elements) can always achieve a sum of 0, regardless of the target value. Therefore, dp[i][0] is set to true.
+
+  &  Initialize the first row of the DP table dp as false, except for dp[0][arr[0]] which is set to true. This is because for i = 0, the only possibility of achieving a sum equal to arr[0] is by including arr[0] itself in the subset.
+
+  &  Iterate through the remaining cells of the DP table dp, starting from i = 1 and t = 1. For each cell (i, t), consider two possibilities:
+  &  a. notTake: The element at index i is not included in the subset, so the result depends on whether the subset sum t can be achieved by considering elements up to index i - 1.
+  &  b. take: The element at index i is included in the subset, so the result depends on whether the subset sum t - arr[i] can be achieved by considering elements up to index i - 1.
+
+  &  Set dp[i][t] to take || notTake, indicating whether the subset sum t can be achieved by considering elements up to index i.
+
+  &  Finally, return the value of dp[arr.size() - 1][target], which represents whether the target sum can be achieved using all the elements of the array.
+
+~ The intuition behind this approach is to build a dynamic programming table dp that tracks the possibilities of achieving different subset sums using elements up to a certain index. By considering each element in the array and updating the table accordingly, we can determine whether the target sum is achievable by any subset of the array. The approach exploits the principle of overlapping subproblems and optimal substructure to efficiently solve the Subset Sum problem in a bottom-up manner.
+
+~ Time Complexity: The code has a nested loop iterating over the size of the array and the target value, resulting in a time complexity of O(arr.size() * target).
+
+~ Space Complexity: The space complexity is determined by the size of the DP table, which is O(arr.size() * target) in this case.
+    * O(N*target) | O(N*target) S.C
+     */
+    bool findSubsetSum_tabulation(vector<int> &arr, int target, vector<vector<bool>> &dp)
+    {
+        for (int i = 0; i < arr.size(); i++)
+            dp[i].front() = true;
+        dp[0][arr[0]] = true;
+        for (int i = 1; i <= arr.size(); i++)
+        {
+            for (int t = 1; t <= target; t++)
+            {
+                bool notTake = dp[i - 1][t];
+                bool take = false;
+                if (arr[i] <= t)
+                {
+                    take = dp[i - 1][t - arr[i]];
+                }
+                dp[i][t] = take || notTake;
+            }
+        }
+        return dp[arr.size() - 1][target];
+    }
+
+    /*
+    @ Space optimization
+ &        Initialize the size of the array as n and create two boolean vectors, prev and temp, of size sum + 1. These vectors will store the subset sum possibilities for different target values.
+
+  &   Set temp.front() to true for all elements of the array. This represents the possibility of achieving a sum of zero by considering an empty subset.
+
+ &    Set prev[arr[0]] to true, indicating that the first element of the array itself can achieve a sum equal to its value.
+
+ &    Iterate through the remaining elements of the array, starting from i = 1. For each element arr[i], iterate through the possible target values from 1 to sum.
+
+  &   For each target value target, consider two possibilities:
+  &   a. notTake: The element at index i is not included in the subset, so the result depends on whether the subset sum target can be achieved by considering elements up to index i - 1.
+  &   b. take: The element at index i is included in the subset, so the result depends on whether the subset sum target - arr[i] can be achieved by considering elements up to index i - 1.
+
+ &    Set temp[target] to take || notTake, indicating whether the subset sum target can be achieved by considering elements up to index i.
+
+ &    Update the prev vector to be the same as the temp vector after processing each element of the array.
+
+  &   After processing all elements of the array, the value at index sum in the prev vector will represent whether the target sum can be achieved using the given array. Return this value.
+
+& The code effectively uses the dynamic programming concept to build a table of subset sum possibilities and uses the results of previously calculated subproblems to compute the final result. This approach ensures that each subproblem is solved only once, improving efficiency.
+
+& Time Complexity: The code has two nested loops iterating over the size of the array and the target sum, resulting in a time complexity of O(n * sum), where n is the size of the array and sum is the target sum.
+
+& Space Complexity: The code uses two boolean vectors, prev and temp, of size sum + 1, resulting in a space complexity of O(sum).
+    * O(N*target) T.C | O(target) S.C
+     */
+    bool isSubsetSum(vector<int> arr, int sum)
+    {
+        // code here
+        int n = arr.size();
+        vector<bool> prev(sum + 1), temp(sum + 1);
+        for (int i = 0; i < arr.size(); i++)
+        {
+            temp.front() = true;
+        }
+        prev[arr[0]] = true;
+        for (int i = 1; i < n; i++)
+        {
+            for (int target = 1; target <= sum; target++)
+            {
+                bool notTake = prev[target];
+                bool take = false;
+                if (target >= arr[i])
+                {
+                    take = prev[target - arr[i]];
+                }
+                temp[target] = take || notTake;
+            }
+            prev = temp;
+        }
+        return prev[sum];
     }
 };
 int main(int argc, char const *argv[])

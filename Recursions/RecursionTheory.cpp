@@ -1313,6 +1313,84 @@ string getPermutation(int n, int k)
     }
     return ans;
 }
+
+//^ Generate All parentheses
+class AllParens
+{
+private:
+    /*
+    @ Recursion
+    The given code generates all valid combinations of parentheses for a given value of n. Let's understand the code and its execution using an example.
+
+Example: n = 3
+
+1. Initially, an empty vector `ans` is created to store the generated combinations.
+
+2. The function `solve()` is called with the initial values `open = n`, `close = n`, and an empty string `temp`.
+
+3. Inside the `solve()` function:
+   - If both `open` and `close` are zero, it means we have used up all the available parentheses, and we have found a valid combination. In this case, the current combination `temp` is added to the `ans` vector using `ans.push_back(temp)`.
+   - If `open` is greater than zero, we can add an opening parenthesis '(' to the current combination `temp`. The function `solve()` is recursively called with `open-1`, `close`, and `temp+'('`.
+   - If `close` is greater than `open`, it means we have more closing parentheses available than opening parentheses. In this case, we can add a closing parenthesis ')' to the current combination `temp`. The function `solve()` is recursively called with `open`, `close-1`, and `temp+')'`.
+
+4. Initially, `solve(n, n, "", ans)` is called. Here, `open = 3`, `close = 3`, and `temp` is an empty string.
+
+5. Inside the `solve()` function, the following steps are executed:
+
+   - `solve(2, 3, "(", ans)`:
+     - `solve(1, 3, "((", ans)`:
+       - `solve(0, 3, "(((", ans)`:
+         - `solve(0, 2, "((()", ans)`:
+           - `solve(0, 1, "((())", ans)`:
+             - `solve(0, 0, "((()))", ans)`:
+               - `ans.push_back("((()))")` (valid combination found)
+           - `solve(1, 1, "(()", ans)`:
+             - `solve(0, 1, "(()(", ans)`:
+               - `solve(0, 0, "(()())", ans)`:
+                 - `ans.push_back("(()())")` (valid combination found)
+           - `solve(1, 2, "(())", ans)`:
+             - `solve(0, 2, "(())(", ans)`:
+               - `solve(0, 1, "(())()", ans)`:
+                 - `solve(0, 0, "(())())", ans)`:
+                   - `ans.push_back("(())())")` (valid combination found)
+       - `solve(2, 2, "()", ans)`:
+         - `solve(1, 2, "()((", ans)`:
+           - `solve(0, 2, "()(()", ans)`:
+             - `solve(0, 1, "()(())", ans)`:
+               - `solve(0, 0, "()(())", ans)`:
+                 - `ans.push_back("()(())")` (valid combination found)
+         - `solve(2, 1, "()(", ans)`:
+           - `solve(1, 1, "())(", ans)`:
+             - `solve(0, 1, "())()", ans)`:
+               - `solve(0, 0, "())())", ans)`:
+                 - `ans.push_back("())())")` (valid combination found)
+   - `solve(3, 2, ")", ans)`
+     */
+public:
+    void solve(int open, int close, string temp, vector<string> &ans)
+    {
+        if (open == 0 && close == 0)
+        {
+            ans.push_back(temp);
+            return;
+        }
+        if (open > 0)
+        {
+            solve(open - 1, close, temp + '(', ans);
+        }
+        if (close > open)
+        {
+            solve(open, close - 1, temp + ')', ans);
+        }
+    }
+    vector<string> AllParenthesis(int n)
+    {
+        // Your code goes here
+        vector<string> ans;
+        solve(n, n, "", ans);
+        return ans;
+    }
+};
 int main()
 {
 

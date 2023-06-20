@@ -1604,8 +1604,8 @@ public:
     {
         for (int i = 0; i < arr.size(); i++)
             dp[i].front() = true;
-        dp[0][arr[0]] = true;
-        for (int i = 1; i <= arr.size(); i++)
+        dp[0][arr[0]] = true; // arr[0] has to be less than equal to target
+        for (int i = 1; i < arr.size(); i++)
         {
             for (int t = 1; t <= target; t++)
             {
@@ -1657,7 +1657,7 @@ public:
         {
             temp.front() = true;
         }
-        prev[arr[0]] = true;
+        prev[arr[0]] = true; // arr[0] has to be less than equal to sum
         for (int i = 1; i < n; i++)
         {
             for (int target = 1; target <= sum; target++)
@@ -1673,6 +1673,73 @@ public:
             prev = temp;
         }
         return prev[sum];
+    }
+};
+
+class PartitionInto2
+{
+public:
+    /*
+    @ Recursive approach #1
+     */
+    bool isPartition(int idx, vector<int> &arr, int sum1, int sum2)
+    {
+        if (idx == 0)
+        {
+            if (sum1 + arr[0] == sum2 || sum2 + arr[0] == sum1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        return isPartition(idx - 1, arr, sum1, sum2 + arr[idx]) || isPartition(idx - 1, arr, sum1 + arr[idx], sum2);
+    }
+    /*
+    @ Recursive approach #2
+    & Use the subset sum = k code after checking whether the sum of the array is odd or even. if the sum of the array is odd, then it is not possible to divide the array into two equal sum subarrays. For even case use the same code with k = sum of array / 2
+
+    ~ Memoization and tabulation can be done using the same code too.
+     */
+
+    /*
+    @ Tabulation
+    * O(N*target) T.C | O(N*target) S.C
+     */
+    bool canPartition(vector<int> &nums)
+    {
+        int sum = 0;
+        for (auto &x : nums)
+        {
+            sum += x;
+        }
+        if (sum % 2 != 0)
+            return false;
+        int target = sum / 2;
+        vector<vector<bool>> dp(nums.size(), vector<bool>(target + 1, false));
+        for (int i = 0; i < nums.size(); i++)
+        {
+            dp[i].front() = true;
+        }
+        if (nums[0] <= target)
+            dp[0][nums[0]] = true;
+        for (int i = 1; i < nums.size(); i++)
+        {
+            for (int t = 1; t <= target; t++)
+            {
+                bool notTake = dp[i - 1][t];
+                bool take = false;
+                if (nums[i] <= t)
+                {
+                    take = dp[i - 1][t - nums[i]];
+                }
+                dp[i][t] = take || notTake;
+            }
+        }
+        return dp[nums.size() - 1][target];
     }
 };
 int main(int argc, char const *argv[])

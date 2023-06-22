@@ -9,7 +9,8 @@
         "regex": "cpp",
         "utility": "cpp",
         "valarray": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "string": "cpp"
     },
     "cSpell.words": [
         "getnode",

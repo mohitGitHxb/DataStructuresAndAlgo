@@ -1707,6 +1707,30 @@ public:
 
     /*
     @ Tabulation
+    & Step 1: Calculate the sum of all elements in the nums vector and store it in the variable sum.
+
+& Step 2: Check if the sum is odd (not divisible by 2). If it is odd, return false as it's not possible to partition the array into two subsets with equal sums.
+
+& Step 3: Calculate the target sum for each subset by dividing the sum by 2.
+
+& Step 4: Create a 2D boolean vector dp with dimensions nums.size() and target + 1. Each element of dp will represent whether a subset with a specific sum can be formed using elements up to a certain index.
+
+& Step 5: Set the first element of each row in dp to true since it's always possible to form a subset with a sum of 0 using an empty set.
+
+& Step 6: Check if the first element of nums is less than or equal to the target sum. If it is, mark the corresponding element in dp as true to indicate that it's possible to form a subset with that specific sum.
+
+& Step 7: Iterate through the remaining elements of nums starting from the second element (i = 1).
+
+& Step 8: For each element nums[i], iterate through the possible target sums from 1 to target.
+
+& Step 9: For each target sum t, consider two possibilities:
+
+    notTake: The element at index i is not included in the subset, so the result depends on whether the subset sum t can be achieved by considering elements up to index i - 1.
+    take: The element at index i is included in the subset, so the result depends on whether the subset sum t - nums[i] can be achieved by considering elements up to index i - 1.
+
+& Step 10: Set the element dp[i][t] to take || notTake, indicating whether it's possible to form a subset with a sum of t using elements up to index i.
+
+& Step 11: After iterating through all elements, the value at dp[nums.size() - 1][target] will represent whether it's possible to partition the array into two subsets with equal sums. Return this value as the result.
     * O(N*target) T.C | O(N*target) S.C
      */
     bool canPartition(vector<int> &nums)
@@ -1741,6 +1765,95 @@ public:
         }
         return dp[nums.size() - 1][target];
     }
+};
+
+//^ Partition with minimum absolute difference of two subsets of array (+ve nums)
+class PartitionWithMin{
+    /* 
+    & Step 1: Calculate the total sum of all elements in the nums vector using the accumulate function.
+
+& Step 2: Build a 2D boolean vector dp with dimensions nums.size() and totalSum + 1. Each element dp[i][target] represents whether it's possible to achieve the target sum target using elements up to index i.
+
+& Step 2.1: Set the first element of each row in dp to true since it's always possible to achieve a sum of 0 using an empty set.
+
+& Step 2.2: Mark the corresponding element in dp as true if the element at index 0 of nums is equal to the target sum, indicating that a subset with that specific sum can be formed.
+
+& Step 2.3: Iterate through the remaining elements of nums starting from the second element (i = 1).
+
+& Step 2.4: For each element nums[i], iterate through the possible target sums from 0 to totalSum.
+
+& Step 2.5: For each target sum target, consider two possibilities:
+
+    notTake: The element at index i is not included in the subset, so the result depends on whether the target sum target can be achieved by considering elements up to index i - 1.
+    take: The element at index i is included in the subset, so the result depends on whether the target sum target - nums[i] can be achieved by considering elements up to index i - 1.
+
+& Step 2.6: Set the element dp[i][target] to take or notTake, indicating whether it's possible to achieve the target sum target using elements up to index i.
+
+& Step 3: Iterate through the sums from 0 to totalSum/2 and find the minimum difference between the total sum and all possible sums. This is done by checking if the last row of dp (representing using all elements) has a true value at each sum i. If it does, calculate the absolute difference between the total sum and twice the current sum, and update minDiff if necessary.
+
+Finally, return the minimum difference obtained.
+     */
+    public:
+        int minimumDifference(vector<int>& nums) {
+        int totalSum=0;
+        totalSum = accumulate(nums.begin(),nums.end(),totalSum);
+       
+        cout << "Total sum: " << totalSum << endl;
+        vector<vector<bool>> dp(nums.size(),vector<bool> (totalSum+1));
+        for(int i = 0; i < nums.size(); i++)
+            dp[i][0] = true;
+        dp[0][nums[0]] = true;
+        for(int i = 1; i < nums.size(); i++){
+            for(int target = 0; target <= totalSum; target++){
+                bool notTake = dp[i-1][target];
+                bool take = (target>=nums[i])?dp[i-1][target-nums[i]]:false;
+                dp[i][target] = take or notTake;
+            }
+        }
+        int minDiff = 1e8;
+        for(int i = 0; i <= totalSum/2; i++){
+            if(dp.back()[i])
+            minDiff = min(minDiff,abs(totalSum - 2*i));
+        }
+        return minDiff;
+    }
+};
+
+//^ Count subsets with sum K (+ve nums)
+class CountSubsetK{
+    public:
+    /* 
+    @ Recursion
+
+    !O(2^N) T.C | O(N) S.C
+     */
+    int findWays(int idx , int target, vector<int> &arr){
+        if(target == 0) return 1;
+        if(idx == 0)return arr[0] == target;
+        int notTake = findWays(idx-1, target, arr);
+        int take = 0;
+        if(arr[idx] <= target)
+            take = findWays(idx-1, target-arr[idx], arr);
+        return take + notTake;
+
+    }
+    /* 
+    @ Memoization
+
+    * O(N^2) T.C | O(N^2) + O(N) S.C 
+     */
+    int findWays_memo(int idx , int target, vector<int> &arr,vector<vector<int>> &dp){
+        if(target == 0) return 1;
+        if(idx == 0)return arr[0] == target;
+        if(dp[idx][target]!=-1)return dp[idx][target];  
+        int notTake = findWays_memo(idx-1, target, arr,dp);
+        int take = 0;
+        if(arr[idx] <= target)
+            take = findWays_memo(idx-1, target-arr[idx], arr,dp);
+        return dp[idx][target] = take + notTake;
+
+    }
+
 };
 int main(int argc, char const *argv[])
 {

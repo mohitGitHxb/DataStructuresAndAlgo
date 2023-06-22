@@ -631,7 +631,7 @@ public:
         free(cur);
         return ans;
     }
-    /* 
+    /*
     @ Using the same approach as merge 2 sorted LL
     & - Initialize two pointers p1 and p2 to the heads of head1 and head2 respectively.
 & - Initialize head and tail pointers to NULL.
@@ -648,42 +648,227 @@ public:
 ? The intuition behind this code is to iterate through both linked lists simultaneously using two pointers p1 and p2. By comparing the node values, we can identify the common nodes between the lists and construct a new linked list containing those common nodes. The algorithm ensures that the intersection list is built in ascending order.
 * O(M+N) T.C | O(1) S.C
      */
-    SingleNode* findIntersection(SingleNode* head1, SingleNode* head2)
-{
-    SingleNode *p1=head1, *p2=head2;
-    SingleNode *head=NULL, *tail=NULL;
-    
-    while(p1 && p2)
-        if(p1->val > p2->val)
-            // nodes dont match
-            // moving to next node in list with smaller node
-            p2 = p2->next;
-        
-        else if(p2->val > p1->val)
-            // nodes dont match
-            // moving to next node in list with smaller node
-            p1 = p1->next;
-        
-        else
-        {
-            // nodes match
-            
-            if(head==NULL)
-                head = tail = new SingleNode(p1->val);
-                // creating new head for intersection list
+    SingleNode *findIntersection(SingleNode *head1, SingleNode *head2)
+    {
+        SingleNode *p1 = head1, *p2 = head2;
+        SingleNode *head = NULL, *tail = NULL;
+
+        while (p1 && p2)
+            if (p1->val > p2->val)
+                // nodes dont match
+                // moving to next node in list with smaller node
+                p2 = p2->next;
+
+            else if (p2->val > p1->val)
+                // nodes dont match
+                // moving to next node in list with smaller node
+                p1 = p1->next;
+
             else
             {
-                // appending new node at the end
-                tail->next = new SingleNode(p1->val);
-                tail = tail->next;
+                // nodes match
+
+                if (head == NULL)
+                    head = tail = new SingleNode(p1->val);
+                // creating new head for intersection list
+                else
+                {
+                    // appending new node at the end
+                    tail->next = new SingleNode(p1->val);
+                    tail = tail->next;
+                }
+                p1 = p1->next;
+                p2 = p2->next;
+                // moving to next nodes in both lists
             }
-            p1 = p1->next;
-            p2 = p2->next;
-            // moving to next nodes in both lists
+
+        return head;
+    }
+};
+
+//^ 12 Clone a linked list with random pointer
+class CloneList
+{
+public:
+    /*
+&     The intuition behind the code is to maintain a mapping between each original node and its corresponding cloned node. This mapping is stored in an unordered map, where the original node is the key and the cloned node is the value.
+
+Here's how the code works:
+
+ &    First, it checks if the given linked list is empty (i.e., head is NULL). If it is, it returns NULL since there's no list to copy.
+
+ &    It initializes an unordered map called mp to store the mapping between original nodes and cloned nodes.
+
+ &    The code then iterates through the original linked list using a pointer curr. In each iteration, it creates a new node with the same data as the current original node and adds it to the map mp with the current original node as the key.
+
+ &    After creating the cloned nodes for all original nodes, the code performs a second iteration through the original linked list. In each iteration, it sets the next pointer of the cloned node to the corresponding cloned node of the next original node using the map mp. Similarly, it sets the arb pointer of the cloned node to the corresponding cloned node of the arb pointer of the original node.
+
+&     Finally, the code returns the cloned node corresponding to the original head node, which can be obtained from the map mp.
+
+& By using the map mp to maintain the mapping between original and cloned nodes, the code ensures that the cloned list is a deep copy with separate memory allocations for each node, while also correctly setting the next and arb pointers.
+
+& Overall, the code effectively creates a deep copy of the given linked list with the additional "arb" pointers by utilizing an unordered map to maintain the mapping between original and cloned nodes.
+
+% O(N) T.C | O(N) S.C
+     */
+    struct Node
+    {
+        int data;
+        Node *next;
+        Node *arb;
+        Node(int x)
+        {
+            data = x;
+            next = NULL;
+            arb = NULL;
         }
-    
-    return head;
-}
+    };
+    Node *copyList(Node *head)
+    {
+        // Write your code here
+        if (!head)
+            return head;
+        unordered_map<Node *, Node *> mp;
+        for (Node *curr = head; curr != NULL; curr = curr->next)
+        {
+            mp[curr] = new Node(curr->data);
+        }
+        for (Node *curr = head; curr != NULL; curr = curr->next)
+        {
+            Node *cloned = mp[curr];
+            cloned->next = mp[curr->next];
+            cloned->arb = mp[curr->arb];
+        }
+        return mp[head];
+    }
+    /*
+        First, it checks if the given linked list is empty (i.e., head is NULL). If it is, it returns NULL since there's no list to copy.
+
+    The code then iterates through the original linked list using a pointer current. In each iteration, it creates a new node with the same data as the current original node and inserts it after the current original node. This is done by assigning the next pointer of the current original node to the newly created node, and assigning the next pointer of the newly created node to the next node in the original list. This effectively creates a duplicate copy of each node in the original list.
+
+    After creating the duplicate nodes, the code performs another iteration through the list to set the arb pointers of the newly created nodes. For each original node, it sets the arb pointer of its corresponding duplicate node to the next node of the original node's arb pointer. This is done by checking if the original node's arb pointer is not NULL. If it is not NULL, the arb pointer of the duplicate node is set to the next node of the original node's arb pointer. This step ensures that the arb pointers of the duplicate nodes correctly point to the corresponding duplicate nodes.
+
+    The code then separates the original and duplicate linked lists by updating the next pointers of the original nodes and the duplicate nodes. It starts by setting two pointers original and copy to the respective heads of the original and duplicate lists. It also keeps a temporary pointer temp to track the head of the duplicate list.
+        In each iteration, it updates the next pointer of the original node to skip the next node (which is the duplicate node), effectively removing the duplicate node from the original list.
+        Similarly, it updates the next pointer of the duplicate node to either skip the next duplicate node (if it exists) or NULL (if it doesn't exist), effectively removing the original node from the duplicate list.
+        It continues this process until either the original list or the duplicate list reaches the end.
+
+    Finally, it returns the head of the duplicate list, which is stored in the temp pointer.
+
+By following these steps, the code effectively creates a deep copy of the given linked list with the additional "arb" pointers. It achieves this by iteratively duplicating each node in the original list, setting the "arb" pointers of the duplicate nodes to the appropriate nodes, and then separating the original and duplicate lists while updating the "next" pointers.
+    * O(N) T.C | O(1) S.C
+     */
+    Node *copyList(Node *head)
+    {
+        // Write your code here
+        if (!head)
+            return head;
+        Node *current = head;
+        while (current != NULL)
+        {
+            Node *temp = current->next;
+            current->next = new Node(current->data);
+            current->next->next = temp;
+            current = temp;
+        }
+        current = head;
+
+        // Setting random pointers to new nodes
+
+        while (current != NULL)
+        {
+
+            current->next->arb = (current->arb) ? current->arb->next : current->arb;
+            current = current->next->next;
+        }
+        Node *original = head;
+        Node *copy = head->next;
+        Node *temp = copy;
+
+        while (original != NULL && copy != NULL)
+        {
+            original->next = original->next->next;
+            copy->next = (copy->next != NULL) ? copy->next->next : copy->next;
+            original = original->next;
+            copy = copy->next;
+        }
+        return temp;
+    }
+};
+
+//^ 13 Check if a linked list is palindrome
+class CheckPalindrome
+{
+public:
+    /*
+    @ Extra space solution
+    & Use any auxillary array (vector) to store the items of the list and check if the array is palindrome or not.
+    ~ Stack can also be used to store the items of the list and then keep popping elements from the stack until the stack is empty
+    ! O(N) T.C | O(N) S.C
+     */
+
+    /*
+    @ Constant space approach by finding middle element and reversing the remaining elements
+    &     The function isPalindrome takes the head of the linked list as input and returns a boolean value indicating whether it is a palindrome or not.
+
+  &   Initially, it handles the edge case where the linked list is empty (head is NULL). In such a case, it returns NULL (which should ideally be false) since an empty list is not considered a palindrome.
+
+ &    The code then finds the middle element of the linked list using the slow and fast pointer technique. It initializes two pointers slow and fast to the head of the list. The slow pointer moves one step at a time, while the fast pointer moves two steps at a time. By the time the fast pointer reaches the end of the list, the slow pointer will be pointing to the middle element (or the first element of the second half if the list has an odd number of nodes).
+
+ &    The code then reverses the second half of the linked list using the reverseLL function. It passes the slow->next node as the head to reverse the second half starting from that node. The reverseLL function iteratively reverses the linked list by updating the next pointers of each node.
+
+ &    After reversing the second half, the code compares the first half and the reversed second half of the linked list. It does this by using two pointers slow (now pointing to the reversed second half) and fast (pointing to the head of the original list). It iterates while the slow pointer is not NULL (indicating it has reached the end of the reversed second half). In each iteration, it checks whether the data of the corresponding nodes in the first half (fast->data) and the reversed second half (slow->data) are equal. If they are not equal, it returns false since the linked list is not a palindrome. Otherwise, it moves both pointers to the next nodes and continues the comparison.
+
+  &   If the code completes the iteration without finding any mismatched nodes, it means the linked list is a palindrome, and it returns true.
+
+& The time complexity of this code is O(n), where n is the number of nodes in the linked list. This is because the code iterates through the linked list twice: once to find the middle element (which takes O(n/2) time) and once to compare the first half with the reversed second half (which also takes O(n/2) time). The space complexity is O(1) since it uses a constant amount of additional space for the pointers.
+
+Example:
+~Consider the linked list: 1 -> 2 -> 3 -> 2 -> 1
+
+ ~   Initially, slow and fast are both set to the head of the list.
+ ~   The while loop moves slow and fast as follows: slow = 3, fast = 1 -> 2 -> 3 -> 2 -> 1
+ ~   After reversing the second half, the list becomes: 1 -> 2 -> 3 -> 1 -> 2
+ ~   The while loop compares the first half (1 -> 2 -> 3) with the reversed second half (1 -> 2). Since all corresponding nodes are equal, it returns true, indicating that the linked list is a palindrome.
+     */
+     SingleNode* reverseLL(SingleNode *head)
+    {
+        SingleNode *curr = head;
+        SingleNode *prev = NULL;
+        while (curr)
+        {
+            SingleNode *temp = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = temp;
+        }
+        return prev;
+    }
+    bool isPalindrome(SingleNode *head)
+    {
+        //? Find the middle element
+        if (!head)
+        {
+            return NULL;
+        }
+        SingleNode *slow = head;
+        SingleNode *fast = head;
+        while (fast->next && fast->next->next)
+        {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        slow = reverseLL(slow->next);
+        fast = head;
+        while (slow)
+        {
+            if (fast->val != slow->val)
+                return false;
+            slow = slow->next;
+            fast = fast->next;
+        }
+        return true;
+    }
 };
 int main(int argc, char const *argv[])
 {

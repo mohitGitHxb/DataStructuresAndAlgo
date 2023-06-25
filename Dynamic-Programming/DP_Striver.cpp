@@ -1768,8 +1768,9 @@ public:
 };
 
 //^ Partition with minimum absolute difference of two subsets of array (+ve nums)
-class PartitionWithMin{
-    /* 
+class PartitionWithMin
+{
+    /*
     & Step 1: Calculate the total sum of all elements in the nums vector using the accumulate function.
 
 & Step 2: Build a 2D boolean vector dp with dimensions nums.size() and totalSum + 1. Each element dp[i][target] represents whether it's possible to achieve the target sum target using elements up to index i.
@@ -1793,67 +1794,129 @@ class PartitionWithMin{
 
 Finally, return the minimum difference obtained.
      */
-    public:
-        int minimumDifference(vector<int>& nums) {
-        int totalSum=0;
-        totalSum = accumulate(nums.begin(),nums.end(),totalSum);
-       
+public:
+    int minimumDifference(vector<int> &nums)
+    {
+        int totalSum = 0;
+        totalSum = accumulate(nums.begin(), nums.end(), totalSum);
+
         cout << "Total sum: " << totalSum << endl;
-        vector<vector<bool>> dp(nums.size(),vector<bool> (totalSum+1));
-        for(int i = 0; i < nums.size(); i++)
+        vector<vector<bool>> dp(nums.size(), vector<bool>(totalSum + 1));
+        for (int i = 0; i < nums.size(); i++)
             dp[i][0] = true;
         dp[0][nums[0]] = true;
-        for(int i = 1; i < nums.size(); i++){
-            for(int target = 0; target <= totalSum; target++){
-                bool notTake = dp[i-1][target];
-                bool take = (target>=nums[i])?dp[i-1][target-nums[i]]:false;
+        for (int i = 1; i < nums.size(); i++)
+        {
+            for (int target = 0; target <= totalSum; target++)
+            {
+                bool notTake = dp[i - 1][target];
+                bool take = (target >= nums[i]) ? dp[i - 1][target - nums[i]] : false;
                 dp[i][target] = take or notTake;
             }
         }
         int minDiff = 1e8;
-        for(int i = 0; i <= totalSum/2; i++){
-            if(dp.back()[i])
-            minDiff = min(minDiff,abs(totalSum - 2*i));
+        for (int i = 0; i <= totalSum / 2; i++)
+        {
+            if (dp.back()[i])
+                minDiff = min(minDiff, abs(totalSum - 2 * i));
         }
         return minDiff;
     }
 };
 
 //^ Count subsets with sum K (+ve nums)
-class CountSubsetK{
-    public:
-    /* 
+class CountSubsetK
+{
+public:
+    /*
     @ Recursion
 
     !O(2^N) T.C | O(N) S.C
      */
-    int findWays(int idx , int target, vector<int> &arr){
-        if(target == 0) return 1;
-        if(idx == 0)return arr[0] == target;
-        int notTake = findWays(idx-1, target, arr);
+    int findWays(int idx, int target, vector<int> &arr)
+    {
+        if (target == 0)
+            return 1;
+        if (idx == 0)
+            return arr[0] == target;
+        int notTake = findWays(idx - 1, target, arr);
         int take = 0;
-        if(arr[idx] <= target)
-            take = findWays(idx-1, target-arr[idx], arr);
+        if (arr[idx] <= target)
+            take = findWays(idx - 1, target - arr[idx], arr);
         return take + notTake;
-
     }
-    /* 
+    /*
     @ Memoization
 
-    * O(N^2) T.C | O(N^2) + O(N) S.C 
+    * O(N^2) T.C | O(N^2) + O(N) S.C
      */
-    int findWays_memo(int idx , int target, vector<int> &arr,vector<vector<int>> &dp){
-        if(target == 0) return 1;
-        if(idx == 0)return arr[0] == target;
-        if(dp[idx][target]!=-1)return dp[idx][target];  
-        int notTake = findWays_memo(idx-1, target, arr,dp);
+    int findWays_memo(int idx, int target, vector<int> &arr, vector<vector<int>> &dp)
+    {
+        if (target == 0)
+            return 1;
+        if (idx == 0)
+            return arr[0] == target;
+        if (dp[idx][target] != -1)
+            return dp[idx][target];
+        int notTake = findWays_memo(idx - 1, target, arr, dp);
         int take = 0;
-        if(arr[idx] <= target)
-            take = findWays_memo(idx-1, target-arr[idx], arr,dp);
+        if (arr[idx] <= target)
+            take = findWays_memo(idx - 1, target - arr[idx], arr, dp);
         return dp[idx][target] = take + notTake;
+    }
+    /*
+    @ Tabulation
 
+    * O(N^2) T.C | O(N^2) S.C
+     */
+
+    int findWays_tabulation(vector<int> &arr, int tar)
+    {
+        int n = arr.size();
+        vector<vector<int>> dp(n, vector<int>(tar + 1));
+        for (int i = 0; i < n; i++)
+            dp[i].front() = 1;
+        if (arr[0] <= tar)
+            dp[0][arr[0]] = 1;
+
+        for (int i = 1; i < n; i++)
+        {
+            for (int sum = 0; sum <= tar; sum++)
+            {
+                int notTake = dp[i - 1][sum];
+                int take = (arr[i] <= sum) ? dp[i - 1][sum - arr[i]] : 0;
+                dp[i][sum] = take + notTake;
+            }
+        }
+
+        return dp.back().at(tar);
     }
 
+    /*
+    @ Space optimization
+
+     */
+    int findWays_optimized(vector<int> &arr, int tar)
+    {
+        int n = arr.size();
+        vector<int> prev(tar + 1), cur(tar + 1);
+        prev.front() = cur.front() = 1;
+        if (arr[0] <= tar)
+            prev[arr[0]] = 1;
+
+        for (int i = 1; i < n; i++)
+        {
+            for (int sum = 0; sum <= tar; sum++)
+            {
+                int notTake = prev[sum];
+                int take = (arr[i] <= sum) ? prev[sum - arr[i]] : 0;
+                cur[sum] = take + notTake;
+            }
+            prev = cur;
+        }
+
+        return prev.back();
+    }
 };
 int main(int argc, char const *argv[])
 {

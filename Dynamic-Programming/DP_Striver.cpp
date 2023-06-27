@@ -1830,7 +1830,19 @@ class CountSubsetK
 public:
     /*
     @ Recursion
+    & Step 1: The base case checks if the target sum has been achieved. If the target is zero, it means that the current subset's elements sum up to the target, so we return 1 to indicate that one way has been found.
 
+& Step 2: Another base case checks if we have considered all the elements in the arr. If we have reached the first element (index 0), we check if it is equal to the target. If it is, we return 1 to indicate one way to achieve the target.
+
+& Step 3: We have not reached the base case, so we make recursive calls to find the ways to achieve the target sum.
+
+& Step 3.1: We make a recursive call without considering the current element. This means that we move to the next index (idx - 1) and keep the target sum the same. The result is stored in the variable notTake.
+
+& Step 3.2: We check if the current element can be included in the sum (its value is less than or equal to the target).
+
+& Step 3.2.1: If the condition is true, we make a recursive call by subtracting the current element from the target sum. This represents including the current element in the sum. The result is stored in the variable take.
+
+& Step 4: Finally, we return the total number of ways to achieve the target sum by summing the results of notTake and take. This accounts for all possible ways to reach the target sum either by including or excluding the current element at the given index.
     !O(2^N) T.C | O(N) S.C
      */
     int findWays(int idx, int target, vector<int> &arr)
@@ -1866,7 +1878,33 @@ public:
     }
     /*
     @ Tabulation
+    & Step 1: We obtain the size of the input array arr to determine the number of elements.
 
+& Step 2: We create a 2D table dp to store the computed results. It has n rows (corresponding to the elements of arr) and tar + 1 columns (representing the possible target sums from 0 to tar).
+
+& Step 3: We initialize the base cases in the dp table.
+
+& Step 3.1: We set the first column of dp to 1 because there is one way to achieve a sum of 0, which is by not taking any element.
+
+& Step 3.2: We check if the first element of arr is less than or equal to tar. If it is, we set the corresponding value in the dp table to 1, indicating that there is one way to achieve that sum using the first element.
+
+& Step 4: We compute the remaining values in the dp table using a tabulation approach.
+
+& Step 4.1: We iterate over the elements of arr starting from the second element (index 1).
+
+& Step 4.2: For each element, we iterate over the possible target sums from 0 to tar.
+
+& Step 4.3: We compute the number of ways to achieve the current target sum by considering the current element.
+
+& Step 4.3.1: We calculate the number of ways without taking the current element, which is stored in the variable notTake.
+
+& Step 4.3.2: We check if the current element can be included in the sum (its value is less than or equal to the sum).
+
+& Step 4.3.2.1: If it can be included, we calculate the number of ways by taking the current element, which is stored in the variable take.
+
+& Step 4.3.3: We store the total number of ways (sum of take and notTake) in the dp table.
+
+& Step 5: Finally, we return the result from the last row and the target column of the dp table, representing the total number of ways to achieve the target sum.
     * O(N^2) T.C | O(N^2) S.C
      */
 
@@ -1918,6 +1956,272 @@ public:
         return prev.back();
     }
 };
+
+//^ 0/1 Knapsack
+class Knapsack
+{
+public:
+    /*
+    @ Memoization
+    & Step 1: We check if we have reached the first item (idx == 0).
+
+& Step 1.1: If it is the first item, we check if the remaining capacity (W) is greater than or equal to the weight of the item. If it is, we can include the item and get its corresponding value (val[idx]), otherwise, we cannot include it and the value is 0.
+
+& Step 2: We check if the result for the current subproblem (idx, W) has already been computed and stored in the dp table. If it is, we directly return the stored value.
+
+& Step 3: We calculate the maximum value by considering two options: taking the current item or not taking it.
+
+& Step 3.1: We calculate the value without taking the current item. This is done by recursively calling the solve_memo function for the previous item (idx - 1) and the same capacity (W).
+
+& Step 3.2: We calculate the value by taking the current item.
+
+& Step 3.2.1: We check if the remaining capacity (W) is sufficient to include the current item (wt[idx]).
+
+& Step 3.2.1.1: If it is, we calculate the value by adding the value of the current item (val[idx]) to the result of recursively calling the solve_memo function for the previous item (idx - 1) and the remaining capacity after subtracting the weight of the current item (W - wt[idx]).
+
+& Step 4: Finally, we choose the maximum value between the two options (take and notTake) and store it in the dp table for the current subproblem (idx, W) to avoid recomputation in future recursive calls. The maximum value is also returned as the result.
+    * O(N*W) T.C | O(N*W) + O(N) S.C
+     */
+    int solve_memo(int idx, int W, int wt[], int val[], vector<vector<int>> &dp)
+    {
+        if (idx == 0)
+        {
+            return (W >= wt[idx]) ? val[idx] : 0;
+        }
+        if (dp[idx][W] != -1)
+            return dp[idx][W];
+        int notTake = 0 + solve_memo(idx - 1, W, wt, val, dp);
+        int take = -1e8;
+        if (W >= wt[idx])
+            take = val[idx] + solve_memo(idx - 1, W - wt[idx], wt, val, dp);
+        return dp[idx][W] = max(take, notTake);
+    }
+    /*
+    @ Tabulation
+        The dp table is initialized with dimensions (n, W+1), where n is the number of items and W is the maximum weight capacity.
+    The loop initializes the values for the first item (index 0) in the dp table. For each weight from wt[0] to W, the value is set to val[0], as we can only choose the first item if its weight is less than or equal to the current weight.
+    The nested loops iterate over the remaining items (indices 1 to n-1) and the possible weights (0 to W).
+    For each subproblem (i, j), the code calculates the maximum value by considering two options: not taking the current item (dp[i-1][j]) and taking the current item if its weight is less than or equal to the current weight (dp[i-1][j-wt[i]] + val[i]).
+    The maximum value between the two options is stored in the dp table at position dp[i][j].
+    After filling the dp table, the maximum value for the full knapsack problem is stored in the bottom-right cell (dp[n-1][W]) and returned as the result.
+    * O(N*W) T.C | O(N*W) S.C
+     */
+    int knapSack_tabulation(int W, int wt[], int val[], int n)
+    {
+        // Your code here
+        vector<vector<int>> dp(n, vector<int>(W + 1));
+        // return solve_memo(n-1,W,wt,val,dp)
+        for (int i = wt[0]; i <= W; i++)
+        {
+            dp[0][i] = val[0];
+        }
+        for (int i = 1; i < n; i++)
+        {
+            for (int j = 0; j <= W; j++)
+            {
+                int notTake = 0 + dp[i - 1][j];
+                int take = (wt[i] <= j) ? val[i] + dp[i - 1][j - wt[i]] : -1e9;
+                dp[i][j] = max(take, notTake);
+            }
+        }
+        return dp[n - 1][W];
+    }
+    /*
+    @ Space optimization 2 Row
+
+    * O(N*W) T.C | O(2N) S.C
+     */
+    int knapSack_optimized(int W, int wt[], int val[], int n)
+    {
+        // Your code here
+        vector<int> prev(W + 1), cur(W + 1);
+        for (int i = wt[0]; i <= W; i++)
+        {
+            prev[i] = val[0];
+        }
+        for (int i = 1; i < n; i++)
+        {
+            for (int j = 0; j <= W; j++)
+            {
+                int notTake = 0 + prev[j];
+                int take = (wt[i] <= j) ? val[i] + prev[j - wt[i]] : -1e9;
+                cur[j] = max(take, notTake);
+            }
+            prev = cur;
+        }
+        return prev[W];
+    }
+    /*
+    @ God like optimization 1 ROW !!
+
+    ~ JUST TRAVERSE FROM RIGHt TO LEFT SIDE AND BOOM no need for 2 rows one row should suffice
+     */
+    int knapSack_godlike(int W, int wt[], int val[], int n)
+    {
+        // Your code here
+        vector<int> prev(W + 1);
+        for (int i = wt[0]; i <= W; i++)
+        {
+            prev[i] = val[0];
+        }
+        for (int i = 1; i < n; i++)
+        {
+            for (int j = W; j >= 0; j--)
+            {
+                int notTake = 0 + prev[j];
+                int take = (wt[i] <= j) ? val[i] + prev[j - wt[i]] : -1e9;
+                prev[j] = max(take, notTake);
+            }
+        }
+        return prev[W];
+    }
+};
+
+//^ Coin Change
+class CoinChange
+{
+public:
+    /*
+    @ Recursion
+     */
+    int coinChange(int idx, int target, vector<int> &coins)
+    {
+        if (target == 0)
+        {
+            cout << "Target is achieved !!!\n\n";
+            return 0;
+        }
+        if (idx == 0)
+        {
+            if (target % coins[idx] == 0)
+            {
+                cout << "Target is achieved at index 0!!!\n\n";
+                return target / coins[idx];
+            }
+            else
+            {
+                return 1e9;
+            }
+        }
+        int notTake = 0 + coinChange(idx - 1, target, coins);
+        int take = 1e9;
+        if (target >= coins[idx])
+        {
+            cout << "Taking this element " << coins[idx] << " remaining target is --> " << target - coins[idx] << "\n";
+            take = 1 + coinChange(idx, target - coins[idx], coins);
+        }
+        return min(take, notTake);
+    }
+    /*
+    @ Tabulation
+    ? Skipping memoization because all you need to do is just change few lines
+   &     The dp table is initialized with dimensions (n, amount+1), where n is the number of coins and amount is the target amount.
+ &   The loop initializes the base case for the first coin (coins[0]) in the dp table. For each target amount from 0 to amount, if the amount is divisible by coins[0], it means the coins can be used to make the amount, so dp[0][target] is set to target/coins[0]. Otherwise, dp[0][target] is set to 1e9, indicating an invalid state or impossibility.
+ &   The nested loops iterate over the remaining coins (coins[1] to coins[n-1]) and the possible amounts (0 to amount).
+ &   For each subproblem (i, j), the code calculates the minimum number of coins required by considering two options: not taking the current coin (dp[i-1][j]) and taking the current coin if its value is less than or equal to the current amount (dp[i][j-coins[i]] + 1).
+ &   The minimum number of coins between the two options is stored in the dp table at position dp[i][j].
+  &  After filling the dp table, the minimum number of coins required to make the given amount is stored in the bottom-right cell (dp[n-1][amount]).
+ &   If the value is still 1e9, it means it's not possible to make the amount with the given coins, so -1 is returned. Otherwise, the result is the minimum number of coins.
+
+&  The algorithm effectively builds the solution by considering the different coin denominations and iteratively calculating the minimum number of coins required for various subproblems.
+     */
+    int coinChange_tabulation(vector<int> &coins, int amount)
+    {
+        int n = coins.size();
+        vector<vector<int>> dp(n, vector<int>(amount + 1));
+
+        // Initialize the base case for the first coin (coins[0])
+        for (int target = 0; target <= amount; target++)
+        {
+            if (target % coins[0] == 0)
+            {
+                dp[0][target] = target / coins[0];
+            }
+            else
+            {
+                dp[0][target] = 1e9; // Set a large value to indicate an invalid state
+            }
+        }
+
+        // Iterate over the remaining coins (coins[1] to coins[n-1])
+        for (int i = 1; i < n; i++)
+        {
+            // Iterate over the possible amounts (0 to amount)
+            for (int j = 0; j <= amount; j++)
+            {
+                // Calculate the minimum number of coins required for the current subproblem (i, j)
+
+                // Option 1: Not taking the current coin
+                int notTake = 0 + dp[i - 1][j];
+
+                // Option 2: Taking the current coin if its value is less than or equal to the current amount (j)
+                int take = 1e9;
+                if (j >= coins[i])
+                {
+                    take = 1 + dp[i][j - coins[i]];
+                }
+
+                // Choose the minimum number of coins between the two options and store it in the dp table
+                dp[i][j] = min(take, notTake);
+            }
+        }
+
+        // The minimum number of coins required to make the given amount is stored in the bottom-right cell of the dp table
+        // If the value is still 1e9, it means it's not possible to make the amount with the given coins, so return -1
+        return (dp.back()[amount] >= 1e9) ? -1 : dp.back()[amount];
+    }
+
+    /*
+    @ Space optimization
+
+     */
+    int coinChange_optimized(vector<int> &coins, int amount)
+    {
+        int n = coins.size();
+        vector<int> prev(amount + 1), curr(amount + 1);
+
+        // Step 1: Initialize the base case for the first coin (coins[0])
+        for (int target = 0; target <= amount; target++)
+        {
+            if (target % coins[0] == 0)
+            {
+                prev[target] = target / coins[0];
+            }
+            else
+            {
+                prev[target] = 1e9;
+            }
+        }
+
+        // Step 2: Iterate over the remaining coins (coins[1] to coins[n-1])
+        for (int i = 1; i < n; i++)
+        {
+            // Step 3: Iterate over the possible amounts (0 to amount)
+            for (int j = 0; j <= amount; j++)
+            {
+                // Step 4: Calculate the minimum number of coins required for the current subproblem (i, j)
+
+                // Option 1: Not taking the current coin
+                int notTake = 0 + prev[j];
+
+                // Option 2: Taking the current coin if its value is less than or equal to the current amount (j)
+                int take = 1e9;
+                if (j >= coins[i])
+                {
+                    take = 1 + curr[j - coins[i]];
+                }
+
+                // Step 5: Choose the minimum number of coins between the two options and store it in the curr array
+                curr[j] = min(take, notTake);
+            }
+            prev = curr; // Step 6: Update the prev array with the values of curr for the next iteration
+        }
+
+        // Step 7: Return the minimum number of coins required to make the given amount
+        return (prev[amount] >= 1e9) ? -1 : prev[amount];
+    }
+};
+
 int main(int argc, char const *argv[])
 {
 

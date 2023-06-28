@@ -996,6 +996,463 @@ Please note that the code assumes the input linked list represents a non-negativ
         return head;
     }
 };
+
+//^ 15 Merge sort in Linked List
+class MergeSortLinkedList
+{
+    SingleNode *merge(SingleNode *left, SingleNode *right)
+    {
+        if (!left)
+            return right;
+        if (!right)
+            return left;
+        SingleNode *ans = new SingleNode(0);
+        SingleNode *dummy = ans;
+        while (left && right)
+        {
+            if (left->val < right->val)
+            {
+                dummy->next = left;
+                dummy = left;
+                left = left->next;
+            }
+            else
+            {
+                dummy->next = right;
+                dummy = right;
+                right = right->next;
+            }
+        }
+        while (left)
+        {
+            dummy->next = left;
+            dummy = left;
+            left = left->next;
+        }
+        while (right)
+        {
+            dummy->next = right;
+            dummy = right;
+            right = right->next;
+        }
+        ans = ans->next;
+        return ans;
+    }
+    SingleNode *getMid(SingleNode *head)
+    {
+        SingleNode *slow = head;
+        SingleNode *fast = head->next;
+        while (fast && fast->next)
+        {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        return slow;
+    }
+    SingleNode *mergeSort(SingleNode *head)
+    {
+        if (!head || !head->next)
+            return head;
+        SingleNode *mid = getMid(head);
+        SingleNode *left = head;
+        SingleNode *right = mid->next;
+        mid->next = NULL;
+        //? Sorting both halfs
+        left = mergeSort(left);
+        right = mergeSort(right);
+
+        //? merge both left and right halves
+        SingleNode *res = merge(left, right);
+    }
+};
+
+//^ 16 Add two numbers represented by linked list
+class AddTwoNums
+{
+private:
+    /*
+        Reverse both input linked lists:
+            & Reverse the first linked list.
+            & Reverse the second linked list.
+
+        Create an empty result linked list:
+            & Initialize pointers ans and ansHead to NULL.
+
+        Perform digit-wise addition:
+            & Traverse both reversed linked lists simultaneously.
+            & While there are nodes in both linked lists:
+                & Calculate the sum of the current digits from the first and second linked lists along with the carry.
+                & Calculate the carry for the next iteration.
+                & Create a new node with the digit obtained from the sum modulo 10.
+                & Update the result linked list by appending the new node.
+                & Move to the next digits in both linked lists.
+
+        Handle remaining digits and carry:
+            & While there are remaining digits in either linked list or a carry value:
+                & Calculate the sum of the remaining digit and the carry.
+                & Calculate the carry for the next iteration.
+                & Create a new node with the digit obtained from the sum modulo 10.
+                & Update the result linked list by appending the new node.
+                & Move to the next remaining digit.
+
+        Reverse the result linked list:
+            & Reverse the result linked list.
+
+        Return the result:
+            & Return the head of the reversed result linked list.
+
+           * O(N) T.C || O(1) S.C
+     */
+    struct Node
+    {
+        int data;
+        struct Node *next;
+        Node(int x)
+        {
+            data = x;
+            next = NULL;
+        }
+    };
+
+public:
+    Node *reverseList(Node *head)
+    {
+        if (!head || head->next == NULL)
+            return head;
+        Node *temp = NULL;
+        while (head != NULL)
+        {
+            Node *next = head->next;
+            head->next = temp;
+            temp = head;
+            head = next;
+        }
+        return temp;
+    }
+
+    void addNode(Node *t, int data)
+    {
+        Node *temp = new Node(data);
+        t->next = temp;
+    }
+
+    struct Node *addTwoLists(struct Node *first, struct Node *second)
+    {
+        // code here
+        first = reverseList(first);
+        second = reverseList(second);
+        struct Node *ans = NULL;
+        struct Node *ansHead = NULL;
+        int carry = 0;
+        while (first != NULL && second != NULL)
+        {
+            int value = first->data + second->data + carry;
+            int num = value % 10;
+            carry = value / 10;
+            struct Node *temp = new Node(num);
+            if (ans == NULL)
+                ansHead = temp;
+            else
+            {
+                ans->next = temp;
+            }
+            ans = temp;
+            first = first->next;
+            second = second->next;
+        }
+        while (first != NULL)
+        {
+            int value = first->data + carry;
+            int num = value % 10;
+            carry = value / 10;
+            struct Node *temp = new Node(num);
+            if (ans == NULL)
+                ansHead = temp;
+            else
+            {
+                ans->next = temp;
+            }
+            ans = temp;
+            first = first->next;
+        }
+        while (second != NULL)
+        {
+            int value = second->data + carry;
+            int num = value % 10;
+            carry = value / 10;
+            struct Node *temp = new Node(num);
+            if (ans == NULL)
+                ansHead = temp;
+            else
+            {
+                ans->next = temp;
+            }
+            ans = temp;
+            second = second->next;
+        }
+        while (carry != 0)
+        {
+            int value = carry;
+            int num = value % 10;
+            carry = value / 10;
+            struct Node *temp = new Node(num);
+            if (ans == NULL)
+                ansHead = temp;
+            else
+            {
+                ans->next = temp;
+            }
+            ans = temp;
+        }
+
+        ansHead = reverseList(ansHead);
+        return ansHead;
+    }
+};
+
+//^ 17 split the circular linked list into two circular lists
+class SplitCircularList
+{
+private:
+    /*
+        Check if the head of the list is null:
+            & If the head is null, it means the list is empty. In this case, there is nothing to split, so return.
+
+        Find the middle node:
+            & Initialize two pointers, slow and fast, both pointing to the head node.
+            & Move slow one step at a time and fast two steps at a time until fast reaches the end of the list or the node just before the head node.
+            & The slow pointer will be at the middle node of the circular linked list.
+
+        Split the list:
+            & Set fast to slow->next to get the head of the second half of the list.
+            & Set *head2_ref to fast to store the head of the second list.
+            & Set slow->next to the original head node to make the first half circular.
+            & Set *head1_ref to the original head node to store the head of the first list.
+
+        Adjust the circular links:
+            & Traverse the second half of the list using fast until it reaches the last node before the head node.
+            & Set fast->next to *head2_ref to make the second half circular.
+
+    ~ The algorithm uses the concept of slow and fast pointers to find the middle of the circular linked list. It then manipulates the pointers to split the list into two halves by adjusting the next pointers accordingly. The resulting lists are still circular linked lists, but they represent the first and second halves of the original circular linked list.
+    * O(N) T.C | O(1) S.C
+     */
+    struct Node
+    {
+        int data;
+        struct Node *next;
+
+        Node(int x)
+        {
+            data = x;
+            next = NULL;
+        }
+    };
+
+public:
+    void splitList(Node *head, Node **head1_ref, Node **head2_ref)
+    {
+        if (!head)
+        {
+            return;
+        }
+        Node *slow = head;
+        Node *fast = head->next;
+        while (fast != head && fast->next != head)
+        {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        fast = slow->next;
+        *head2_ref = fast;
+        slow->next = head;
+        *head1_ref = head;
+        while (fast->next != head)
+        {
+            fast = fast->next;
+        }
+        fast->next = *head2_ref;
+    }
+};
+
+//^ 18 Deletion in a circular LL
+class deletionInCircularLL
+{
+    struct Node
+    {
+        int data;
+        struct Node *next;
+    };
+
+public:
+    void deleteNode(struct Node **head, int key)
+    {
+
+        // Your code goes here
+        Node *prev = NULL;
+        Node *curr = *head;
+        while (curr->data != key)
+        {
+            prev = curr;
+            curr = curr->next;
+        }
+        prev->next = curr->next;
+        curr->next = NULL;
+        delete curr;
+    }
+
+    /* Function to reverse the linked list */
+    void reverse(struct Node **head_ref)
+    {
+        Node *prev = NULL, *curr = *head_ref;
+        while (curr->next)
+        {
+            Node *next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+        }
+        curr->next = prev;
+        *head_ref = prev;
+    }
+};
+
+//^ 19 Reverse a doubly linked list
+class ReverseDLL
+{
+private:
+    struct Node
+    {
+        int data;
+        Node *next;
+        Node *prev;
+        Node(int x)
+        {
+            data = x;
+            next = NULL;
+            prev = NULL;
+        }
+    };
+
+public:
+    /*
+    & Check if the head of the list is null or if it has only one node:
+
+  ~   If the head is null or if it has only one node, it means the list is empty or already reversed, so return the head as it is.
+
+& Initialize variables:
+
+ ~    Create two pointers, temp and curr, and set them both to the head of the list.
+ ~    temp will be used to traverse the list, and curr will be used to keep track of the current node.
+
+& Reverse the list:
+
+  ~   Enter a loop that continues until temp becomes null.
+  ~   Inside the loop:
+    & Update the curr pointer to temp.
+    & Move temp to the next node in the original list.
+    & Swap the prev and next pointers of the curr node to reverse the links of the current node.
+    & Repeat these steps until temp reaches the end of the original list.
+
+& Update the head:
+
+ ~    After the loop ends, the curr pointer will be pointing to the last node of the original list, which will be the new head of the reversed list.
+    Update the head pointer to point to the new head node.
+
+& Return the head of the reversed list.
+
+~ The algorithm iterates through the doubly linked list and reverses the links of each node by swapping the prev and next pointers. It starts with the initial head and moves forward until the end of the list, updating the pointers along the way. Finally, it returns the new head of the reversed list.
+     */
+
+    Node *reverseDLL(Node *head)
+    {
+        // Your code here
+        if (!head || !head->next)
+        {
+            return head;
+        }
+        Node *temp = head;
+        Node *curr = head;
+        while (temp)
+        {
+            curr = temp;
+            temp = temp->next;
+            swap(curr->prev, curr->next);
+        }
+        head = curr;
+        return head;
+    }
+};
+
+//^ 20 find pairs whose sum is equal to x in a sorted doubly linked list
+class FindPair
+{
+private:
+    /*
+    ~    Initialize two pointer variables to find the candidate elements in the sorted doubly linked list. Initialize first with the start of the doubly linked list i.e; first=head and initialize second with the last node of the doubly linked list i.e; second=last_node.
+ ~   We initialize first and second pointers as first and last nodes. Here we don’t have random access, so to find the second pointer, we traverse the list to initialize the second.
+ ~   If current sum of first and second is less than x, then we move first in forward direction. If current sum of first and second element is greater than x, then we move second in backward direction.
+  ~  Loop termination conditions are also different from arrays. The loop terminates when two pointers cross each other (second->next = first), or they become the same (first == second).
+ ~   The case when no pairs are present will be handled by the condition “first==second”
+
+ * O(N) T.C || O(1) S.C
+
+ ! O(N^2) Solution can be achieved by traversing the list in a nested loop
+
+ & Hashmaps can also be used to find pairs in O(N) Time but they will require extra O(N) Space to store all the data
+     */
+public:
+    // structure of node of doubly linked list
+    struct Node
+    {
+        int data;
+        struct Node *next, *prev;
+    };
+
+    // Function to find pair whose sum equal to given value x.
+    void pairSum(struct Node *head, int x)
+    {
+        // Set two pointers, first to the beginning of DLL
+        // and second to the end of DLL.
+        struct Node *first = head;
+        struct Node *second = head;
+        while (second->next != NULL)
+            second = second->next;
+
+        // To track if we find a pair or not
+        bool found = false;
+
+        // The loop terminates when two pointers
+        // cross each other (second->next
+        // == first), or they become same (first == second)
+        while (first != second && second->next != first)
+        {
+            // pair found
+            if ((first->data + second->data) == x)
+            {
+                found = true;
+                cout << "(" << first->data << ", "
+                     << second->data << ")" << endl;
+
+                // move first in forward direction
+                first = first->next;
+
+                // move second in backward direction
+                second = second->prev;
+            }
+            else
+            {
+                if ((first->data + second->data) < x)
+                    first = first->next;
+                else
+                    second = second->prev;
+            }
+        }
+
+        // if pair is not present
+        if (found == false)
+            cout << "No pair found";
+    }
+};
 int main(int argc, char const *argv[])
 {
     /* code */

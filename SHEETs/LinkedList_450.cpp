@@ -1453,6 +1453,360 @@ public:
             cout << "No pair found";
     }
 };
+
+//^ 21 Find triplets in a sorted doubly linked list whose sum is x
+class FindTriplets
+{
+private:
+    /*
+    @ Method - 1 Naive
+    ~ Run 3 loops and check all possibilities
+    ! O(N^3) T.C | O(1) S.C
+
+    @ Method - 2 Using hashing to optimize the naive approach
+    & For the innermost loop instead of checking every possible element maintain a hash table to get the 3rd element in constant time
+
+    & This algorithm will work for singly linked list too
+    * O(N^2) T.C | O(N) S.C
+
+    @ Method-3 Three pointers
+    ~ Note this will only work for DLL not singly linked lists
+   & Traverse the doubly linked list from left to right. For each current node during the traversal, initialize two pointers first = pointer to the node next to the current node and last = pointer to the last node of the list. Now, count pairs in the list from first to last pointer that sum up to value (x – current node’s data) (algorithm described in this post). Add this count to the total_count of triplets. Pointer to the last node can be found only once in the beginning.
+     */
+public:
+    struct Node
+    {
+        int data;
+        struct Node *next, *prev;
+    };
+
+    int countTripletsDLL(Node *head, int x)
+    {
+        if (!head)
+            return 0;
+        Node *curr, *first, *last;
+        int count = 0;
+        last = head;
+        while (last->next)
+            last = last->next;
+        for (curr = head; curr != NULL; curr = curr->next)
+        {
+            first = curr->next;
+            count += getPairs(first, last, x - curr->data);
+        }
+        return count;
+    }
+
+    int getPairs(Node *first, Node *second, int value)
+    {
+        int count = 0;
+
+        //? The loop terminates when either of two pointers
+        //? become NULL, or they cross each other (second->next
+        //? == first), or they become same (first == second)
+        while (first != NULL && second != NULL &&
+               first != second && second->next != first)
+        {
+
+            // pair found
+            if ((first->data + second->data) == value)
+            {
+
+                // increment count
+                count++;
+
+                // move first in forward direction
+                first = first->next;
+
+                // move second in backward direction
+                second = second->prev;
+            }
+
+            //? if sum is greater than 'value'
+            //? move second in backward direction
+            else if ((first->data + second->data) > value)
+                second = second->prev;
+
+            // else move first in forward direction
+            else
+                first = first->next;
+        }
+
+        // required count of pairs
+        return count;
+    }
+};
+
+//^ 22 Multiply two linked lists
+
+class MultiplyList
+{
+private:
+    /*
+    @ Building number from the linked list
+ &    The code starts by initializing two variables num1 and num2 to store the numerical values represented by the linked lists l1 and l2, respectively. These variables are initially set to 0.
+
+& The first while loop iterates through the linked list l1 and updates num1 by multiplying it by 10 and adding the current node's data value. This operation effectively appends the digit represented by the current node to num1. To avoid overflow, the value of num1 is taken modulo mod after each iteration.
+
+& The second while loop performs the same operation for the linked list l2 and updates the variable num2 accordingly.
+
+& Finally, the code returns the product of num1 and num2, taken modulo mod. This ensures that the result is within the range of the given modular arithmetic system.
+
+& The intuition behind this approach is to convert the linked lists into their respective numerical values by iteratively building them digit by digit. By multiplying these numerical values together and applying the modulus operation, the code efficiently calculates the product while keeping the result within the specified range.
+
+* O(N) T.C | O(1) S.C
+     */
+public:
+    long long mod = 1e9 + 7;
+    long long multiplyTwoLists(SingleNode *l1, SingleNode *l2)
+    {
+        // Your code here
+        long long num1 = 0;
+        while (l1)
+        {
+            num1 = num1 * 10 + l1->val;
+            num1 = num1 % mod;
+            l1 = l1->next;
+        }
+        long long num2 = 0;
+        while (l2)
+        {
+            num2 = num2 * 10 + l2->val;
+            num2 = num2 % mod;
+            l2 = l2->next;
+        }
+        return (num1 * num2) % mod;
+    }
+};
+
+//^ 23 Flatten a linked list
+class FlattenList
+{
+private:
+    struct Node
+    {
+        int data;
+        struct Node *next;
+        struct Node *bottom;
+
+        Node(int x)
+        {
+            data = x;
+            next = NULL;
+            bottom = NULL;
+        }
+    };
+
+public:
+    /*
+    @ Naive approach
+    & Store all the elements of the linked list into an array and sort them
+    & then return the new list made from this sorted array
+
+    @ Using merging two sorted linked lists
+     &   The merge function is used to merge two sorted linked lists (left and right) into a single sorted linked list.
+     &   Create a dummy node temp and a pointer res to keep track of the head of the merged list.
+     &   Iterate through both left and right lists simultaneously until either one of them reaches the end.
+    &    Compare the data of the current nodes in left and right. If the data in left is smaller, add the left node to the merged list, update temp, and move left to the next node in its list.
+    &    If the data in right is smaller or equal, add the right node to the merged list, update temp, and move right to the next node in its list.
+     &   Continue this process until one of the lists reaches the end.
+    &    If there are any remaining nodes in either left or right, append them to the merged list.
+    &    Return the bottom pointer of the res node, which points to the head of the merged list.
+
+    &The flatten function recursively flattens the given hierarchical linked list by following these steps:
+
+    &    If the given root node is either NULL or it has no next node, return the root itself (base case for recursion).
+    &    Recursively flatten the rest of the linked list starting from root->next by calling flatten(root->next).
+    &    Update the root node to point to the merged list of root and root->next by calling the merge function.
+        Return the updated root.
+
+~    The intuition behind this approach is to divide the problem into subproblems by recursively flattening the linked list and merging them in a sorted manner using the merge function. This approach leverages the merging property of the sorted linked lists to efficiently flatten the entire hierarchical linked list.
+
+~    The time complexity of this code is O(N * M), where N is the total number of nodes in the linked list and M is the number of levels in the hierarchy. The space complexity is O(1) since the operations are performed in-place without using any additional data structures.
+     */
+    Node *merge(Node *left, Node *right)
+    {
+        Node *temp = new Node(0);
+        Node *res = temp;
+        while (left && right)
+        {
+            if (left->data < right->data)
+            {
+                temp->bottom = left;
+                temp = temp->bottom;
+                left = left->bottom;
+            }
+            else
+            {
+                temp->bottom = right;
+                temp = temp->bottom;
+                right = right->bottom;
+            }
+        }
+        if (left)
+            temp->bottom = left;
+        else
+            temp->bottom = right;
+        return res->bottom;
+    }
+    Node *flatten(Node *root)
+    {
+        if (!root || !root->next)
+            return root;
+        root->next = flatten(root->next);
+        root = merge(root, root->next);
+
+        return root;
+    }
+};
+
+//^ 24 Segregate even and odd numbers in a linked list
+/*
+& This code is a function that takes in an integer `N` and a pointer to the head of a linked list `head` as arguments. The function segregates the even and odd numbers in the linked list by rearranging the nodes such that all even nodes come before all odd nodes. The original relative order of the nodes within each of the even and odd segments is maintained.
+
+& The function first checks if the linked list is empty or has only one node, in which case it returns the head of the list. Then, it initializes two pointers `oddList` and `evenList` to `NULL`. These pointers will be used to keep track of the first odd and even nodes in the list, respectively.
+
+& Next, the function checks if the data in the head node is even or odd. If it is even, it sets `evenList` to point to the head node and then iterates through the list using a while loop to find the first odd node. If it finds an odd node, it sets `oddList` to point to that node and breaks out of the loop. If the data in the head node is odd, it sets `oddList` to point to the head node and then iterates through the list using a while loop to find the first even node. If it finds an even node, it sets `evenList` to point to that node and breaks out of the loop.
+
+& After finding the first odd and even nodes, the function checks if either of them is `NULL`. If `evenList` is `NULL`, it returns `oddList`. If `oddList` is `NULL`, it returns `evenList`.
+
+& If both `oddList` and `evenList` are not `NULL`, the function initializes two more pointers `prevO` and `prevE` to point to `oddList` and `evenList`, respectively. It then iterates through the list again using a while loop. For each node, if its data is even and it is not equal to `evenList`, it sets the next pointer of `prevE` to point to that node and updates `prevE` to point to that node. If its data is odd and it is not equal to `oddList`, it sets the next pointer of `prevO` to point to that node and updates `prevO` to point to that node.
+
+& After iterating through all nodes, the function sets the next pointer of `prevO` to `NULL`, effectively terminating the odd list. It then sets the next pointer of `prevE` to point to `oddList`, effectively concatenating the even and odd lists. Finally, it returns `evenList`.
+
+& The time complexity of this function is O(N) since it iterates through all N nodes in the linked list twice. The space complexity is O(1) since it uses a constant number of pointers.
+
+ */
+SingleNode *divide(int N, SingleNode *head)
+{
+    // code here
+    if (!head || !head->next)
+        return head;
+    SingleNode *oddList = NULL, *evenList = NULL;
+    if (head->val % 2 == 0)
+    {
+        evenList = head;
+        SingleNode *curr = head;
+        while (curr)
+        {
+            if (curr->val % 2 != 0)
+            {
+                oddList = curr;
+                break;
+            }
+            curr = curr->next;
+        }
+    }
+    else
+    {
+        oddList = head;
+        SingleNode *curr = head;
+        while (curr)
+        {
+            if (curr->val % 2 == 0)
+            {
+                evenList = curr;
+                break;
+            }
+            curr = curr->next;
+        }
+    }
+
+    if (evenList == NULL)
+        return oddList;
+    else if (oddList == NULL)
+        return evenList;
+
+    SingleNode *prevO = oddList, *prevE = evenList;
+    SingleNode *curr = head;
+    while (curr)
+    {
+        if (curr->val % 2 == 0 && curr != evenList)
+        {
+            prevE->next = curr;
+            prevE = curr;
+        }
+        else if (curr->val % 2 != 0 && curr != oddList)
+        {
+            prevO->next = curr;
+            prevO = curr;
+        }
+        curr = curr->next;
+    }
+    prevO->next = NULL;
+    prevE->next = oddList;
+    return evenList;
+}
+
+//^ 25 Nth Node from the linked list
+/*
+
+& The function first initializes a pointer x to point to the head of the linked list.
+
+& Then, it enters a while loop that iterates through the list until x becomes NULL. Inside the loop, it checks if n is non-zero. If it is, it decrements n by 1. If n is zero, it updates h to point to its next node. Then, it updates x to point to its next node.
+
+& After the while loop, the function checks if n is non-zero. If it is, it means that the value of n was greater than the length of the linked list, so the function returns -1. Otherwise, it returns the data of the node pointed to by h.
+
+~ The intuition behind this code is that it uses two pointers, x and h, to traverse the linked list. Pointer x starts at the head of the list and moves forward one node at a time. Pointer h also starts at the head of the list but only starts moving forward after pointer x has moved forward n nodes. This way, when pointer x reaches the end of the list, pointer h will be pointing to the nth node from the end of the list.
+
+* The time complexity of this function is O(N) since it iterates through all N nodes in the linked list once. The space complexity is O(1) since it uses a constant number of pointers.
+ */
+
+//^ 26 First non-repeating character in a stream
+/*
+* T.C O(26 * n)
+* S.C O(26)
+
+&   The solve function takes a string str as input and returns the modified string as the result.
+&   It initializes a queue named q, an empty string named ans, and an array freq of size 26, which represents the frequencies of characters from 'a' to 'z'.
+&   It iterates through each character in the input string str.
+&   For each character, it increments its frequency in the freq array and adds the    character to the queue.
+&   It then enters a while loop that processes the characters in the queue to find the first non-repeating character.
+&   Inside the while loop, it checks if the frequency of the character at the front of the queue is greater than 1.
+&   If the frequency is greater than 1, it means the character is repeating, so it is removed from the queue using q.pop().
+&   If the frequency is 1, it means it is the first non-repeating character encountered so far. In this case, the character is appended to the ans string using ans.push_back(q.front()), and the loop is terminated using break.
+&   If the queue becomes empty after processing all the characters, it means that there are no non-repeating characters encountered so far. In this case, a '#' character is appended to the ans string using ans.push_back('#').
+Finally, the modified string ans is returned as the result of the solve function. */
+
+class FirstCharacter
+{
+public:
+    string solve(string str)
+    {
+        queue<char> q;
+        string ans = "";
+        int freq[26] = {0};
+        for (int i = 0; i < str.size(); i++)
+        {
+            char ch = str[i];
+            freq[ch - 'a']++;
+            q.push(ch);
+            while (!q.empty())
+            {
+                if (freq[q.front() - 'a'] > 1)
+                {
+                    q.pop();
+                }
+                else
+                {
+                    ans.push_back(q.front());
+                    break;
+                }
+            }
+            if (q.empty())
+            {
+                ans.push_back('#');
+            }
+        }
+        return ans;
+    }
+    string FirstNonRepeating(string A)
+    {
+        // Code here
+        return solve(A);
+    }
+};
+
 int main(int argc, char const *argv[])
 {
     /* code */

@@ -1800,7 +1800,6 @@ public:
         int totalSum = 0;
         totalSum = accumulate(nums.begin(), nums.end(), totalSum);
 
-        cout << "Total sum: " << totalSum << endl;
         vector<vector<bool>> dp(nums.size(), vector<bool>(totalSum + 1));
         for (int i = 0; i < nums.size(); i++)
             dp[i][0] = true;
@@ -2083,6 +2082,8 @@ class CoinChange
 public:
     /*
     @ Recursion
+
+    ! O(N^N) T.C || O(N) S.C
      */
     int coinChange(int idx, int target, vector<int> &coins)
     {
@@ -2124,6 +2125,8 @@ public:
  &   If the value is still 1e9, it means it's not possible to make the amount with the given coins, so -1 is returned. Otherwise, the result is the minimum number of coins.
 
 &  The algorithm effectively builds the solution by considering the different coin denominations and iteratively calculating the minimum number of coins required for various subproblems.
+
+* O(N^2) T.C | O(N^2) S.C
      */
     int coinChange_tabulation(vector<int> &coins, int amount)
     {
@@ -2174,6 +2177,7 @@ public:
     /*
     @ Space optimization
 
+    * O(N^2) T.C | O(N) S.C
      */
     int coinChange_optimized(vector<int> &coins, int amount)
     {
@@ -2220,8 +2224,118 @@ public:
         // Step 7: Return the minimum number of coins required to make the given amount
         return (prev[amount] >= 1e9) ? -1 : prev[amount];
     }
+    /* 
+    ^ Coin Change 2 (You need to return all combinations rather than minimum one)
+    @ space optimized
+    
+     */
+    int change(int amount, vector<int>& coins) {
+    int n = coins.size();
+    vector<int> prev(amount + 1), curr(amount + 1);
+    
+    // Step 1: Initialize the base case for the first coin (coins[0])
+    for (int target = 0; target <= amount; target++) {
+        if (target % coins[0] == 0) {
+            prev[target] = 1;
+        } else {
+            prev[target] = 0;
+        }
+    }
+
+    // Step 2: Iterate over the remaining coins (coins[1] to coins[n-1])
+    for (int i = 1; i < n; i++) {
+        // Step 3: Iterate over the possible amounts (0 to amount)
+        for (int j = 0; j <= amount; j++) {
+            // Step 4: Calculate the number of combinations for the current subproblem (i, j)
+
+            // Option 1: Not taking the current coin
+            int notTake = 0 + prev[j];
+
+            // Option 2: Taking the current coin if its value (coins[i]) is less than or equal to the current amount (j)
+            int take = 0;
+            if (j >= coins[i]) {
+                take = curr[j - coins[i]];
+            }
+
+            // Step 5: Calculate the total number of combinations by summing the options
+            curr[j] = (take + notTake);
+        }
+        prev = curr; // Step 6: Update the prev array with the values of curr for the next iteration
+    }
+
+    // Step 7: Return the number of combinations to make the given amount
+    return prev[amount];
+}
+
 };
 
+//^ Target sum
+class TargetSum
+{
+public:
+    /*
+    @ Same problem as find ways to partition the array into two subsets whose sums are equal to the given target
+
+    @ SPACE OPTIMIZED DIRECTLY
+
+& 1. Calculate the sum of all elements in the array 'A' and store it in the variable 'sum'.
+& 2. If the sum is less than the target, return 0 as it's not possible to achieve the target sum.
+& 3. If the difference between the sum and the target is odd, return 0 as it's not possible to achieve the target sum.
+& 4. Calculate a modified target value, 'ttarget', which is half of the difference between the sum and the target.
+& 5. Create a vector 'dummy' of size 'ttarget+1' and initialize all elements to 0, except for the element at index 0, which is set to 1. This represents the base case where no elements are selected and the sum is 0, which is achieved in one way. (& dummy[0] = 1)
+& 6. Iterate through the array starting from index 1.
+& 6.1. Create a new vector 'cur' of size 'ttarget+1' and initialize all elements to 0.
+& 6.2. Iterate through each possible target sum 'j' from 0 to 'ttarget'.
+& 6.2.1. Calculate the number of ways to achieve the target sum 'j' by either not taking the current element (dummy[j]) or by taking the current element if 'j-A[i]' is a valid index (dummy[j-A[i]]).
+& 6.2.2. Update the value of 'cur[j]' to the sum of the number of ways calculated in the previous step.
+& 6.3. Set 'dummy' to the new vector 'cur'.
+& 7. Return the value at index 'ttarget' in the 'dummy' vector, which represents the number of ways to achieve the target sum.
+
+* The time complexity of this code is O(N * M), where N is the size of the input array 'A' and M is the modified target value 'ttarget'. The space complexity is O(M) for the 'dummy' and 'cur' vectors.
+     */
+
+    int findTargetSumWays(vector<int> &A, int target)
+    {
+        // Your code here
+        int sum = 0;
+        for (int i = 0; i < A.size(); i++)
+        {
+            sum += A[i];
+        }
+        if (sum < target)
+            return 0;
+        if ((sum - target) % 2)
+            return 0;
+        int ttarget = (sum - target) / 2;
+        vector<int> dummy(ttarget + 1, 0);
+        dummy[0] = 1;
+        if (A[0] <= ttarget)
+        {
+            if (A[0] == 0)
+            {
+                dummy[A[0]] = 2;
+            }
+            else
+            {
+                dummy[A[0]] = 1;
+            }
+        }
+        for (int i = 1; i < A.size(); i++)
+        {
+            vector<int> cur(ttarget + 1, 0);
+            for (int j = 0; j <= ttarget; j++)
+            {
+                int notTake = dummy[j];
+                int Take = 0;
+                if (j - A[i] >= 0)
+                    Take = dummy[j - A[i]];
+                cur[j] = Take + notTake;
+            }
+            dummy = cur;
+        }
+        return dummy[ttarget];
+    }
+};
 int main(int argc, char const *argv[])
 {
 

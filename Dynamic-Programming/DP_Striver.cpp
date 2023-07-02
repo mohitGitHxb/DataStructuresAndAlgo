@@ -2224,49 +2224,56 @@ public:
         // Step 7: Return the minimum number of coins required to make the given amount
         return (prev[amount] >= 1e9) ? -1 : prev[amount];
     }
-    /* 
+    /*
     ^ Coin Change 2 (You need to return all combinations rather than minimum one)
     @ space optimized
-    
+
      */
-    int change(int amount, vector<int>& coins) {
-    int n = coins.size();
-    vector<int> prev(amount + 1), curr(amount + 1);
-    
-    // Step 1: Initialize the base case for the first coin (coins[0])
-    for (int target = 0; target <= amount; target++) {
-        if (target % coins[0] == 0) {
-            prev[target] = 1;
-        } else {
-            prev[target] = 0;
-        }
-    }
+    int change(int amount, vector<int> &coins)
+    {
+        int n = coins.size();
+        vector<int> prev(amount + 1), curr(amount + 1);
 
-    // Step 2: Iterate over the remaining coins (coins[1] to coins[n-1])
-    for (int i = 1; i < n; i++) {
-        // Step 3: Iterate over the possible amounts (0 to amount)
-        for (int j = 0; j <= amount; j++) {
-            // Step 4: Calculate the number of combinations for the current subproblem (i, j)
-
-            // Option 1: Not taking the current coin
-            int notTake = 0 + prev[j];
-
-            // Option 2: Taking the current coin if its value (coins[i]) is less than or equal to the current amount (j)
-            int take = 0;
-            if (j >= coins[i]) {
-                take = curr[j - coins[i]];
+        // Step 1: Initialize the base case for the first coin (coins[0])
+        for (int target = 0; target <= amount; target++)
+        {
+            if (target % coins[0] == 0)
+            {
+                prev[target] = 1;
             }
-
-            // Step 5: Calculate the total number of combinations by summing the options
-            curr[j] = (take + notTake);
+            else
+            {
+                prev[target] = 0;
+            }
         }
-        prev = curr; // Step 6: Update the prev array with the values of curr for the next iteration
+
+        // Step 2: Iterate over the remaining coins (coins[1] to coins[n-1])
+        for (int i = 1; i < n; i++)
+        {
+            // Step 3: Iterate over the possible amounts (0 to amount)
+            for (int j = 0; j <= amount; j++)
+            {
+                // Step 4: Calculate the number of combinations for the current subproblem (i, j)
+
+                // Option 1: Not taking the current coin
+                int notTake = 0 + prev[j];
+
+                // Option 2: Taking the current coin if its value (coins[i]) is less than or equal to the current amount (j)
+                int take = 0;
+                if (j >= coins[i])
+                {
+                    take = curr[j - coins[i]];
+                }
+
+                // Step 5: Calculate the total number of combinations by summing the options
+                curr[j] = (take + notTake);
+            }
+            prev = curr; // Step 6: Update the prev array with the values of curr for the next iteration
+        }
+
+        // Step 7: Return the number of combinations to make the given amount
+        return prev[amount];
     }
-
-    // Step 7: Return the number of combinations to make the given amount
-    return prev[amount];
-}
-
 };
 
 //^ Target sum
@@ -2334,6 +2341,148 @@ public:
             dummy = cur;
         }
         return dummy[ttarget];
+    }
+};
+
+//^ Unbounded Knapsack
+class UnboundedKnapsack
+{
+private:
+public:
+    /*
+    @ RECURSION
+
+    ! O(exponential) T.C | O(N) S.C
+     */
+    int maxLoot(int idx, int cap, vector<pair<int, int>> &items)
+    {
+        if (idx == 0)
+        {
+            return ((int)(cap / items[0].first) * items[0].second);
+        }
+        int notTake = 0 + maxLoot(idx - 1, cap, items);
+        int take = -1e8;
+        if (cap >= items[idx].first)
+        {
+            take = items[idx].second + maxLoot(idx, cap - items[idx].first, items);
+        }
+        return max(take, notTake);
+    }
+    /*
+    @ Memoization
+
+    * O(N*cap) T.C | O(N*cap) + O(N) S.C
+     */
+    int knapsackUtil(vector<int> &wt, vector<int> &val, int ind, int W, vector<vector<int>> &dp)
+    {
+
+        if (ind == 0)
+        {
+            return ((int)(W / wt[0])) * val[0];
+        }
+
+        if (dp[ind][W] != -1)
+            return dp[ind][W];
+
+        int notTaken = 0 + knapsackUtil(wt, val, ind - 1, W, dp);
+
+        int taken = -1e8;
+        if (wt[ind] <= W)
+            taken = val[ind] + knapsackUtil(wt, val, ind, W - wt[ind], dp);
+
+        return dp[ind][W] = max(notTaken, taken);
+    }
+    /*
+    @ Tabulation
+
+     */
+    int unboundedKnapsack_tabulation(int n, int W, vector<int> &val, vector<int> &wt)
+    {
+
+        vector<vector<int>> dp(n, vector<int>(W + 1, 0));
+
+        for (int i = wt[0]; i <= W; i++)
+        {
+            dp[0][i] = ((int)i / wt[0]) * val[0];
+        }
+
+        for (int ind = 1; ind < n; ind++)
+        {
+            for (int cap = 0; cap <= W; cap++)
+            {
+
+                int notTaken = 0 + dp[ind - 1][cap];
+
+                int taken = -1e8;
+                if (wt[ind] <= cap)
+                    taken = val[ind] + dp[ind][cap - wt[ind]];
+
+                dp[ind][cap] = max(notTaken, taken);
+            }
+        }
+
+        return dp[n - 1][W];
+    }
+    /*
+    @ Space optimization 2 Rows
+     */
+    int unboundedKnapsack_optimized(int n, int W, vector<int> &val, vector<int> &wt)
+    {
+
+        vector<int> prev(W + 1), cur(W + 1);
+
+        for (int i = wt[0]; i <= W; i++)
+        {
+            prev[i] = ((int)i / wt[0]) * val[0];
+        }
+
+        for (int ind = 1; ind < n; ind++)
+        {
+            for (int cap = 0; cap <= W; cap++)
+            {
+
+                int notTaken = 0 + prev[cap];
+
+                int taken = -1e8;
+                if (wt[ind] <= cap)
+                    taken = val[ind] + cur[cap - wt[ind]];
+
+                cur[cap] = max(notTaken, taken);
+            }
+            prev = cur;
+        }
+
+        return prev[W];
+    }
+    /*
+    @ GODLIKE 1 ROW
+     */
+    int unboundedKnapsack_godlike(int n, int W, vector<int> &val, vector<int> &wt)
+    {
+
+        vector<int> cur(W + 1, 0);
+
+        for (int i = wt[0]; i <= W; i++)
+        {
+            cur[i] = ((int)i / wt[0]) * val[0];
+        }
+
+        for (int ind = 1; ind < n; ind++)
+        {
+            for (int cap = 0; cap <= W; cap++)
+            {
+
+                int notTaken = cur[cap];
+
+                int taken = INT_MIN;
+                if (wt[ind] <= cap)
+                    taken = val[ind] + cur[cap - wt[ind]];
+
+                cur[cap] = max(notTaken, taken);
+            }
+        }
+
+        return cur[W];
     }
 };
 int main(int argc, char const *argv[])

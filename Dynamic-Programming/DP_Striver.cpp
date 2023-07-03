@@ -2351,7 +2351,21 @@ private:
 public:
     /*
     @ RECURSION
+ ~   Start with the function maxLoot which takes three parameters: idx (current item index), cap (remaining capacity), and items (list of item weights and values).
 
+    Check if idx is equal to 0, indicating the first item in the list:
+    & - If true, calculate the maximum value that can be obtained by taking as many instances of the first item as possible within the remaining capacity. Multiply the number of times the first item can be taken (int(cap / items[0].first)) by its corresponding value (items[0].second), and return this value.
+
+  &  Initialize notTake with 0, representing the maximum value obtained by not taking the current item.
+
+  &  Initialize take with a very large negative value (-1e8) to denote that taking the current item is not possible until proven otherwise.
+
+  &  Check if the remaining capacity cap is greater than or equal to the weight of the current item items[idx].first:
+    & - If true, calculate the maximum value that can be obtained by taking the current item and recursively calling maxLoot with the same item index and reduced capacity (cap - items[idx].first). Add the value of the current item items[idx].second to the result and store it in take.
+
+    Return the maximum value between take and notTake using the max function.
+
+! The time complexity of this algorithm is exponential, as it explores all possible combinations of items and capacities. In the worst case, it can be O(2^N), where N is the number of items. The space complexity is O(N), as it requires space for the recursive call stack to handle N levels of recursion.
     ! O(exponential) T.C | O(N) S.C
      */
     int maxLoot(int idx, int cap, vector<pair<int, int>> &items)
@@ -2370,7 +2384,18 @@ public:
     }
     /*
     @ Memoization
+        The function knapsackUtil is called recursively to find the maximum value that can be obtained by selecting items for a given weight capacity.
+    The function takes several parameters: wt (a vector of item weights), val (a vector of item values), ind (current item index), W (remaining weight capacity), and dp (a 2D vector for memoization).
+    If the current index ind is 0, it means we have reached the first item. In this case, we calculate the maximum value that can be obtained by taking as many instances of the first item as possible within the remaining weight capacity W. The value is calculated by multiplying the number of times the first item can be taken (int(W / wt[0])) with its corresponding value val[0].
+    If the memoization table dp already has a value stored for the current item index ind and weight capacity W, we return the stored value to avoid redundant calculations.
+    Otherwise, we proceed with the recursive calls:
+        We calculate the maximum value that can be obtained by not taking the current item. This is done by recursively calling knapsackUtil with the next item index ind - 1 and the same weight capacity W.
+        We calculate the maximum value that can be obtained by taking the current item. This is done by recursively calling knapsackUtil with the same item index ind and reduced weight capacity W - wt[ind]. We add the value of the current item val[ind] to the result.
+        We return the maximum value between the not taken and taken scenarios using the max function.
+    Finally, we store the calculated maximum value in the memoization table dp at the current item index ind and weight capacity W for future reference.
+    The function returns the maximum value that can be obtained for the given weight capacity.
 
+* The time complexity of this recursive approach depends on the number of unique subproblems, which is determined by the number of distinct combinations of ind and W. In the worst case, where each subproblem is unique, the time complexity is exponential, O(2^N), where N is the number of items. However, with proper memoization, the algorithm can achieve a complexity of O(N * W), where N is the number of items and W is the weight capacity. The space complexity is O(N * W) due to the memoization table.
     * O(N*cap) T.C | O(N*cap) + O(N) S.C
      */
     int knapsackUtil(vector<int> &wt, vector<int> &val, int ind, int W, vector<vector<int>> &dp)
@@ -2394,7 +2419,27 @@ public:
     }
     /*
     @ Tabulation
+        Initialize a 2D matrix dp of size n x (W + 1) with all elements initially set to 0. This matrix will store the maximum values that can be obtained for different items and weight capacities.
 
+    Iterate from wt[0] to W:
+    & - Calculate the maximum value that can be obtained by taking different quantities of the first item and store it in the first row of dp. The value is calculated by multiplying the number of times the first item can be taken (int(i / wt[0])) with its corresponding value val[0].
+
+    Iterate over the remaining items and weight capacities:
+    & - For each item ind from 1 to n-1:
+    & - For each weight capacity cap from 0 to W:
+    & - Calculate the maximum value that can be obtained:
+    & - The maximum value obtained by not taking the current item is dp[ind - 1][cap].
+    & - The maximum value obtained by taking the current item is val[ind] plus the maximum value obtained for the remaining weight capacity cap - wt[ind], which is dp[ind][cap - wt[ind]].
+    & - Select the maximum value between not taking and taking the current item using the max function.
+    & - Store the calculated maximum value in dp[ind][cap].
+
+    Return the maximum value stored in dp[n - 1][W].
+
+~ This dynamic programming algorithm iterates through all possible item choices and weight capacities to calculate the maximum value that can be obtained. The dp matrix is used to store the intermediate results to avoid redundant calculations and optimize the solution.
+
+*Time Complexity: The time complexity of this algorithm is O(n * W), where n is the number of items and W is the maximum weight capacity.
+
+*Space Complexity: The space complexity of this algorithm is O(n * W) as we are using a 2D matrix of size n x (W + 1) to store intermediate results.
      */
     int unboundedKnapsack_tabulation(int n, int W, vector<int> &val, vector<int> &wt)
     {
@@ -2456,6 +2501,15 @@ public:
     }
     /*
     @ GODLIKE 1 ROW
+    & The function first initializes a vector cur of size W + 1 with all elements set to 0. This vector will be used to store the maximum value that can be obtained for each possible weight of the knapsack.
+
+& Then, it enters a for loop that iterates from wt[0] to W. Inside the loop, it sets element i of vector cur to the maximum value that can be obtained by using only item 0 and a knapsack with capacity i. This is calculated by dividing i by wt[0] to find the maximum number of copies of item 0 that can fit into the knapsack, and then multiplying this number by val[0].
+
+& Next, the function enters another for loop that iterates from 1 to n-1. Inside this loop, it enters another for loop that iterates from 0 to W. Inside this inner loop, it calculates the maximum value that can be obtained by using items 0 to ind and a knapsack with capacity cap. It does this by considering two cases: either item ind is not taken, in which case the maximum value is equal to element cap of vector cur, or item ind is taken, in which case the maximum value is equal to val[ind] plus element cap - wt[ind] of vector cur. It then sets element cap of vector cur to the maximum of these two values.
+
+& After both for loops, the function returns element W of vector cur, which represents the maximum value that can be obtained by using all items and a knapsack with capacity W.
+
+* The key optimization in this code is that it uses only a single row (vector cur) as a tabulation DP (dynamic programming) table instead of using a full 2D table. This reduces the space complexity from O(nW) to O(W). The time complexity remains O(nW) since it still needs to iterate through all items and all possible weights.
      */
     int unboundedKnapsack_godlike(int n, int W, vector<int> &val, vector<int> &wt)
     {
@@ -2483,6 +2537,74 @@ public:
         }
 
         return cur[W];
+    }
+};
+
+//^ Rod cutting problem [same as unbounded knapsack]
+class RodCut
+{ /*
+  @ space optimized 2 rows
+  & The function first initializes two vectors prev and cur of size n + 1. These vectors will be used to store the maximum value that can be obtained for each possible length of the rod.
+
+& Then, it enters a for loop that iterates from 1 to n. Inside the loop, it sets element i of vector prev to the maximum value that can be obtained by cutting the rod into pieces of length 1. This is calculated by dividing i by 1 to find the maximum number of pieces that can be obtained, and then multiplying this number by price[0].
+
+& Next, the function enters another for loop that iterates from 1 to n-1. Inside this loop, it enters another for loop that iterates from 0 to n. Inside this inner loop, it calculates the maximum value that can be obtained by cutting the rod into pieces of lengths 1 to ind+1. It does this by considering two cases: either a piece of length ind+1 is not cut, in which case the maximum value is equal to element cap of vector prev, or a piece of length ind+1 is cut, in which case the maximum value is equal to price[ind] plus element cap - ind - 1 of vector cur. It then sets element cap of vector cur to the maximum of these two values.
+
+& After each iteration of the outer for loop, the function sets vector prev to vector cur.
+
+& After both for loops, the function returns element n of vector prev, which represents the maximum value that can be obtained by cutting the rod into pieces of any length.
+
+* The key optimization in this code is that it uses only two rows (vectors prev and cur) as a tabulation DP (dynamic programming) table instead of using a full 2D table. This reduces the space complexity from O(n^2) to O(n). The time complexity remains O(n^2) since it still needs to iterate through all possible lengths and all possible cuts.
+*/
+    int rodCut_optimized(int n, vector<int> &price)
+    {
+
+        vector<int> prev(n + 1), cur(n + 1);
+
+        for (int i = 1; i <= n; i++)
+        {
+            prev[i] = ((int)i / 1) * price[0];
+        }
+
+        for (int ind = 1; ind < n; ind++)
+        {
+            for (int cap = 0; cap <= n; cap++)
+            {
+
+                int notTaken = 0 + prev[cap];
+
+                int taken = -1e8;
+                if (ind + 1 <= cap)
+                    taken = price[ind] + cur[cap - ind - 1];
+
+                cur[cap] = max(notTaken, taken);
+            }
+            prev = cur;
+        }
+
+        return prev[n];
+    }
+    /*
+    @ Godlike optimization
+ ~   Then, it enters a for loop that iterates from 1 to n. Inside this loop, it enters another for loop that iterates from 0 to i-1. Inside this inner loop, it calculates the maximum value that can be obtained by cutting the rod into pieces of lengths 1 to i. It does this by considering all possible cuts and taking the maximum value among them. It then sets element i of vector dp to this maximum value.
+
+~   After both for loops, the function returns element n of vector dp, which represents the maximum value that can be obtained by cutting the rod into pieces of any length.
+
+*   This code uses only a single row (vector dp) as a tabulation DP table, which reduces the space complexity from O(n^2) to O(n). The time complexity remains O(n^2) since it still needs to iterate through all possible lengths and all possible cuts.
+     */
+    int rodCut_godlike(int n, vector<int> &price)
+    {
+        vector<int> dp(n + 1, 0);
+
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                dp[i] = max(dp[i], price[j] + dp[i - j - 1]);
+            }
+        }
+
+        return dp[n];
     }
 };
 int main(int argc, char const *argv[])

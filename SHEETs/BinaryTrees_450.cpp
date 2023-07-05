@@ -400,6 +400,136 @@ public:
         return maxi;
     }
 };
+
+//^ 10 Zig Zag traversal
+/*
+&- The function zigzagLevelOrder takes a TreeNode pointer root as input and returns a 2D vector.
+&- If the root is nullptr, indicating an empty tree, an empty vector ans is returned.
+&- Otherwise, a queue q is created to perform the level order traversal. The root node is added to the queue.
+&- A vector of vectors ans is initialized to store the final result.
+&- A boolean variable toggle is set to true to keep track of the traversal direction. If toggle is true, the traversal is from left to right. If toggle is false, the traversal is from right to left.
+&- The main loop continues until the queue q is empty, meaning all nodes have been processed.
+&- Inside the loop, the current level's size is stored in a variable size.
+&- A vector row of size size is created to store the values of the current level.
+&- If toggle is true, indicating a left-to-right traversal, the values are added to row in the order they are dequeued from the queue. Each node is dequeued, and its value is added to the row vector. If the dequeued node has left and right children, they are enqueued in the queue.
+&- If toggle is false, indicating a right-to-left traversal, the values are added to row in reverse order. Each node is dequeued, and its value is added to the row vector at the corresponding index. If the dequeued node has left and right children, they are enqueued in the queue.
+&- After processing the current level, the toggle variable is flipped to change the traversal direction for the next level.
+&- The row vector, containing the values of the current level, is added to the ans vector.
+&- Once the loop finishes, the function returns the ans vector, which contains the zigzag level order traversal of the binary tree.
+
+* The time complexity of this code is O(N), where N is the number of nodes in the binary tree. This is because each node is visited once during the level order traversal.
+
+* The space complexity is O(M), where M is the maximum number of nodes at any level in the binary tree. This is because at any given time, the queue q holds at most the nodes at the current level. The maximum number of nodes at any level can be the leaf level, which has N/2 nodes in a balanced binary tree, resulting in a space complexity of O(N/2) = O(N).
+ */
+vector<vector<int>> zigzagLevelOrder(TreeNode *root)
+{
+    if (!root)
+        return {};
+    queue<TreeNode *> q;
+    q.emplace(root);
+    vector<vector<int>> ans;
+    bool toggle = true;
+    while (!q.empty())
+    {
+        int size = q.size();
+        vector<int> row(size);
+        if (toggle)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                auto x = q.front();
+                q.pop();
+                row[i] = x->val;
+                if (x->left)
+                    q.emplace(x->left);
+                if (x->right)
+                    q.emplace(x->right);
+            }
+        }
+        else
+        {
+            for (int i = size - 1; i >= 0; i--)
+            {
+                auto x = q.front();
+                q.pop();
+                row[i] = x->val;
+                if (x->left)
+                    q.emplace(x->left);
+                if (x->right)
+                    q.emplace(x->right);
+            }
+        }
+        toggle = !toggle;
+        ans.emplace_back(row);
+    }
+    return ans;
+}
+
+//^ 11 Boundary Traversal of a binary tree
+class BoundaryTraversal
+{
+public:
+    bool isLeaf(Node *root)
+    {
+        return !root->left && !root->right;
+    }
+    void addLeftBoundary(Node *root, vector<int> &res)
+    {
+        Node *curr = root->left;
+        while (curr)
+        {
+            if (!isLeaf(curr))
+                res.push_back(curr->data);
+            if (curr->left)
+                curr = curr->left;
+            else
+                curr = curr->right;
+        }
+    }
+    void addRightBoundary(Node *root, vector<int> &res)
+    {
+        Node *curr = root->right;
+        vector<int> tmp;
+        while (curr)
+        {
+            if (!isLeaf(curr))
+                tmp.push_back(curr->data);
+            if (curr->right)
+                curr = curr->right;
+            else
+                curr = curr->left;
+        }
+        for (int i = tmp.size() - 1; i >= 0; i--)
+        {
+            res.push_back(tmp.at(i));
+        }
+    }
+    void addLeaves(Node *root, vector<int> &res)
+    {
+        if (isLeaf(root))
+        {
+            res.push_back(root->data);
+            return;
+        }
+        if (root->left)
+            addLeaves(root->left, res);
+        if (root->right)
+            addLeaves(root->right, res);
+    }
+
+    vector<int> printBoundary(Node *root)
+    {
+        vector<int> res;
+        if (!root)
+            return res;
+        if (!isLeaf(root))
+            res.push_back(root->data);
+        addLeftBoundary(root, res);
+        addLeaves(root, res);
+        addRightBoundary(root, res);
+        return res;
+    }
+};
 int main()
 {
     return 0;

@@ -2607,6 +2607,143 @@ class RodCut
         return dp[n];
     }
 };
+
+//^ Longest common subsequence
+class LCS
+{
+public:
+    /*
+    @ Recursion
+    & The function first checks if either ind or idx is less than 0. If either of them is, the function returns 0 since there are no more characters left to compare in at least one of the strings.
+
+    & Next, the function checks if the characters at indices ind and idx in strings str and txt, respectively, are equal. If they are, it means that these characters are part of the LCS, so the function returns 1 plus the result of a recursive call to itself with ind and idx decremented by 1.
+
+    & If the characters at indices ind and idx are not equal, the function returns 0 plus the maximum of two recursive calls to itself: one with ind decremented by 1 and one with idx decremented by 1. This represents the case where either character at index ind or character at index idx is not part of the LCS.
+
+    ~ The intuition behind this code is that it uses a recursive approach to find the LCS of two strings. In each call to the function, it compares the characters at indices ind and idx in strings str and txt, respectively. If they are equal, it means that these characters are part of the LCS, so it includes them in the count and continues with the next pair of characters. If they are not equal, it means that either character at index ind or character at index idx is not part of the LCS, so it tries both possibilities by making two recursive calls to itself.
+    ! O(2^N * 2^M) T.C | O(M+N) S.C
+     */
+    int lcs(int ind, int idx, string &str, string &txt)
+    {
+        if (ind < 0 || idx < 0)
+        {
+            return 0;
+        }
+        if (str[ind] == txt[idx])
+        {
+            return 1 + lcs(ind - 1, idx - 1, str, txt);
+        }
+        return 0 + max(lcs(ind - 1, idx, str, txt), lcs(ind, idx - 1, str, txt));
+    }
+    /*
+    @ Memoization
+    & The function first checks if either ind or idx is less than 0. If either of them is, the function returns 0 since there are no more characters left to compare in at least one of the strings.
+
+& Next, the function checks if element [ind][idx] of vector dp is not equal to -1. If it is not, it means that the LCS of the suffixes of strings str and txt starting at indices ind and idx, respectively, has already been computed, so the function returns this value.
+
+& If element [ind][idx] of vector dp is equal to -1, the function checks if the characters at indices ind and idx in strings str and txt, respectively, are equal. If they are, it means that these characters are part of the LCS, so the function returns 1 plus the result of a recursive call to itself with ind and idx decremented by 1.
+
+& If the characters at indices ind and idx are not equal, the function sets element [ind][idx] of vector dp to the maximum of two recursive calls to itself: one with ind decremented by 1 and one with idx decremented by 1. This represents the case where either character at index ind or character at index idx is not part of the LCS. It then returns this value.
+
+~ The intuition behind this code is similar to that of the previous code you provided for finding the LCS of two strings. The key difference is that this code uses a memoization table (vector dp) to store intermediate results and avoid recomputing them. This significantly improves the time complexity of the algorithm.
+    *O(NM) T.C | O(NM) S.C + O(N+M) S.C
+     */
+    int lcs_memo(int ind, int idx, string &str, string &txt, vector<vector<int>> &dp)
+    {
+        if (ind < 0 || idx < 0)
+        {
+            return 0;
+        }
+        if (dp[ind][idx] != -1)
+            return dp[ind][idx];
+        if (str[ind] == txt[idx])
+        {
+            return dp[ind][idx] = 1 + lcs_memo(ind - 1, idx - 1, str, txt, dp);
+        }
+        return dp[ind][idx] = max(lcs_memo(ind - 1, idx, str, txt, dp), lcs_memo(ind, idx - 1, str, txt, dp));
+    }
+    /*
+    @ Tabulation
+    ~ SHIFT INDEX to right side to counter the case of negative indices
+     */
+    int lcs_tabulation(string &str, string &txt)
+    {
+        vector<vector<int>> dp(str.length() + 1, vector<int>(txt.length() + 1));
+        for (int i = 1; i <= str.length(); i++)
+        {
+            for (int j = 1; j <= txt.length(); j++)
+            {
+                if (str[i - 1] == txt[j - 1])
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                else
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+        return dp[str.length()][txt.size()];
+    }
+    /*
+    @ Space optimized
+    & The function first initializes two integers n and m to the lengths of strings str and txt, respectively. It then checks if m is greater than n. If it is, it swaps the order of the strings by calling itself recursively with arguments txt and str.
+
+& Next, the function initializes two vectors prev and curr of size m + 1. These vectors will be used to store the lengths of the LCSs of the prefixes of strings str and txt.
+
+& Then, it enters a for loop that iterates from 1 to n. Inside this loop, it enters another for loop that iterates from 1 to m. Inside this inner loop, it checks if characters at indices i-1 and j-1 in strings str and txt, respectively, are equal. If they are, it sets element j of vector curr to 1 plus element j-1 of vector prev. If they are not equal, it sets element j of vector curr to the maximum of element j of vector prev and element j-1 of vector curr.
+
+& After each iteration of the outer for loop, the function sets vector prev to vector curr.
+
+& After both for loops, the function returns element m of vector curr, which represents the length of the LCS of strings str and txt.
+
+~ The key idea behind this code is that it uses a bottom-up dynamic programming approach to find the LCS of two strings. In each iteration of the inner for loop, it calculates the length of the LCS of the prefixes of strings str and txt ending at indices i-1 and j-1, respectively. It does this by considering two cases: either characters at indices i-1 and j-1 are equal, in which case they are part of the LCS, or they are not equal, in which case either character at index i-1 or character at index j-1 is not part of the LCS.
+
+* The time complexity of this function is O(mn) where m and n are the lengths of strings str and txt, respectively. This is because it needs to fill in all elements of vectors prev and curr, which have size m+1. The space complexity is O(m) since it uses two vectors of size m+1 to store intermediate results.
+     */
+    int longestCommonSubsequence(string &str, string &txt)
+    {
+        int n = str.length(), m = txt.length();
+        if (m > n)
+            return longestCommonSubsequence(txt, str);
+        vector<int> prev(m + 1), curr(m + 1);
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 1; j <= m; j++)
+            {
+                if (str[i - 1] == txt[j - 1])
+                    curr[j] = 1 + prev[j - 1];
+                else
+                    curr[j] = max(prev[j], curr[j - 1]);
+            }
+            prev = curr;
+        }
+        return curr[m];
+    }
+    /*
+    @ Godlike optimization
+ &    Then, it enters a for loop that iterates from 1 to n. Inside this loop, it initializes an integer prev to 0. It then enters another for loop that iterates from 1 to m. Inside this inner loop, it sets an integer temp to element j of vector dp. It then checks if characters at indices i-1 and j-1 in strings str and txt, respectively, are equal. If they are, it sets element j of vector dp to prev + 1. If they are not equal, it sets element j of vector dp to the maximum of element j of vector dp and element j-1 of vector dp. It then sets integer prev to integer temp.
+
+& After both for loops, the function returns element m of vector dp, which represents the length of the LCS of strings str and txt.
+
+* This code uses only a single row (vector dp) as a tabulation DP table, which reduces the space complexity from O(mn) to O(m). The time complexity remains O(mn) since it still needs to iterate through all possible lengths and all possible cuts.
+     */
+    int longestCommonSubsequence_godlike(string &str, string &txt)
+    {
+        int n = str.length(), m = txt.length();
+        vector<int> dp(m + 1, 0);
+        for (int i = 1; i <= n; i++)
+        {
+            int prev = 0;
+            for (int j = 1; j <= m; j++)
+            {
+                int temp = dp[j];
+                if (str[i - 1] == txt[j - 1])
+                    dp[j] = prev + 1;
+                else
+                    dp[j] = max(dp[j], dp[j - 1]);
+                prev = temp;
+            }
+        }
+        return dp[m];
+    }
+};
 int main(int argc, char const *argv[])
 {
 

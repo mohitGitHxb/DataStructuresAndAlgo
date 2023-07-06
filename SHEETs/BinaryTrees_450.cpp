@@ -530,6 +530,126 @@ public:
         return res;
     }
 };
+
+class VerticalOrder
+{
+private:
+    /*
+&        Check if the root node is null. If it is, return an empty vector since there are no nodes to traverse.
+
+&    Create a map called nodes to store the nodes of the binary tree based on their horizontal and vertical positions. The map is defined as map<int, map<int, multiset<int>>>, where the first integer represents the horizontal position (x-coordinate), the second map represents the vertical position (y-coordinate), and the multiset stores the nodes' values. Using a multiset allows nodes with the same vertical position to be sorted in ascending order.
+
+&    Create a queue called q to perform a breadth-first search. Each element in the queue is a pair consisting of a tree node and its corresponding position (x, y). Initialize the queue with the root node at position (0, 0).
+
+&    Start a while loop that continues until the queue becomes empty:
+    ~    Retrieve the front element from the queue.
+    ~    Extract the node, x-coordinate, and y-coordinate from the element.
+    ~    Insert the node's value into the nodes map at the corresponding position (x, y).
+    ~    If the node has a left child, push it into the queue with the position (x-1, y+1) to move left and down.
+    ~    If the node has a right child, push it into the queue with the position (x+1, y+1) to move right and down.
+
+&    After traversing all nodes, create a vector called ans to store the final result.
+
+&    Iterate over the nodes map using a range-based loop:
+    ~    For each horizontal position (x), create a vector called col to store the nodes' values.
+    ~    Iterate over the multiset of nodes at each vertical position (y) using another range-based loop.
+    ~    Insert the node values from the multiset into the col vector using the insert function.
+    ~    Append the col vector to the ans vector.
+
+&    Return the ans vector, which contains the vertical order traversal of the binary tree.
+
+*   The time complexity of this code is O(n log n), where n is the number of nodes in the binary tree. This is because the code performs a breadth-first traversal, which takes O(n) time, and inserting values into the multiset within the map takes O(log n) time. The space complexity is O(n) since the nodes map can potentially store all nodes of the binary tree.
+
+     */
+public:
+    vector<vector<int>> verticalTraversal(TreeNode *root)
+    {
+        if (!root)
+            return {};
+        map<int, map<int, multiset<int>>> nodes;
+        queue<pair<TreeNode *, pair<int, int>>> q;
+        q.push({root, {0, 0}});
+        while (!q.empty())
+        {
+            auto it = q.front();
+            q.pop();
+            TreeNode *node = it.first;
+            int x = it.second.first;
+            int y = it.second.second;
+            nodes[x][y].insert(node->val);
+            if (node->left)
+                q.push({node->left, {x - 1, y + 1}});
+            if (node->right)
+                q.push({node->right, {x + 1, y + 1}});
+        }
+
+        vector<vector<int>> ans;
+        for (auto &it : nodes)
+        {
+            vector<int> col;
+            for (auto &k : it.second)
+                col.insert(col.end(), k.second.begin(), k.second.end());
+            ans.push_back(col);
+        }
+        return ans;
+    }
+
+    /*
+    @ Slightly more optimized version of the above function
+        Create a map called m to store the nodes of the binary tree based on their horizontal positions (x-axis). The map is defined as map<int, vector<int>>, where the key represents the horizontal position (x-axis), and the value is a vector that stores the node values.
+
+    Create a queue called q to perform a level order traversal. Each element in the queue is a pair consisting of an integer representing the horizontal position (x-axis) and a tree node. Initialize the queue with a pair (0, root), where 0 represents the horizontal position of the root node.
+
+    Start a while loop that continues until the queue becomes empty:
+        Create a set called tmp to store the nodes with the same horizontal position (x-axis). The set is defined as set<pair<int, int>>, where each pair consists of the horizontal position (x-axis) and the node value.
+        Get the current size of the queue to iterate only over the nodes at the current level.
+        Iterate over the elements in the queue:
+            Retrieve the front element from the queue.
+            Insert the pair (horizontal position, node value) into the tmp set.
+            If the node has a left child, push it into the queue with the horizontal position decreased by 1 to move left.
+            If the node has a right child, push it into the queue with the horizontal position increased by 1 to move right.
+        After processing all nodes at the current level, iterate over the tmp set and insert the node values into the corresponding vector in the m map.
+
+    After traversing all nodes, create a vector called res to store the final result.
+
+    Iterate over the elements in the m map using a range-based loop:
+        For each horizontal position (x-axis), append the corresponding vector of node values to the res vector.
+
+    Return the res vector, which contains the vertical order traversal of the binary tree.
+
+The time complexity of this code is O(n log n), where n is the number of nodes in the binary tree. This is because the code performs a breadth-first traversal, which takes O(n) time, and inserting values into the set within the loop takes O(log n) time. The space complexity is O(n) since the m map can potentially store all nodes of the binary tree.
+     */
+    vector<vector<int>>
+    verticalTraversal_optimized(TreeNode *root)
+    {
+        map<int, vector<int>> m;        // when iterate map, key is already the order of x-axis
+        queue<pair<int, TreeNode *>> q; // for level traversal
+        q.push(make_pair(0, root));     // root default x-axis is 0
+        while (!q.empty())
+        {
+            set<pair<int, int>> tmp; // k: x-axis, v:val Already solved the case when the position is ths same
+            int len = q.size();
+            for (int i = 0; i < len; ++i)
+            {
+                auto p = q.front();
+                q.pop();
+                tmp.insert(make_pair(p.first, p.second->val));
+                if (p.second->left)
+                    q.push(make_pair(p.first - 1, p.second->left));
+                if (p.second->right)
+                    q.push(make_pair(p.first + 1, p.second->right));
+            }
+
+            for (auto p : tmp)
+                m[p.first].push_back(p.second);
+        }
+
+        vector<vector<int>> res;
+        for (auto kv : m)
+            res.push_back(kv.second);
+        return res;
+    }
+};
 int main()
 {
     return 0;

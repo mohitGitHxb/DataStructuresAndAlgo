@@ -2798,6 +2798,128 @@ public:
         return ans;
     }
 };
+
+class LongestPalindromicSubsequence
+{
+public:
+    /*
+    @ Tabulation
+
+    & check for the longest common subsequence between the original string and the reversed version of that [EASY AF!]
+
+    *O(N^2)T.C | O(N^2) S.C
+     */
+    int longestPalindromeSubseq(string &s)
+    {
+
+        if (s.empty())
+            return 0;
+        string t(s.rbegin(), s.rend());
+        int n = s.size();
+        vector<vector<int>> dp(n + 1, vector<int>(n + 1));
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 1; j <= n; j++)
+            {
+                if (s[i - 1] == t[j - 1])
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                else
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+        return dp[n][n];
+    }
+
+    /*
+    @ Space optimized approach
+     */
+    int longestPalindromeSubseq_optimized(string &s)
+    {
+
+        if (s.empty())
+            return 0;
+        string t(s.rbegin(), s.rend());
+        int n = s.size();
+        vector<int> prev(n + 1), curr(n + 1);
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 1; j <= n; j++)
+            {
+                if (s[i - 1] == t[j - 1])
+                    curr[j] = 1 + prev[j - 1];
+                else
+                    curr[j] = max(prev[j], curr[j - 1]);
+            }
+            prev = curr;
+        }
+        return prev[n];
+    }
+};
+
+//^ Minimum insertion to make a string palindrome
+class MinimumInsertion
+{
+public:
+    /*
+    @ Space optimized
+    & Using the same process of LCS(longest common subsequence) we can find the longest palindromic subsequence just by passing the string in reverse order.
+
+    & Using the observation that the minimum insertions required to make a string palindrome is nothing but length of string - longest palindromic subsequence length
+
+    ~ s.length() - longest palindromic subsequence length
+
+     */
+    int minInsertions(string &s)
+    {
+        string t(s.rbegin(), s.rend());
+        int n = s.length();
+        vector<int> prev(n + 1), curr(n + 1);
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 1; j <= n; j++)
+            {
+                if (s[i - 1] == t[j - 1])
+                    curr[j] = 1 + prev[j - 1];
+                else
+                    curr[j] = max(curr[j - 1], prev[j]);
+            }
+            prev = curr;
+        }
+        return n - prev[n];
+    }
+};
+
+//^ Minimum number of operations to make str1 into str2;
+class MinOperations
+{
+public:
+    /*
+    @ space optimized approach
+
+    & (str1.length + str2.length) - 2 * ( lcs(str,str2));
+     */
+    int minDistance(string &word1, string &word2)
+    {
+        int n = word1.length();
+        int m = word2.length();
+        if (m > n)
+            return minDistance(word2, word1);
+        vector<int> prev(m + 1), curr(m + 1);
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 1; j <= m; j++)
+            {
+                if (word1[i - 1] == word2[j - 1])
+                    curr[j] = 1 + prev[j - 1];
+                else
+                    curr[j] = max(curr[j - 1], prev[j]);
+            }
+            prev = curr;
+        }
+
+        return (n + m) - 2 * (prev[m]);
+    }
+};
 int main(int argc, char const *argv[])
 {
 

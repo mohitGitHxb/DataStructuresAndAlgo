@@ -771,6 +771,46 @@ public:
         leftViewTree(root->right, ans, level + 1);
     }
 };
+/*
+&- The code implements the diagonal traversal of a binary tree.
+&- The algorithm utilizes a modified form of the breadth-first search (BFS) approach.
+&- It uses a queue to store the nodes to be processed.
+&- A vector is used to store the values of the nodes in the diagonal order.
+&- The root node is pushed into the queue.
+&- While the queue is not empty, the algorithm performs the following steps:
+&- Dequeue a node from the front of the queue.
+&- While the current node is not null, perform the following steps:
+&- If the node has a left child, enqueue the left child into the queue.
+&- Add the data of the current node to the result vector.
+&- Move to the right child of the current node.
+&- After the traversal, the result vector contains the values of the nodes in the diagonal order.
+&- Return the result vector.
+
+~ The intuition behind this algorithm is to traverse the binary tree in a modified BFS manner, where each diagonal is traversed from top-left to bottom-right. By enqueueing the left child of each node (if it exists) before processing the current node and moving to the right child, the algorithm ensures that the diagonal elements are visited in the correct order.
+
+* Since the algorithm visits each node once and performs constant-time operations, the time complexity is O(n), where n is the number of nodes in the binary tree. The space complexity is also O(n) in the worst case, as the queue may store all the nodes in the binary tree in the case of a skewed tree
+ */
+vector<int> diagonal(Node *root)
+{
+    if (!root)
+        return {};
+    queue<Node *> q;
+    q.emplace(root);
+    vector<int> res;
+    while (!q.empty())
+    {
+        Node *node = q.front();
+        q.pop();
+        while (node)
+        {
+            if (node->left)
+                q.emplace(node->left);
+            res.emplace_back(node->data);
+            node = node->right;
+        }
+    }
+    return res;
+}
 int main()
 {
     return 0;

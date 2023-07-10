@@ -2920,6 +2920,218 @@ public:
         return (n + m) - 2 * (prev[m]);
     }
 };
+
+class ShortestSuperSequence
+{
+private:
+    /*
+    @ Tabulation
+    & The function first initializes two integers p and q to the lengths of strings X and Y, respectively. It then initializes a 2D vector dp of size p + 1 by q + 1 with all elements set to 0. This vector will be used to store the lengths of the longest common subsequences (LCSs) of the prefixes of strings X and Y.
+
+& Then, it enters a for loop that iterates from 1 to p. Inside this loop, it enters another for loop that iterates from 1 to q. Inside this inner loop, it checks if characters at indices i-1 and j-1 in strings X and Y, respectively, are equal. If they are, it sets element [i][j] of vector dp to 1 plus element [i-1][j-1] of vector dp. If they are not equal, it sets element [i][j] of vector dp to the maximum of element [i-1][j] and element [i][j-1] of vector dp.
+
+& After both for loops, the function returns the result of subtracting element [p][q] of vector dp from the sum of integers n and m. This represents the length of the SCS of strings X and Y.
+
+~ The key idea behind this code is that it first finds the LCS of strings X and Y, and then uses this information to find the SCS of the two strings. The length of the SCS is equal to the sum of the lengths of strings X and Y, minus the length of their LCS. This is because the LCS represents the common characters between strings X and Y, which only need to be included once in the SCS.
+
+~ The time complexity of this function is O(mn) where m and n are the lengths of strings X and Y, respectively. This is because it needs to fill in all elements of vector dp, which has size m x n. The space complexity is also O(mn) since it uses a 2D vector of size m x n to store intermediate results.
+
+     */
+public:
+    int shortestCommonSupersequence(string X, string Y, int n, int m)
+    {
+        // find lcs first
+        int p = X.size();
+        int q = Y.size();
+        vector<vector<int>> dp(p + 1, vector<int>(q + 1));
+        for (int i = 1; i <= p; i++)
+        {
+            for (int j = 1; j <= q; j++)
+            {
+                if (X[i - 1] == Y[j - 1])
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                else
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+
+        return (n + m) - dp[p][q];
+    }
+};
+
+class DistinctSubsequence
+{
+public:
+    /*
+    @ Memoization
+    & The function first checks if integer j is less than 0. If it is, the function returns 1 since there are no more characters left to match in string t. It then checks if integer i is less than 0. If it is, the function returns 0 since there are no more characters left to match in string s.
+
+& Next, the function checks if element [i][j] of vector dp is not equal to -1. If it is not, it means that the number of distinct subsequences of the suffixes of strings s and t starting at indices i and j, respectively, has already been computed, so the function returns this value.
+
+& If element [i][j] of vector dp is equal to -1, the function checks if characters at indices i and j in strings s and t, respectively, are equal. If they are, it sets element [i][j] of vector dp to the sum of two recursive calls to itself: one with both integers i and j decremented by 1, and one with only integer i decremented by 1. It then returns this value. If characters at indices i and j are not equal, it sets element [i][j] of vector dp to the result of a recursive call to itself with only integer i decremented by 1. It then returns this value
+
+~ The key idea behind this function is that it uses a recursive approach with memoization to find the number of distinct subsequences of string “s” that equal string “t”. In each call to the function, it compares characters at indices “i” and “j” in strings “s” and “t”, respectively. If they are equal, it means that character at index “i” in string “s” can either be part of a subsequence or not be part of a subsequence, so it tries both possibilities by making two recursive calls to itself. If they are not equal, it means that character at index “i” in string “s” cannot be part of a subsequence, so it makes only one recursive call to itself.
+
+* The time complexity of this function is O(mn) where m and n are the lengths of strings “s” and “t”, respectively. This is because it needs to fill in all elements of vector “dp”, which has size m x n. The space complexity is also O(mn) since it uses a 2D vector of size m x n to store intermediate results.
+    *O(NM) T.C | O(NM) S.C + O(N+M)
+     */
+    int helper(int i, int j, string &s, string &t, vector<vector<int>> &dp)
+    {
+        if (j < 0)
+            return 1;
+        if (i < 0)
+            return 0;
+
+        if (dp[i][j] != -1)
+        {
+            return dp[i][j];
+        }
+
+        if (s[i] == t[j])
+        {
+            return dp[i][j] = helper(i - 1, j - 1, s, t, dp) + helper(i - 1, j, s, t, dp);
+        }
+        else
+        {
+            return dp[i][j] = helper(i - 1, j, s, t, dp);
+        }
+    }
+    int numDistinct_memo(string s, string t)
+    {
+        vector<vector<int>> dp(s.length(), vector<int>(t.length(), -1));
+        return helper(s.length() - 1, t.length() - 1, s, t, dp);
+    }
+
+    /*
+    @ Tabulation
+    *O(NM) T.C | O(NM) S.C
+    % Using double instead of int due to a specific testcase which throws int overflow exceptions
+
+     */
+    int numDistinct_tabulation(string &s, string &t)
+    {
+        vector<vector<double>> dp(s.size() + 1, vector<double>(t.size() + 1));
+        for (int i = 0; i <= s.size(); i++)
+            dp[i][0] = 1;
+        for (int i = 1; i <= s.size(); i++)
+        {
+            for (int j = 1; j <= t.size(); j++)
+            {
+                if (s[i - 1] == t[j - 1])
+                    dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];
+                else
+                    dp[i][j] = dp[i - 1][j];
+            }
+        }
+        return (int)dp[s.size()][t.size()];
+    }
+
+    /*
+    @ Space optimization
+
+     */
+    int numDistinct_optimized(string &s, string &t)
+    {
+        vector<double> prev(t.size() + 1), curr(t.size() + 1);
+        curr[0] = 1;
+        prev[0] = 1;
+        for (int i = 1; i <= s.size(); i++)
+        {
+            for (int j = 1; j <= t.size(); j++)
+            {
+                if (s[i - 1] == t[j - 1])
+                    curr[j] = prev[j - 1] + prev[j];
+                else
+                    curr[j] = prev[j];
+            }
+            prev = curr;
+        }
+        return (int)prev[t.size()];
+    }
+    /*
+    @ Godlike optimization
+    & The function first initializes a vector curr of size t.size() + 1 with all elements set to 0. It then sets element 0 of vector curr to 1.
+
+& Then, it enters a for loop that iterates from 1 to s.size(). Inside this loop, it enters another for loop that iterates from t.size() to 1 in reverse. Inside this inner loop, it checks if characters at indices i-1 and j-1 in strings s and t, respectively, are equal. If they are, it sets element j of vector curr to the sum of element j-1 and element j of vector curr. If they are not equal, it sets element j of vector curr to itself.
+
+& After both for loops, the function returns the integer value of element t.size() of vector curr, which represents the number of distinct subsequences of string s that equal string t.
+
+~ The key idea behind this code is that it uses a bottom-up dynamic programming approach to find the number of distinct subsequences of string s that equal string t. In each iteration of the inner for loop, it calculates the number of distinct subsequences of the prefix of string s ending at index i-1 that equal the prefix of string t ending at index j-1. It does this by considering two cases: either character at index i-1 in string s is part of a subsequence, in which case it needs to be equal to character at index j-1 in string t, or it is not part of a subsequence, in which case the number of distinct subsequences remains unchanged.
+
+*   The time complexity of this function is O(mn) where m and n are the lengths of strings s and t, respectively. This is because it needs to fill in all elements of vector curr, which has size n+1. The space complexity is O(n) since it uses a vector of size n+1 to store intermediate results.
+     */
+    int numDistinct_godlike(string &s, string &t)
+    {
+        vector<double> curr(t.size() + 1);
+        curr[0] = 1;
+        for (int i = 1; i <= s.size(); i++)
+        {
+            for (int j = t.size(); j >= 1; j--)
+            {
+                if (s[i - 1] == t[j - 1])
+                    curr[j] = curr[j - 1] + curr[j];
+                else
+                    curr[j] = curr[j];
+            }
+            // prev = curr;
+        }
+        return (int)curr[t.size()];
+    }
+};
+
+class EditDistance
+{
+public:
+    int editDistanceRecur(int i, int j, string &s, string &t)
+    {
+        if (j < 0)
+        {
+            return j + 1;
+        }
+        if (i < 0)
+        {
+            return i + 1;
+        }
+        if (s[i] == t[j])
+        {
+            return editDistanceRecur(i - 1, j - 1, s, t);
+        }
+        else
+        {
+            int insertion = 1 + editDistanceRecur(i, j - 1, s, t);
+            int deletion = 1 + editDistanceRecur(i - 1, j, s, t);
+            int replacement = 1 + editDistanceRecur(i - 1, j - 1, s, t);
+
+            return min(deletion, min(replacement, insertion));
+        }
+    }
+    int editDistance_memo(int i, int j, string &s, string &t, vector<vector<int>> &dp)
+    {
+        if (j < 0)
+        {
+            return i + 1;
+        }
+        if (i < 0)
+        {
+            return j + 1;
+        }
+        if (dp[i][j] != -1)
+        {
+            return dp[i][j];
+        }
+
+        if (s[i] == t[j])
+        {
+            return dp[i][j] = editDistance_memo(i - 1, j - 1, s, t, dp);
+        }
+
+        int insertion = 1 + editDistance_memo(i, j - 1, s, t, dp);
+        int deletion = 1 + editDistance_memo(i - 1, j, s, t, dp);
+        int replacement = 1 + editDistance_memo(i - 1, j - 1, s, t, dp);
+
+        return dp[i][j] = min(deletion, min(replacement, insertion));
+    }
+};
 int main(int argc, char const *argv[])
 {
 

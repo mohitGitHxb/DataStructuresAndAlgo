@@ -408,7 +408,7 @@ SingleNode *rotate(SingleNode *head, int k)
     curr->next = head;
     return tail;
 }
-//^ 7 First Node in a loop
+//^ 7 First SingleNode in a loop
 /*
 & 1)Temp,slowPointer and fastPointer, both set to the head of the linked list.
 
@@ -711,31 +711,31 @@ Here's how the code works:
 
 % O(N) T.C | O(N) S.C
      */
-    struct Node
+    struct SingleNode
     {
         int data;
-        Node *next;
-        Node *arb;
-        Node(int x)
+        SingleNode *next;
+        SingleNode *arb;
+        SingleNode(int x)
         {
             data = x;
             next = NULL;
             arb = NULL;
         }
     };
-    Node *copyList(Node *head)
+    SingleNode *copyList(SingleNode *head)
     {
         // Write your code here
         if (!head)
             return head;
-        unordered_map<Node *, Node *> mp;
-        for (Node *curr = head; curr != NULL; curr = curr->next)
+        unordered_map<SingleNode *, SingleNode *> mp;
+        for (SingleNode *curr = head; curr != NULL; curr = curr->next)
         {
-            mp[curr] = new Node(curr->data);
+            mp[curr] = new SingleNode(curr->data);
         }
-        for (Node *curr = head; curr != NULL; curr = curr->next)
+        for (SingleNode *curr = head; curr != NULL; curr = curr->next)
         {
-            Node *cloned = mp[curr];
+            SingleNode *cloned = mp[curr];
             cloned->next = mp[curr->next];
             cloned->arb = mp[curr->arb];
         }
@@ -758,16 +758,16 @@ Here's how the code works:
 By following these steps, the code effectively creates a deep copy of the given linked list with the additional "arb" pointers. It achieves this by iteratively duplicating each node in the original list, setting the "arb" pointers of the duplicate nodes to the appropriate nodes, and then separating the original and duplicate lists while updating the "next" pointers.
     * O(N) T.C | O(1) S.C
      */
-    Node *copyList(Node *head)
+    SingleNode *copyList(SingleNode *head)
     {
         // Write your code here
         if (!head)
             return head;
-        Node *current = head;
+        SingleNode *current = head;
         while (current != NULL)
         {
-            Node *temp = current->next;
-            current->next = new Node(current->data);
+            SingleNode *temp = current->next;
+            current->next = new SingleNode(current->data);
             current->next->next = temp;
             current = temp;
         }
@@ -781,9 +781,9 @@ By following these steps, the code effectively creates a deep copy of the given 
             current->next->arb = (current->arb) ? current->arb->next : current->arb;
             current = current->next->next;
         }
-        Node *original = head;
-        Node *copy = head->next;
-        Node *temp = copy;
+        SingleNode *original = head;
+        SingleNode *copy = head->next;
+        SingleNode *temp = copy;
 
         while (original != NULL && copy != NULL)
         {
@@ -875,12 +875,12 @@ Example:
 class Add1toLL
 {
 private:
-    struct Node
+    struct SingleNode
     {
         int data;
-        struct Node *next;
+        struct SingleNode *next;
 
-        Node(int x)
+        SingleNode(int x)
         {
             data = x;
             next = NULL;
@@ -906,7 +906,7 @@ public:
 
     ! O(Nodes) T.C | O(Nodes) S.C
      */
-    int solve(Node *curr)
+    int solve(SingleNode *curr)
     {
         if (curr->next == NULL)
         {
@@ -937,12 +937,12 @@ public:
         }
         return carry;
     }
-    // Node *addOne(Node *head)
+    // SingleNode *addOne(SingleNode *head)
     // {
     //     int getCarry = solve(head);
     //     if (getCarry == 1)
     //     {
-    //         Node *temp = new Node(1);
+    //         SingleNode *temp = new SingleNode(1);
     //         temp->next = head;
     //         return temp;
     //     }
@@ -970,9 +970,9 @@ Using this approach, the code efficiently handles cases where the linked list co
 Please note that the code assumes the input linked list represents a non-negative integer, and it does not consider cases where the resulting number exceeds the range of integer representation.
 
      */
-    Node *addOne(Node *head)
+    SingleNode *addOne(SingleNode *head)
     {
-        Node *notNine = head, *end = head;
+        SingleNode *notNine = head, *end = head;
         while (end->next)
         {
             if (end->data != 9)
@@ -1103,11 +1103,11 @@ private:
 
            * O(N) T.C || O(1) S.C
      */
-    struct Node
+    struct SingleNode
     {
         int data;
-        struct Node *next;
-        Node(int x)
+        struct SingleNode *next;
+        SingleNode(int x)
         {
             data = x;
             next = NULL;
@@ -1115,14 +1115,14 @@ private:
     };
 
 public:
-    Node *reverseList(Node *head)
+    SingleNode *reverseList(SingleNode *head)
     {
         if (!head || head->next == NULL)
             return head;
-        Node *temp = NULL;
+        SingleNode *temp = NULL;
         while (head != NULL)
         {
-            Node *next = head->next;
+            SingleNode *next = head->next;
             head->next = temp;
             temp = head;
             head = next;
@@ -1130,26 +1130,26 @@ public:
         return temp;
     }
 
-    void addNode(Node *t, int data)
+    void addNode(SingleNode *t, int data)
     {
-        Node *temp = new Node(data);
+        SingleNode *temp = new SingleNode(data);
         t->next = temp;
     }
 
-    struct Node *addTwoLists(struct Node *first, struct Node *second)
+    struct SingleNode *addTwoLists(struct SingleNode *first, struct SingleNode *second)
     {
         // code here
         first = reverseList(first);
         second = reverseList(second);
-        struct Node *ans = NULL;
-        struct Node *ansHead = NULL;
+        struct SingleNode *ans = NULL;
+        struct SingleNode *ansHead = NULL;
         int carry = 0;
         while (first != NULL && second != NULL)
         {
             int value = first->data + second->data + carry;
             int num = value % 10;
             carry = value / 10;
-            struct Node *temp = new Node(num);
+            struct SingleNode *temp = new SingleNode(num);
             if (ans == NULL)
                 ansHead = temp;
             else
@@ -1165,7 +1165,7 @@ public:
             int value = first->data + carry;
             int num = value % 10;
             carry = value / 10;
-            struct Node *temp = new Node(num);
+            struct SingleNode *temp = new SingleNode(num);
             if (ans == NULL)
                 ansHead = temp;
             else
@@ -1180,7 +1180,7 @@ public:
             int value = second->data + carry;
             int num = value % 10;
             carry = value / 10;
-            struct Node *temp = new Node(num);
+            struct SingleNode *temp = new SingleNode(num);
             if (ans == NULL)
                 ansHead = temp;
             else
@@ -1195,7 +1195,7 @@ public:
             int value = carry;
             int num = value % 10;
             carry = value / 10;
-            struct Node *temp = new Node(num);
+            struct SingleNode *temp = new SingleNode(num);
             if (ans == NULL)
                 ansHead = temp;
             else
@@ -1236,12 +1236,12 @@ private:
     ~ The algorithm uses the concept of slow and fast pointers to find the middle of the circular linked list. It then manipulates the pointers to split the list into two halves by adjusting the next pointers accordingly. The resulting lists are still circular linked lists, but they represent the first and second halves of the original circular linked list.
     * O(N) T.C | O(1) S.C
      */
-    struct Node
+    struct SingleNode
     {
         int data;
-        struct Node *next;
+        struct SingleNode *next;
 
-        Node(int x)
+        SingleNode(int x)
         {
             data = x;
             next = NULL;
@@ -1249,14 +1249,14 @@ private:
     };
 
 public:
-    void splitList(Node *head, Node **head1_ref, Node **head2_ref)
+    void splitList(SingleNode *head, SingleNode **head1_ref, SingleNode **head2_ref)
     {
         if (!head)
         {
             return;
         }
-        Node *slow = head;
-        Node *fast = head->next;
+        SingleNode *slow = head;
+        SingleNode *fast = head->next;
         while (fast != head && fast->next != head)
         {
             slow = slow->next;
@@ -1277,19 +1277,19 @@ public:
 //^ 18 Deletion in a circular LL
 class deletionInCircularLL
 {
-    struct Node
+    struct SingleNode
     {
         int data;
-        struct Node *next;
+        struct SingleNode *next;
     };
 
 public:
-    void deleteNode(struct Node **head, int key)
+    void deleteNode(struct SingleNode **head, int key)
     {
 
         // Your code goes here
-        Node *prev = NULL;
-        Node *curr = *head;
+        SingleNode *prev = NULL;
+        SingleNode *curr = *head;
         while (curr->data != key)
         {
             prev = curr;
@@ -1301,12 +1301,12 @@ public:
     }
 
     /* Function to reverse the linked list */
-    void reverse(struct Node **head_ref)
+    void reverse(struct SingleNode **head_ref)
     {
-        Node *prev = NULL, *curr = *head_ref;
+        SingleNode *prev = NULL, *curr = *head_ref;
         while (curr->next)
         {
-            Node *next = curr->next;
+            SingleNode *next = curr->next;
             curr->next = prev;
             prev = curr;
             curr = next;
@@ -1320,12 +1320,12 @@ public:
 class ReverseDLL
 {
 private:
-    struct Node
+    struct SingleNode
     {
         int data;
-        Node *next;
-        Node *prev;
-        Node(int x)
+        SingleNode *next;
+        SingleNode *prev;
+        SingleNode(int x)
         {
             data = x;
             next = NULL;
@@ -1363,15 +1363,15 @@ public:
 ~ The algorithm iterates through the doubly linked list and reverses the links of each node by swapping the prev and next pointers. It starts with the initial head and moves forward until the end of the list, updating the pointers along the way. Finally, it returns the new head of the reversed list.
      */
 
-    Node *reverseDLL(Node *head)
+    SingleNode *reverseDLL(SingleNode *head)
     {
         // Your code here
         if (!head || !head->next)
         {
             return head;
         }
-        Node *temp = head;
-        Node *curr = head;
+        SingleNode *temp = head;
+        SingleNode *curr = head;
         while (temp)
         {
             curr = temp;
@@ -1402,19 +1402,19 @@ private:
      */
 public:
     // structure of node of doubly linked list
-    struct Node
+    struct SingleNode
     {
         int data;
-        struct Node *next, *prev;
+        struct SingleNode *next, *prev;
     };
 
     // Function to find pair whose sum equal to given value x.
-    void pairSum(struct Node *head, int x)
+    void pairSum(struct SingleNode *head, int x)
     {
         // Set two pointers, first to the beginning of DLL
         // and second to the end of DLL.
-        struct Node *first = head;
-        struct Node *second = head;
+        struct SingleNode *first = head;
+        struct SingleNode *second = head;
         while (second->next != NULL)
             second = second->next;
 
@@ -1474,17 +1474,17 @@ private:
    & Traverse the doubly linked list from left to right. For each current node during the traversal, initialize two pointers first = pointer to the node next to the current node and last = pointer to the last node of the list. Now, count pairs in the list from first to last pointer that sum up to value (x – current node’s data) (algorithm described in this post). Add this count to the total_count of triplets. Pointer to the last node can be found only once in the beginning.
      */
 public:
-    struct Node
+    struct SingleNode
     {
         int data;
-        struct Node *next, *prev;
+        struct SingleNode *next, *prev;
     };
 
-    int countTripletsDLL(Node *head, int x)
+    int countTripletsDLL(SingleNode *head, int x)
     {
         if (!head)
             return 0;
-        Node *curr, *first, *last;
+        SingleNode *curr, *first, *last;
         int count = 0;
         last = head;
         while (last->next)
@@ -1497,7 +1497,7 @@ public:
         return count;
     }
 
-    int getPairs(Node *first, Node *second, int value)
+    int getPairs(SingleNode *first, SingleNode *second, int value)
     {
         int count = 0;
 
@@ -1583,13 +1583,13 @@ public:
 class FlattenList
 {
 private:
-    struct Node
+    struct SingleNode
     {
         int data;
-        struct Node *next;
-        struct Node *bottom;
+        struct SingleNode *next;
+        struct SingleNode *bottom;
 
-        Node(int x)
+        SingleNode(int x)
         {
             data = x;
             next = NULL;
@@ -1624,10 +1624,10 @@ public:
 
 ~    The time complexity of this code is O(N * M), where N is the total number of nodes in the linked list and M is the number of levels in the hierarchy. The space complexity is O(1) since the operations are performed in-place without using any additional data structures.
      */
-    Node *merge(Node *left, Node *right)
+    SingleNode *merge(SingleNode *left, SingleNode *right)
     {
-        Node *temp = new Node(0);
-        Node *res = temp;
+        SingleNode *temp = new SingleNode(0);
+        SingleNode *res = temp;
         while (left && right)
         {
             if (left->data < right->data)
@@ -1649,7 +1649,7 @@ public:
             temp->bottom = right;
         return res->bottom;
     }
-    Node *flatten(Node *root)
+    SingleNode *flatten(SingleNode *root)
     {
         if (!root || !root->next)
             return root;
@@ -1738,7 +1738,7 @@ SingleNode *divide(int N, SingleNode *head)
     return evenList;
 }
 
-//^ 25 Nth Node from the linked list
+//^ 25 Nth SingleNode from the linked list
 /*
 
 & The function first initializes a pointer x to point to the head of the linked list.
@@ -1807,6 +1807,85 @@ public:
     }
 };
 
+//^ 27 Delete greater nodes at the right
+class DeleteGreaterNodes
+{
+public:
+    /*
+    @ Stack based solution
+    & The function first creates a new node tmp with a large data value (1e8) and initializes an empty stack s of pointers to nodes. It then pushes pointer tmp onto stack s.
+
+& Next, it enters a for loop that iterates through all nodes in the linked list starting from the head. Inside this loop, it enters another while loop that continues until the data of the top element of stack s is greater than or equal to the data of node temp. Inside this inner loop, it pops the top element from stack s. It then sets the next pointer of the top element of stack s to point to node temp and pushes pointer temp onto stack s.
+
+& After both loops, the function returns the next pointer of node tmp, which represents the head of the new linked list.
+
+~ The key idea behind this code is that it uses a stack to keep track of nodes whose value is greater than or equal to the value of any node to their right. In each iteration of the for loop, it visits a node and checks if its value is greater than the value of any node on stack s. If it is, it pops these nodes from stack s until it finds a node whose value is greater than or equal to its own value. It then sets the next pointer of this node to point to itself and pushes itself onto stack s. This way, all nodes whose value is smaller than the value of any node to their right are removed from the linked list.
+
+! The time complexity of this function is O(N) since it visits all N nodes in the linked list once. The space complexity is O(N) since it uses a stack that can store up to N nodes.
+     */
+    SingleNode *compute(SingleNode *head)
+    {
+        SingleNode *tmp = new SingleNode(1e8);
+        stack<SingleNode *> s;
+        s.push(tmp);
+        for (SingleNode *temp = head; temp; temp = temp->next)
+        {
+            while (s.top()->val < temp->val)
+                s.pop();
+            s.top()->next = temp;
+            s.push(temp);
+        }
+        return tmp->next;
+    }
+
+    /*
+    @ Reversing the list
+&    The compute function takes in a pointer to the head of a singly linked list head as an argument and returns a pointer to the head of a new linked list where all nodes whose value is smaller than the value of any node to their right have been deleted.
+
+& The function first calls the reverse function with argument head to reverse the order of nodes in the linked list. It then enters a for loop that iterates through all nodes in the reversed linked list starting from the head. Inside this loop, it checks if the data of node temp is greater than the data of its next node. If it is, it sets its next pointer to point to its next next node. Otherwise, it updates pointer temp to point to its next node.
+
+& After the for loop, the function calls the reverse function again with argument head to reverse the order of nodes in the linked list back to their original order. It then returns this result.
+
+~ The key idea behind this function is that it first reverses the order of nodes in the linked list, then iterates through all nodes in this reversed linked list and removes any node whose value is smaller than the value of its next node. Finally, it reverses the order of nodes in the linked list again to obtain a new linked list where all nodes whose value is smaller than the value of any node to their right have been deleted.
+
+* The time complexity of this function is O(N) since it calls the reverse function twice (which has time complexity O(N)) and iterates through all N nodes in the linked list once. The space complexity is O(1) since it uses a constant number of pointers.
+     */
+    SingleNode *reverse(SingleNode *h)
+    {
+        SingleNode *prev = NULL, *n = h;
+        while (n)
+        {
+            SingleNode *tmp = n;
+            n = n->next;
+            tmp->next = prev;
+            prev = tmp;
+        }
+        return prev;
+    }
+    SingleNode *compute_v2(SingleNode *head)
+    {
+        head = reverse(head);
+        for (SingleNode *temp = head; temp && temp->next;)
+        {
+            if (temp->val > temp->next->val)
+                temp->next = temp->next->next;
+            else
+                temp = temp->next;
+        }
+        return reverse(head);
+    }
+    /*
+    @ Recursive
+
+     */
+    SingleNode *compute(SingleNode *head)
+    {
+        if (!head->next)
+            return head;
+        head->next = compute(head->next);
+        return (head->val < head->next->val) ? head->next : head;
+    }
+};
 int main(int argc, char const *argv[])
 {
     /* code */

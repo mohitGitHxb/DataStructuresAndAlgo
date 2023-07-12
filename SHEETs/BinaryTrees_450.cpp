@@ -531,6 +531,7 @@ public:
     }
 };
 
+//^ 12 vertical order traversal
 class VerticalOrder
 {
 private:
@@ -650,6 +651,8 @@ The time complexity of this code is O(n log n), where n is the number of nodes i
         return res;
     }
 };
+
+//^ 13,14,15,16
 class DifferentViewsOfTree
 {
 public:
@@ -790,6 +793,8 @@ public:
 
 * Since the algorithm visits each node once and performs constant-time operations, the time complexity is O(n), where n is the number of nodes in the binary tree. The space complexity is also O(n) in the worst case, as the queue may store all the nodes in the binary tree in the case of a skewed tree
  */
+
+//^ 17
 vector<int> diagonal(Node *root)
 {
     if (!root)
@@ -811,6 +816,272 @@ vector<int> diagonal(Node *root)
     }
     return res;
 }
+
+//^ 18 Root to a given node path
+/*
+& Traverse using Inorder traversal technique (DFS algorithm)
+& getPath functions checks whether the node is present in the tree or not
+& at the same time it keeps track of the path by using a ds like array or vector
+& after the functions returns the ds will hold the path from root to that target node
+
+* O(N) T.C | O(H) S.C
+ */
+bool getPath(Node *root, vector<int> &ds, int x)
+{
+    if (!root)
+        return false;
+    ds.emplace_back(root->data);
+
+    if (root->data == x)
+    {
+        return true;
+    }
+    if (getPath(root->left, ds, x) || getPath(root->right, ds, x))
+    {
+        return true;
+    }
+    ds.pop_back();
+    return false;
+}
+
+//^ 19 Lowest Common Ancestor of a binary tree
+class LCS
+{
+public:
+    /*
+    @ Method - 1 brute force
+    & use the root to a given node path solution to get the path of two elements whose lcs needs to be found
+
+    & then just look for the rightmost common element and that will be our LCS
+     */
+
+    /*
+    @ Method - 2
+    &- If the root is NULL, it means we have reached the end of the tree, so we return NULL.
+
+&- If the current node root is equal to either p or q, it means we have found one of the nodes we are looking for. Therefore, we return the current node as the lowest common ancestor.
+
+&- We recursively call the lowestCommonAncestor function on the left and right subtrees of the current node to find the lowest common ancestor in those subtrees.
+
+&- If both the left and right subtrees return non-null values, it means that p and q are found in different subtrees, and the current node root is their lowest common ancestor. Hence, we return root.
+
+&- If either the left or right subtree returns a non-null value, it means that both p and q are found in the same subtree, and the non-null value represents their lowest common ancestor. We return that value.
+
+* The time complexity of this algorithm is O(N), where N is the number of nodes in the binary tree. This is because we need to visit each node exactly once.
+
+* The space complexity is O(H), where H is the height of the binary tree. In the worst case, when the binary tree is skewed, the height can be equal to the number of nodes in the tree, resulting in O(N) space complexity. However, in a balanced binary tree, the height is logarithmic, resulting in O(log N) space complexity.
+     */
+    TreeNode *lcs(TreeNode *root, TreeNode *p, TreeNode *q)
+    {
+        if (!root)
+            return nullptr;
+        if (root == p || root == q)
+            return root;
+        TreeNode *left = lcs(root->left, p, q);
+        TreeNode *right = lcs(root->right, p, q);
+        if (left && right)
+        {
+            return root;
+        }
+
+        return (left) ? left : right;
+    }
+};
+
+//^ 20 Maximum Width of a binary tree [LeetCode]
+int widthOfBinaryTree(TreeNode *root)
+{
+    if (!root)
+        return 0;
+    int ans = 0;
+    queue<pair<TreeNode *, int>> q;
+    q.emplace(root, 0);
+    while (!q.empty())
+    {
+        int size = q.size();
+        int parent_id = q.front().second;
+        int first = 0, last = 0;
+        for (int i = 0; i < size; i++)
+        {
+            int cur_id = q.front().second - parent_id;
+            TreeNode *node = q.front().first;
+            q.pop();
+            if (i == 0)
+            {
+                first = cur_id;
+            }
+            if (i == size - 1)
+            {
+                last = cur_id;
+            }
+
+            if (node->left)
+            {
+                q.emplace(node->left, cur_id * 2 + 1);
+            }
+            if (node->right)
+            {
+                q.emplace(node->right, cur_id * 2 + 2);
+            }
+        }
+
+        ans = max(ans, last - first + 1);
+    }
+    return ans;
+}
+
+//^ 21 Children sum property [hard]
+void changeTree(Node *root)
+{
+    if (!root)
+        return;
+    int childSum = 0;
+    if (root->left)
+    {
+        childSum += root->left->data;
+    }
+    if (root->right)
+    {
+        childSum += root->right->data;
+    }
+    if (childSum >= root->data)
+    {
+        root->data = childSum;
+    }
+    else
+    {
+        if (root->left)
+        {
+            root->left->data = root->data;
+        }
+        if (root->right)
+        {
+            root->right->data = root->data;
+        }
+    }
+    changeTree(root->left);
+    changeTree(root->right);
+    int sum = 0;
+    if (root->left)
+    {
+        sum += root->left->data;
+    }
+    if (root->right)
+    {
+        sum += root->right->data;
+    }
+    root->data = max(root->data, sum);
+}
+
+//^ All nodes at a distance k in a binary tree
+class DistanceK
+{
+private:
+    /*
+ &       The setParents function sets up a parent-child relationship map for the nodes in the binary tree. It performs a level order traversal using a queue and populates the parent map for each node except the root. This map helps in traversing back to the parent nodes during the BFS traversal in the distanceK function.
+
+ &   The distanceK function takes three arguments: the root of the binary tree, the target node, and the distance k. It first performs some basic input validations and initializes data structures.
+
+ &   It uses a BFS (Breadth-First Search) traversal to explore the tree starting from the target node and moving outward in levels.
+
+ &   It maintains a queue q to store the nodes to be visited during the traversal. Initially, the target node is enqueued.
+
+ &   It also maintains a visited map to keep track of the nodes that have been visited during the traversal.
+
+ &   Inside the main BFS loop, it processes each level by iterating over the nodes in the current level. It checks if the current level is equal to the desired distance k. If it is, it breaks out of the loop as we have explored all nodes at distance k from the target.
+
+ &   For each node, it checks its left child, right child, and parent nodes. If they exist and have not been visited, they are enqueued, and their corresponding entries in the visited map are marked as true.
+
+ &   Once the BFS traversal is complete, the queue q contains all the nodes at distance k from the target node.
+
+ &   The nodes in the queue are extracted one by one, and their values are added to the result vector res.
+
+ &   Finally, the function returns the res vector containing the values of all nodes at distance k from the target node.
+
+Intuition:
+~   The code uses a BFS traversal starting from the target node to explore the tree. It maintains a visited map to prevent revisiting the same node and a parent map to keep track of parent-child relationships. By breaking the loop when the current level is equal to the desired distance k, we ensure that only nodes at the desired distance are processed.
+
+*   Time Complexity: The code performs a BFS traversal on the binary tree, which takes O(n) time, where n is the number of nodes in the tree. Additionally, adding nodes to the queue and marking them as visited take constant time operations. Therefore, the overall time complexity is O(n).
+
+*   Space Complexity: The space complexity is determined by the space used for the queue, the visited map, and the parent map. In the worst case, the queue may contain all the nodes at the maximum level of the tree, which would be O(n/2) = O(n) nodes. The visited and parent maps also occupy O(n) space. Therefore, the overall space complexity is O(n).
+
+In summary, the code efficiently finds all nodes at a distance k from a target node in a binary tree using a BFS traversal and maintains a visited map and a parent map. It has a time complexity of O(n) and a space complexity of O(n).
+
+     */
+public:
+    void setParents(TreeNode *root, unordered_map<TreeNode *, TreeNode *> &parent)
+    {
+        queue<TreeNode *> q;
+        q.emplace(root);
+        while (!q.empty())
+        {
+            int size = q.size();
+            for (int i = 0; i < size; i++)
+            {
+                TreeNode *cur = q.front();
+                q.pop();
+                if (cur->left)
+                {
+                    q.emplace(cur->left);
+                    parent[cur->left] = cur;
+                }
+                if (cur->right)
+                {
+                    q.emplace(cur->right);
+                    parent[cur->right] = cur;
+                }
+            }
+        }
+    }
+
+    vector<int> distanceK(TreeNode *root, TreeNode *target, int k)
+    {
+        if (!root || k < 0 || !target)
+            return {};
+        unordered_map<TreeNode *, TreeNode *> parent;
+        setParents(root, parent);
+        queue<TreeNode *> q;
+        q.emplace(target);
+        unordered_map<TreeNode *, bool> visited;
+        int currentLevel = 0;
+        visited[target] = true;
+        while (!q.empty())
+        {
+            int size = q.size();
+            if (currentLevel++ == k)
+                break;
+            for (int i = 0; i < size; i++)
+            {
+                TreeNode *node = q.front();
+                q.pop();
+                if (node->left && !visited[node->left])
+                {
+                    q.emplace(node->left);
+                    visited[node->left] = true;
+                }
+                if (node->right && !visited[node->right])
+                {
+                    q.emplace(node->right);
+                    visited[node->right] = true;
+                }
+                if (parent[node] && !visited[parent[node]])
+                {
+                    q.emplace(parent[node]);
+                    visited[parent[node]] = true;
+                }
+            }
+        }
+
+        // q has all the elements we need :-)
+        vector<int> res;
+        while (!q.empty())
+        {
+            res.push_back(q.front()->val);
+            q.pop();
+        }
+        return res;
+    }
+};
 int main()
 {
     return 0;

@@ -973,7 +973,7 @@ void changeTree(Node *root)
     root->data = max(root->data, sum);
 }
 
-//^ All nodes at a distance k in a binary tree
+//^ 22 All nodes at a distance k in a binary tree
 class DistanceK
 {
 private:
@@ -1080,6 +1080,170 @@ public:
             q.pop();
         }
         return res;
+    }
+};
+
+//^ 23 Minimum time to burn a binary tree
+class BurnTree
+{
+public:
+    /*
+
+&       This code is a solution to the problem of burning a tree from a given target node. The problem is to find the minimum time required to burn the entire tree if we start burning it from the target node. The code uses a breadth-first search (BFS) algorithm to solve this problem.
+
+&   The `convertIntoGraph` function converts the tree into a graph by storing the parent of each node in an unordered_map. This is done using a BFS traversal of the tree.
+
+&   The `getTargetAddress` function returns the address of the target node in the tree.
+
+&   The `minTime` function calculates the minimum time required to burn the entire tree. It first converts the tree into a graph using the `convertIntoGraph` function and then finds the address of the target node using the `getTargetAddress` function. It then performs a BFS traversal starting from the target node and keeps track of the minimum time required to burn all nodes.
+
+* The time complexity of this code is O(n) where n is the number of nodes in the tree. The space complexity is also O(n) as we need to store the parent and visited information for each node.
+
+&- The code uses BFS to solve the problem.
+&- The `convertIntoGraph` function converts the tree into a graph.
+&- The `getTargetAddress` function returns the address of the target node.
+&- The `minTime` function calculates the minimum time required to burn the entire tree.
+&- The time complexity is O(n) and space complexity is also O(n).
+     */
+    void convertIntoGraph(Node *root, unordered_map<Node *, Node *> &mp)
+    {
+        queue<Node *> q;
+        q.emplace(root);
+        while (!q.empty())
+        {
+            int size = q.size();
+            for (int i = 0; i < size; i++)
+            {
+                Node *curr = q.front();
+                q.pop();
+                if (curr->left)
+                {
+                    q.emplace(curr->left);
+                    mp[curr->left] = curr;
+                }
+                if (curr->right)
+                {
+                    q.emplace(curr->right);
+                    mp[curr->right] = curr;
+                }
+            }
+        }
+    }
+    Node *getTargetAddress(Node *root, int target)
+    {
+        if (!root || root->data == target)
+            return root;
+        Node *l = getTargetAddress(root->left, target);
+        Node *r = getTargetAddress(root->right, target);
+        return (l) ? l : r;
+    }
+    int minTime(Node *root, int target)
+    {
+        if (!root)
+            return 0;
+        unordered_map<Node *, Node *> parent;
+        unordered_map<Node *, bool> visited;
+        convertIntoGraph(root, parent);
+        Node *key = getTargetAddress(root, target);
+        queue<Node *> q;
+        q.emplace(key);
+        visited[key] = true;
+        int minTime = -1;
+        while (!q.empty())
+        {
+            int size = q.size();
+            for (int i = 0; i < size; i++)
+            {
+                Node *curr = q.front();
+                q.pop();
+                visited[curr] = true;
+                if (curr->left && !visited[curr->left])
+                {
+                    q.emplace(curr->left);
+                    visited[curr->left] = true;
+                }
+                if (curr->right && !visited[curr->right])
+                {
+                    q.emplace(curr->right);
+                    visited[curr->right] = true;
+                }
+                if (parent[curr] && !visited[parent[curr]])
+                {
+                    q.emplace(parent[curr]);
+                    visited[parent[curr]] = true;
+                }
+            }
+            minTime++;
+        }
+        return minTime;
+    }
+};
+
+//^ 24 Count all nodes in a complete tree
+class CountNodes
+{
+private:
+    /*
+&     The f function takes two arguments, left and right, which are the left and right children of a node. If the left child is NULL, it returns 0. If the right child is NULL, it returns 1. Otherwise, it returns 2 plus the result of recursively calling the f function on the left and right children of both the left and right children.
+
+& The countNodes function takes the root of the tree as an argument and returns the number of nodes in the tree. If the root is NULL, it returns 0. Otherwise, it returns 1 plus the result of calling the f function on the left and right children of the root.
+
+! The time complexity of this code is O(n) where n is the number of nodes in the tree. The space complexity is O(h) where h is the height of the tree.
+
+    * Important property : total nodes in a complete tree = 2*height - 1;
+     */
+public:
+    int f(TreeNode *left, TreeNode *right)
+    {
+        if (!left)
+            return 0;
+        if (!right)
+            return 1;
+        return 2 + f(left->left, left->right) + f(right->left, right->right);
+    }
+    int countNodes(TreeNode *root)
+    {
+        if (!root)
+            return 0;
+        return 1 + f(root->left, root->right);
+    }
+    /*
+&       The leftHeight function calculates the height of the left subtree of the given root by traversing down the leftmost path of the tree. Similarly, the rightHeight function calculates the height of the right subtree of the given root by traversing down the rightmost path of the tree.
+
+&   The countNodes_v2 function takes the root of the tree as an argument and returns the number of nodes in the tree. If the root is NULL, it returns 0. It then calculates the height of the left and right subtrees using the leftHeight and rightHeight functions. If the heights are equal, it means that the last level of the tree is completely filled, so it returns 2^h - 1, where h is the height of the tree. Otherwise, it returns 1 plus the result of recursively calling countNodes_v2 on the left and right children of the root.
+
+*   The time complexity of this code is O(log^2 n) where n is the number of nodes in the tree. The space complexity is O(h) where h is the height of the tree.
+
+     */
+    int leftHeight(TreeNode *root)
+    {
+        int h = 0;
+        while (root)
+        {
+            root = root->left;
+            h++;
+        }
+        return h;
+    }
+    int rightHeight(TreeNode *root)
+    {
+        int h = 0;
+        while (root)
+        {
+            root = root->right;
+            h++;
+        }
+        return h;
+    }
+    int countNodes_v2(TreeNode *root)
+    {
+        if (!root)
+            return 0;
+        int lh = leftHeight(root);
+        int rh = rightHeight(root);
+        if (lh == rh)
+            return pow(2, lh) - 1;
+        return 1 + countNodes_v2(root->left) + countNodes_v2(root->right);
     }
 };
 int main()

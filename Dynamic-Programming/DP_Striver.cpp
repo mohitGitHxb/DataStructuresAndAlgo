@@ -3216,11 +3216,27 @@ public:
 class WildCard
 {
 public:
-/* 
-@ Recursion
+    /*
+    @ Recursion
+%    This code is a recursive function that takes in four arguments: two integers `i` and `j` representing the current indices in two strings, and two strings `s` and `t`. The function returns a boolean value indicating whether string `s` matches string `t`, where string `s` may contain wildcard characters `?` and `*`. The wildcard character `?` can match any single character, while the wildcard character `*` can match any sequence of characters (including the empty sequence).
 
-! O(exp) T.C | O(N+M) S.C
- */
+& The function first checks if both integers `i` and `j` are less than 0. If they are, the function returns true since there are no more characters left to match in either string.
+
+& Next, the function checks if integer `i` is less than 0 and integer `j` is greater than or equal to 0. If this is the case, the function returns false since there are no more characters left to match in string `s`, but there are still characters left to match in string `t`.
+
+& The function then checks if integer `j` is less than 0 and integer `i` is greater than or equal to 0. If this is the case, it enters a for loop that iterates from 0 to integer `i`. Inside this loop, it checks if character at index `k` in string `s` is not equal to the wildcard character `*`. If it is not, the function returns false since all remaining characters in string “s” must be wildcard characters “*” in order for the strings to match. After the for loop, the function returns true.
+
+& If none of these conditions are true, the function checks if character at index “i” in string “s” is equal to character at index “j” in string “t” or if it is equal to the wildcard character “?”. If either of these conditions is true, it means that these characters can be matched, so the function returns the result of a recursive call to itself with both integers “i” and “j” decremented by 1.
+
+& If character at index “i” in string “s” is not equal to character at index “j” in string “t” or the wildcard character “?”, the function checks if it is equal to the wildcard character “*”. If it is, it means that this character can match any sequence of characters (including the empty sequence), so the function returns the logical OR of two recursive calls to itself: one with only integer “j” decremented by 1 (representing the case where character at index “i” matches an empty sequence), and one with only integer “i” decremented by 1 (representing the case where character at index “i” matches a non-empty sequence).
+
+& If none of these conditions are true, it means that character at index “i” in string “s” cannot be matched with any character in string “t”, so the function returns false.
+
+~ The key idea behind this code is that it uses a recursive approach to check if string “s” matches string “t”. In each call to the function, it compares characters at indices “i” and “j” in strings “s” and “t”, respectively. If they are equal or if character at index “i” in string “s” is equal to the wildcard character “?”, it means that these characters can be matched, so it continues with the next pair of characters. If character at index “i” in string “s” is equal to the wildcard character “*”, it means that this character can match any sequence of characters (including the empty sequence), so it tries both possibilities by making two recursive calls to itself.
+
+! The time complexity of this function is O(2^(m+n)) where m and n are the lengths of strings “s” and “t”, respectively. This is because in the worst case, the function makes two recursive calls to itself in each call, leading to an exponential number of calls. The space complexity is O(m+n) since it uses a recursive call stack that can grow up to m+n levels deep.
+
+     */
     bool wildCard(int i, int j, string &s, string &t)
     {
         if (i < 0 && j < 0)
@@ -3242,11 +3258,11 @@ public:
             return wildCard(i, j - 1, s, t) || wildCard(i - 1, j, s, t);
         return false;
     }
-        /*
-    @ Memoization
-
-    * O(N*M) T.C | O(N*M) S.C + O(N + M)
-     */
+    /*
+@ Memoization
+& No need for explanation as this is literally what we have been doing for past 30+ problems
+* O(N*M) T.C | O(N*M) S.C + O(N + M)
+ */
     bool wildCard_memo(int i, int j, string &s, string &t, vector<vector<int>> &dp)
     {
         if (i < 0 && j < 0)
@@ -3270,8 +3286,55 @@ public:
             return dp[i][j] = wildCard_memo(i, j - 1, s, t, dp) || wildCard_memo(i - 1, j, s, t, dp);
         return dp[i][j] = false;
     }
-};
+    /*
+ %   This code is a function that takes in two strings `pattern` and `str` as arguments and returns a boolean value indicating whether string `pattern` matches string `str`, where string `pattern` may contain wildcard characters `?` and `*`. The wildcard character `?` can match any single character, while the wildcard character `*` can match any sequence of characters (including the empty sequence).
 
+& The function first initializes a 2D vector `dp` of size `pattern.length() + 1` by `str.length() + 1` with all elements set to false. It then sets the first element of the first row of vector `dp` to true.
+
+& Then, it enters a for loop that iterates from 1 to `pattern.size()`. Inside this loop, it initializes a boolean variable `flag` to true and enters another for loop that iterates from 1 to integer `i`. Inside this inner loop, it checks if character at index `k-1` in string `pattern` is not equal to the wildcard character `*`. If it is not, it sets boolean variable `flag` to false and breaks out of the for loop. After the inner for loop, it sets element `[i][0]` of vector `dp` to boolean variable `flag`.
+
+& Next, the function enters another for loop that iterates from 1 to `pattern.size()`. Inside this loop, it enters another for loop that iterates from 1 to `str.size()`. Inside this inner loop, it checks if character at index `i-1` in string “pattern” is equal to character at index “j-1” in string “str” or if it is equal to the wildcard character “?”. If either of these conditions is true, it sets element `[i][j]” of vector “dp” to element “[i-1][j-1]” of vector “dp”. If character at index “i-1” in string “pattern” is equal to the wildcard character “*”, it sets element “[i][j]” of vector “dp” to the logical OR of element “[i][j-1]” and element “[i-1][j]” of vector “dp”. Otherwise, it sets element “[i][j]” of vector “dp” to false.
+
+& After both for loops, the function returns the last element of the last row of vector “dp”, which represents whether string “pattern” matches string “str”.
+
+~ The key idea behind this code is that it uses a bottom-up dynamic programming approach to check if string “pattern” matches string “str”. In each iteration of the inner for loop, it calculates whether the prefix of string “pattern” ending at index “i-1” matches the prefix of string “str” ending at index “j-1”. It does this by considering three cases: either character at index “i-1” in string “pattern” is equal to character at index “j-1” in string “str” or it is equal to the wildcard character “?”, in which case these characters can be matched; or character at index “i-1” in string “pattern” is equal to the wildcard character “*”, in which case this character can match any sequence of characters (including the empty sequence); or none of these conditions are true, in which case these characters cannot be matched.
+
+* The time complexity of this function is O(mn) where m and n are the lengths of strings “pattern” and “str”, respectively. This is because it needs to fill in all elements of vector “dp”, which has size m x n. The space complexity is also O(mn) since it uses a 2D vector of size m x n to store intermediate results.
+
+     */
+    bool wildCard_tabulation(string pattern, string str)
+    {
+        vector<vector<bool>> dp(pattern.length() + 1, vector<bool>(str.length() + 1));
+        dp.front().front() = true;
+        for (int i = 1; i <= pattern.size(); i++)
+        {
+            bool flag = true;
+            for (int k = 1; k <= i; k++)
+            {
+                if (pattern.at(k - 1) != '*')
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            dp.at(i).front() = flag;
+        }
+
+        for (int i = 1; i <= pattern.size(); i++)
+        {
+            for (int j = 1; j <= str.size(); j++)
+            {
+                if (pattern.at(i - 1) == str.at(j - 1) || pattern.at(i - 1) == '?')
+                    dp.at(i).at(j) = dp.at(i - 1).at(j - 1);
+                else if (pattern.at(i - 1) == '*')
+                    dp.at(i).at(j) = dp.at(i).at(j - 1) || dp.at(i - 1).at(j);
+                else
+                    dp.at(i).at(j) = false;
+            }
+        }
+        return dp.back().back();
+    }
+};
 int main(int argc, char const *argv[])
 {
 

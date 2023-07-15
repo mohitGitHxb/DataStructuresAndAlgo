@@ -1246,6 +1246,64 @@ public:
         return 1 + countNodes_v2(root->left) + countNodes_v2(root->right);
     }
 };
+
+//^ 25 Construct binary tree from inorder and preorder traversal [duplicates allowed]
+class BuildTree
+{
+private:
+    /*
+&    The helper function takes in seven arguments: two arrays of integers pre and in representing the preorder and inorder traversals of a binary tree, four integers preStart, preEnd, inStart, and inEnd representing the start and end indices of the current subarrays in arrays pre and in, and an integer n representing the number of nodes in the binary tree. The function returns a pointer to the root of the binary tree constructed from these traversals.
+
+& The function first checks if either integer preEnd is less than integer preStart or integer inEnd is less than integer inStart. If either of these conditions is true, the function returns NULL since there are no more nodes left to construct.
+
+& Next, the function creates a new node root with data equal to element preStart of array pre. It then initializes an integer inRoot to 0 and enters a for loop that iterates from 0 to n-1. Inside this loop, it checks if element i of array in is equal to element preStart of array pre. If it is, it sets integer inRoot to integer i, sets element i of array in to -1, and breaks out of the for loop.
+
+& After the for loop, the function initializes an integer numsLeft to the difference between integers inRoot and inStart. It then sets the left pointer of node root to the result of a recursive call to itself with updated arguments, and sets the right pointer of node root to the result of another recursive call to itself with updated arguments. It then returns pointer root.
+
+~ The key idea behind this function is that it uses a recursive approach to construct a binary tree from its preorder and inorder traversals. In each call to the function, it creates a new node with data equal to the first element in the current subarray of array pre. This element represents the root of the current subtree. It then finds the index of this element in array in, which represents the inorder traversal of this subtree. All elements to the left of this index in array “in” represent the left subtree, while all elements to the right represent the right subtree. The function then makes two recursive calls to itself with updated arguments to construct these subtrees.
+
+* The time complexity of this function is O(n^2) where n is the number of nodes in the binary tree. This is because in each call to the function, it needs to search for an element in array “in”, which takes O(n) time. Since there are n calls to the function (one for each node), the total time complexity is O(n^2). The space complexity is O(n) since it uses a recursive call stack that can grow up to n levels deep.
+
+The “buildTree” function takes in three arguments: two arrays of integers “in” and “pre” representing the inorder and preorder traversals of a binary tree, and an integer “n” representing the number of nodes in the binary tree. The function returns a pointer to the root of the binary tree constructed from these traversals.
+
+& The function first calls the “helper” function with arguments “pre”, 0, “n-1”, “in”, 0, “n-1”, and “n” to construct the binary tree. It then returns this result.
+
+* The time complexity of this function is O(n^2) since it calls the “helper” function, which has time complexity O(n^2). The space complexity is also O(n) since it uses a recursive call stack that can grow up to n levels deep.
+
+% If there are no duplicates use hashmap to store inorder traversal to get inRoot in O(1) time this will reduce T.C to O(N)
+     */
+
+public:
+    Node *helper(int pre[], int preStart, int preEnd, int in[], int inStart, int inEnd, int n)
+    {
+        if (preEnd < preStart || inEnd < inStart)
+        {
+            return NULL;
+        }
+        Node *root = new Node(pre[preStart]);
+        int inRoot = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if (in[i] == pre[preStart])
+            {
+                inRoot = i;
+                in[i] = -1;
+                break;
+            }
+        }
+        int numsLeft = inRoot - inStart;
+        root->left = helper(pre, preStart + 1, preStart + numsLeft, in, inStart, inRoot - 1, n);
+        root->right = helper(pre, preStart + numsLeft + 1, preEnd, in, inRoot + 1, inEnd, n);
+        return root;
+    }
+    Node *buildTree(int in[], int pre[], int n)
+    {
+        // Code here
+
+        Node *root = helper(pre, 0, n - 1, in, 0, n - 1, n);
+        return root;
+    }
+};
 int main()
 {
     return 0;

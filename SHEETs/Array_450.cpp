@@ -405,9 +405,33 @@ int largestSumContiguousArray(vector<int> &arr){
 // ^ 8 Minimize the maximum difference in an array
 
 /* 
-& Sort the array 
-& Try to make each height of the tower maximum by decreasing the height of all the  towers to the right by k and increasing all the height of the towers to the left by & k. Check whether the current index tower has the maximum height or not by comparing it with a[n]-k. If the tower’s height is greater than the a[n]-k then it’s the tallest tower available.
-&     Similarly, find the shortest tower and minimize the difference between these two towers.  
+
+ &   The function getMinDiff takes two arguments: a reference to a vector arr representing the tower heights, and an integer k representing the adjustment value.
+
+ &   The code first sorts the tower heights in ascending order using sort(arr.begin(), arr.end()). Sorting the array allows us to easily find the shortest and longest towers.
+
+ &   The variable minDiff is initialized as the difference between the last (maximum) and first (minimum) elements in the sorted array.
+
+&    The code then enters a loop that iterates from the second element of the array (index 1) to the last element. The purpose of this loop is to consider different arrangements by adjusting the heights using k and update the minimum difference accordingly.
+
+ &   Inside the loop, it checks if the current element minus k is greater than or equal to 0. This condition ensures that the adjustment does not result in negative heights.
+
+ &   If the condition is true, it calculates two temporary values:
+    ~    tempMax: the maximum possible height when k is subtracted from all elements from the previous element (arr[i-1]) to the last element (arr.back()).
+    ~    tempMin: the minimum possible height when k is added to all elements from the first element (arr.front()) to the current element (arr[i]).
+
+&    It then calculates the difference between tempMax and tempMin and updates minDiff if this difference is smaller than the current minDiff.
+
+ &   After the loop completes, the function returns minDiff, which represents the minimized difference between the shortest and longest tower heights achievable by adjusting the heights using k.
+
+Intuition:
+~   By sorting the tower heights, we ensure that the first and last elements represent the shortest and longest towers, respectively. The code iterates over the sorted array and considers different arrangements by adjusting the heights using k. It calculates the maximum possible height and minimum possible height based on the adjustment, and updates the minimum difference accordingly.
+
+~   The goal is to minimize the difference between the shortest and longest towers by finding the optimal arrangement with the given adjustment value k. By calculating the differences in the loop and updating minDiff, the code identifies the best possible arrangement.
+
+*   The time complexity of the code is O(n log n) due to the initial sorting operation using sort. The loop iterates over the sorted array, which has a complexity of O(n). Thus, the overall time complexity is dominated by the sorting operation.
+
+* The space complexity is O(1) as the code uses only a constant amount of additional space. 
  */
 
 //~ O(NlogN) T.C | O(1) space
@@ -447,6 +471,34 @@ bool canReachEndOfArray(vector<int> &arr){
         
     }
 }
+/* 
+    The function minJumps takes two arguments: a reference to a vector arr representing the array, and an integer n representing the size of the array.
+
+    The code first checks for special cases:
+        If the first element of the array is 0 and there is more than one element (n > 1), it means there is no way to progress, so it returns -1.
+        If the size of the array is less than 2, it means we are already at the end, so it returns 0.
+
+    The variables jumps, steps, and maxRange are initialized:
+        jumps keeps track of the minimum number of jumps.
+        steps represents the number of steps that can be taken from the current position.
+        maxRange represents the maximum range that can be reached from the current position.
+
+    The code enters a loop that iterates from index 1 to n-1 to analyze each element of the array.
+
+    Inside the loop:
+        If the current index i is equal to n-1, it means we have reached the last element, so the code returns jumps as the minimum number of jumps required to reach the end.
+        The code updates maxRange by taking the maximum between the current maxRange and the sum of the current element arr[i] and its index i. This ensures that we always consider the farthest range we can reach.
+        steps is decremented, representing one step taken from the current position.
+        If steps becomes 0, it means we have exhausted all steps from the current position. We need to make a jump to the next position, so jumps is incremented. If maxRange is less than or equal to the current index i, it means we cannot move forward anymore, so it returns -1. Otherwise, steps is updated to the difference between maxRange and i, representing the number of steps available from the new position.
+
+    If the loop completes without encountering a return statement, it means we were unable to reach the last element, so it returns -1.
+
+Intuition:
+The code uses a greedy approach to find the minimum number of jumps required to reach the end of the array. It maintains a maxRange that represents the farthest position we can reach from the current position. By decrementing steps and checking when it becomes 0, the code determines when a jump is necessary. It ensures that the next jump is always made to the position that can reach the farthest range (maxRange). This approach guarantees the minimum number of jumps to reach the end.
+
+The time complexity of the code is O(n) since it iterates over the array once.
+The space complexity is O(1) as the code uses only a constant amount of additional space.
+ */
 int minJumps(vector<int> &arr, int n){
         
         if(arr[0] == 0 && n>1)return -1;
@@ -573,10 +625,10 @@ void mergeArray(vector<int> &A, vector<int> &B){
     int k=0;
     while (i<A.size() && j<B.size()) 
     {
-        if(A[i] > B[i]){
+        if(A[i] > B[j]){
             C[k++] = B[j++];
         }
-        else if(A[i] <= B[i])
+        else if(A[i] <= B[j])
         {
             C[k++] = A[i++];
         }

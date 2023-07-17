@@ -10,7 +10,10 @@
         "utility": "cpp",
         "valarray": "cpp",
         "functional": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "chrono": "cpp",
+        "random": "cpp",
+        "limits": "cpp"
     },
     "cSpell.words": [
         "getnode",

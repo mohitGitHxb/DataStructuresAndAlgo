@@ -1304,6 +1304,115 @@ public:
         return root;
     }
 };
+//^ 26 Construct Binary tree from inorder and postorder traversal
+class BuildTree_2
+{
+private:
+public:
+    TreeNode *helper(vector<int> &postorder, vector<int> &inorder, unordered_map<int, int> &mp, int postStart, int postEnd, int inStart, int inEnd)
+    {
+
+        if (postStart > postEnd || inStart > inEnd)
+        {
+            return nullptr;
+        }
+        TreeNode *root = new TreeNode(postorder[postEnd]);
+        int inRoot = mp[root->val];
+        int numsLeft = inRoot - inStart;
+
+        root->left = helper(postorder, inorder, mp, postStart, postStart + numsLeft - 1, inStart, inStart + numsLeft - 1);
+        root->right = helper(postorder, inorder, mp, postStart + numsLeft, postEnd - 1, inStart + numsLeft + 1, inEnd);
+        return root;
+    }
+    TreeNode *buildTree(vector<int> &inorder, vector<int> &postorder)
+    {
+        unordered_map<int, int> mp;
+        for (int i = 0; i < inorder.size(); i++)
+        {
+            mp[inorder[i]] = i;
+        }
+        return helper(postorder, inorder, mp, 0, postorder.size() - 1, 0, inorder.size() - 1);
+    }
+};
+
+//^ Morris traversals [inorder,postorder,preorder];
+
+class MorrisTraversals
+{
+private:
+public:
+    vector<int> morrisInorder(TreeNode *root)
+    {
+        vector<int> inorder;
+        TreeNode *curr = root;
+        while (curr)
+        {
+            if (!curr->left)
+            {
+                inorder.emplace_back(curr->val);
+                curr = curr->right;
+            }
+            else
+            {
+                TreeNode *prev = curr->left;
+                while (prev->right && prev->right != curr)
+                {
+                    prev = prev->right;
+                }
+                if (!prev->right)
+                {
+                    prev->right = curr;
+                    curr = curr->left;
+                }
+                if (prev->right == curr)
+                {
+                    prev->right = nullptr;
+                    inorder.emplace_back(curr->val);
+                    curr = curr->right;
+                }
+            }
+        }
+        return inorder;
+    }
+
+    vector<int> morrisPreorder(TreeNode *root)
+    {
+        vector<int> preorder;
+        TreeNode *curr = root;
+        while (curr)
+        {
+            if (!curr->left)
+            {
+                preorder.emplace_back(curr->val);
+                curr = curr->right;
+            }
+            else
+            {
+                TreeNode *prev = curr->left;
+                while (prev->right && prev->right != curr)
+                {
+                    prev = prev->right;
+                }
+                if (!prev->right)
+                {
+                    prev->right = curr;
+                    preorder.emplace_back(curr);
+                    curr = curr->left;
+                }
+                else
+                {
+                    prev->right = nullptr;
+                    curr = curr->right;
+                }
+            }
+        }
+        return preorder;
+    }
+
+    vector<int> morrisPostorder(TreeNode* root){
+        
+    }
+};
 int main()
 {
     return 0;

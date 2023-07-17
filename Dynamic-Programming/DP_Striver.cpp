@@ -541,8 +541,11 @@ public:
 
                 for (int task = 0; task < 3; task++)
                 {
-                    int point = points[day][task] + dp[day - 1][task];
-                    dp[day][last] = max(dp[day][task], point);
+                    if (task != last)
+                    {
+                        int point = points[day][task] + dp[day - 1][task];
+                        dp[day][last] = max(dp[day][last], point);
+                    }
                 }
             }
         }
@@ -3333,6 +3336,259 @@ public:
             }
         }
         return dp.back().back();
+    }
+};
+
+//^ DP on Stocks
+//^ buy and sell stocks [infinite transactions]
+class stockSell2
+{
+public:
+    /*
+    @ Recursive
+     */
+    int getMaxProfit(vector<int> &arr, int ind, bool buy)
+    {
+        if (ind == (arr).size())
+        {
+            return 0;
+        }
+
+        int profit = 0;
+        if (buy)
+        {
+            int take = -arr[ind] + getMaxProfit(arr, ind + 1, !buy);
+            int notTake = getMaxProfit(arr, ind + 1, buy);
+            profit = max(take, notTake);
+        }
+        else
+        {
+            int sell = arr[ind] + getMaxProfit(arr, ind + 1, !buy);
+            int notSell = getMaxProfit(arr, ind + 1, buy);
+            profit = max(sell, notSell);
+        }
+        return profit;
+    }
+    /*
+    @ Memoization
+     */
+    int getMaxProfit(vector<int> &arr, int ind, bool buy, vector<vector<int>> &dp)
+    {
+        if (ind == (arr).size())
+        {
+            return 0;
+        }
+
+        int profit = 0;
+        if (dp[ind][buy] != -1)
+        {
+            return dp[ind][buy];
+        }
+        if (buy)
+        {
+            int take = -arr[ind] + getMaxProfit(arr, ind + 1, !buy, dp);
+            int notTake = getMaxProfit(arr, ind + 1, buy, dp);
+            profit = max(take, notTake);
+        }
+        else
+        {
+            int sell = arr[ind] + getMaxProfit(arr, ind + 1, !buy, dp);
+            int notSell = getMaxProfit(arr, ind + 1, buy, dp);
+            profit = max(sell, notSell);
+        }
+        return dp[ind][buy] = profit;
+    }
+    /*
+    @ Tabulation
+
+     */
+    int getMaxProfit_tabulation(vector<int> &arr)
+    {
+        vector<vector<int>> dp(arr.size(), vector<int>(2, 0));
+        for (int ind = arr.size() - 2; ind >= 0; ind--)
+        {
+            for (int buy = 0; buy < 2; buy++)
+            {
+                int profit = 0;
+                if (buy)
+                {
+                    int take = -arr[ind] + dp[ind + 1][1];
+                    int notTake = dp[ind + 1][0];
+                    profit = max(take, notTake);
+                }
+                else
+                {
+                    int sell = arr[ind] + dp[ind + 1][1];
+                    int notSell = dp[ind + 1][0];
+                    profit = max(sell, notSell);
+                }
+                dp[ind][buy] = profit;
+            }
+        }
+        return dp[0][1];
+    }
+};
+
+//^ Stock sell 3 [two transactions]
+class StockSell3
+{
+public:
+    /*
+    @ Recursion
+     */
+    int getProfit(vector<int> &prices, int i, bool buy, int cap)
+    {
+        if (i == prices.size())
+        {
+            return 0;
+        }
+
+        int profit = 0;
+        if (buy)
+        {
+            int take = -1e8, notTake = -1e8;
+            if (cap > 0)
+            {
+                take = -prices[i] + getProfit(prices, i + 1, false, cap - 1);
+            }
+            notTake = getProfit(prices, i + 1, true, cap);
+            profit = max(take, notTake);
+        }
+        else
+        {
+            int sell = prices[i] + getProfit(prices, i + 1, true, cap);
+            int notSell = getProfit(prices, i + 1, false, cap);
+            profit = max(sell, notSell);
+        }
+        return profit;
+    }
+    /*
+    @ Memoization
+
+     */
+    int getProfit(vector<int> &prices, int i, bool buy, int cap, vector<vector<vector<int>>> &dp)
+    {
+        if (i == prices.size())
+        {
+            return 0;
+        }
+        if (dp[i][buy][cap] != -1)
+        {
+            return dp[i][buy][cap];
+        }
+        int profit = 0;
+        if (buy)
+        {
+            int take = -1e8, notTake = -1e8;
+            if (cap > 0)
+            {
+                take = -prices[i] + getProfit(prices, i + 1, false, cap - 1, dp);
+            }
+            notTake = getProfit(prices, i + 1, true, cap, dp);
+            profit = max(take, notTake);
+        }
+        else
+        {
+            int sell = prices[i] + getProfit(prices, i + 1, true, cap, dp);
+            int notSell = getProfit(prices, i + 1, false, cap, dp);
+            profit = max(sell, notSell);
+        }
+        return dp[i][buy][cap] = profit;
+    }
+    /*
+    @ Tabulation
+     */
+    int getProfit_tabu(vector<int> &prices)
+    {
+        vector<vector<vector<int>>> dp(prices.size() + 1, vector<vector<int>>(2, vector<int>(3)));
+
+        for (int i = prices.size() - 1; i >= 0; i--)
+        {
+            for (int buy = 0; buy <= 1; buy++)
+            {
+                for (int cap = 1; cap <= 2; cap++)
+                {
+                    if (buy)
+                    {
+                        int take = -prices[i] + dp[i + 1][0][cap];
+                        int notTake = dp[i + 1][1][cap];
+                        dp[i][buy][cap] = max(take, notTake);
+                    }
+                    else
+                    {
+                        int sell = prices[i] + dp[i + 1][1][cap - 1];
+                        int notSell = dp[i + 1][0][cap];
+                        dp[i][buy][cap] = max(sell, notSell);
+                    }
+                }
+            }
+        }
+        return dp[0][1][2];
+    }
+
+    /*
+    @ Space optimization
+
+     */
+    int getProfit_optimized(vector<int> &prices)
+    {
+        vector<vector<int>> after(2, vector<int>(3));
+        vector<vector<int>> curr(2, vector<int>(3));
+
+        for (int i = prices.size() - 1; i >= 0; i--)
+        {
+            for (int buy = 0; buy <= 1; buy++)
+            {
+                for (int cap = 1; cap <= 2; cap++)
+                {
+                    if (buy)
+                    {
+                        int take = -prices[i] + after[0][cap];
+                        int notTake = after[1][cap];
+                        curr[buy][cap] = max(take, notTake);
+                    }
+                    else
+                    {
+                        int sell = prices[i] + after[1][cap - 1];
+                        int notSell = after[0][cap];
+                        curr[buy][cap] = max(sell, notSell);
+                    }
+                }
+                after = curr;
+            }
+        }
+        return after[1][2];
+    }
+    /*
+    @ Godlike
+
+     */
+    int getProfit_godlike(vector<int> &prices)
+    {
+        vector<vector<int>> curr(2, vector<int>(3));
+
+        for (int i = prices.size() - 1; i >= 0; i--)
+        {
+            for (int buy = 1; buy >= 0; buy--)
+            {
+                for (int cap = 2; cap >= 1; cap--)
+                {
+                    if (buy)
+                    {
+                        int take = -prices[i] + curr[0][cap];
+                        int notTake = curr[1][cap];
+                        curr[buy][cap] = max(take, notTake);
+                    }
+                    else
+                    {
+                        int sell = prices[i] + curr[1][cap - 1];
+                        int notSell = curr[0][cap];
+                        curr[buy][cap] = max(sell, notSell);
+                    }
+                }
+            }
+        }
+        return curr[1][2];
     }
 };
 int main(int argc, char const *argv[])

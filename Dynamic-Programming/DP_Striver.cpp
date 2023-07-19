@@ -3591,6 +3591,498 @@ public:
         return curr[1][2];
     }
 };
+
+//^ stock selling with a cooldown [Maximum profit with a cooldown of 1 day kind of similar like house robber problem]
+
+class StockSellWithCooldown
+{
+private:
+public:
+    /*
+    @ Memoization
+     */
+    int f(int i, int buy, vector<int> &prices, vector<vector<int>> &dp)
+    {
+        if (i >= prices.size())
+        {
+            return 0;
+        }
+        if (dp[i][buy] != -1)
+            return dp[i][buy];
+        int profit = 0;
+        if (buy)
+        {
+            profit = max(-prices[i] + f(i + 1, 0, prices, dp), f(i + 1, 1, prices, dp));
+        }
+        else
+        {
+            profit = max(prices[i] + f(i + 2, 1, prices, dp), f(i + 1, 0, prices, dp));
+        }
+        return dp[i][buy] = profit;
+    }
+
+    /*
+
+    @ tabulation
+     */
+    int maxProfit_tabulation(vector<int> &prices)
+    {
+        int n = prices.size();
+        vector<vector<int>> dp(n + 2, vector<int>(2));
+        for (int i = n - 1; i >= 0; i--)
+        {
+            for (int j = 0; j <= 1; j++)
+            {
+                if (j)
+                {
+                    dp[i][j] = max(-prices[i] + dp[i + 1][0], dp[i + 1][1]);
+                }
+                else
+                {
+                    dp[i][j] = max(prices[i] + dp[i + 2][1], dp[i + 1][0]);
+                }
+            }
+        }
+        return dp[0][1];
+    }
+
+    /*
+
+    @ Space optimized
+
+     */
+    int maxProfit_optimized(vector<int> &prices)
+    {
+        int n = prices.size();
+        vector<int> ahead1(n + 2), ahead2(n + 2), curr(n + 2);
+        for (int i = n - 1; i >= 0; i--)
+        {
+            curr[1] = max(-prices[i] + ahead1[0], ahead1[1]);
+            curr[0] = max(prices[i] + ahead2[1], ahead1[0]);
+            ahead2 = ahead1;
+            ahead1 = curr;
+        }
+        return ahead1[1];
+    }
+};
+
+//^ Longest Increasing Subsequence
+class LIS
+{
+private:
+    /*
+    ! First 4 solutions are mine the next following solutions are from striver's video!!!
+     */
+public:
+    /*
+    @ Recursion
+&    The function first checks if the current index is valid. If it is not, it returns 0. It then initializes a variable take to a very small negative value and calls itself recursively with the previous index and the same previous index to calculate the result if the current element is not included in the subsequence (notTake).
+
+&   If the previous index is equal to the size of the input vector, it means that this is the first element being considered for inclusion in the subsequence. In this case, it updates the value of take as 1 plus the result of calling itself recursively with the previous index and the current index. If the previous index is not equal to the size of the input vector and the current element is smaller than the element at the previous index, it also updates the value of take as 1 plus the result of calling itself recursively with the previous index and the current index.
+
+Finally, it returns the maximum of take and notTake.
+
+!   The time complexity of this function is O(2^n), where n is the length of the input vector, because in the worst case, it needs to explore all possible subsequences of the input vector. The space complexity is O(n), because it needs to store the recursive call stack.
+     */
+    int LongestIncreasingSubsequence(int ind, int prevInd, vector<int> &arr)
+    {
+        if (ind < 0)
+        {
+            return 0;
+        }
+        int take = -1e8;
+
+        int notTake = LongestIncreasingSubsequence(ind - 1, prevInd, arr);
+        if (prevInd == arr.size())
+        {
+
+            take = 1 + LongestIncreasingSubsequence(ind - 1, ind, arr);
+        }
+
+        else if (arr[ind] < arr.at(prevInd))
+        {
+            take = 1 + LongestIncreasingSubsequence(ind - 1, ind, arr);
+        }
+
+        return max(take, notTake);
+    }
+
+    /*
+
+    @ Memoization
+&   The function first checks if the current index is valid. If it is not, it returns 0. It then initializes a variable take to a very small negative value and calls itself recursively with the previous index and the same previous index to calculate the result if the current element is not included in the subsequence (notTake).
+
+&   If the result for the current indices has already been calculated, it returns it. Otherwise, if the previous index is equal to the size of the input vector, it means that this is the first element being considered for inclusion in the subsequence. In this case, it updates the value of take as 1 plus the result of calling itself recursively with the previous index and the current index. If the previous index is not equal to the size of the input vector and the current element is smaller than the element at the previous index, it also updates the value of take as 1 plus the result of calling itself recursively with the previous index and the current index.
+
+Finally, it calculates and stores the result as the maximum of take and notTake and returns it.
+
+* The time complexity of this function is O(n^2), where n is the length of the input vector, because it needs to fill all entries in the dp vector. The space complexity is also O(n^2), because it needs to store the dp vector.
+     */
+    int LongestIncreasingSubsequence_memo(int ind, int prevInd, vector<int> &arr, vector<vector<int>> &dp)
+    {
+        if (ind < 0)
+        {
+            return 0;
+        }
+        int take = -1e8;
+        int notTake = LongestIncreasingSubsequence_memo(ind - 1, prevInd, arr, dp);
+
+        if (dp[ind][prevInd] != -1)
+            return dp[ind][prevInd];
+        if (prevInd == arr.size())
+        {
+            take = 1 + LongestIncreasingSubsequence_memo(ind - 1, ind, arr, dp);
+        }
+
+        else if (arr[ind] < arr.at(prevInd))
+        {
+
+            take = 1 + LongestIncreasingSubsequence_memo(ind - 1, ind, arr, dp);
+        }
+
+        return dp[ind][prevInd] = max(take, notTake);
+    }
+
+    /*
+    @ Tabulation
+&    The function creates a 2D vector dp to store the intermediate results and iterates through each element in the input vector and each possible previous index. It initializes a variable take to a very small negative value and calculates the result if the current element is not included in the subsequence (notTake) as the value in the dp vector for the previous element and the same previous index.
+
+&   If the previous index is equal to the size of the input vector, it means that this is the first element being considered for inclusion in the subsequence. In this case, it updates the value of take as 1 plus the value in the dp vector for the previous element and the current index. If the previous index is not equal to the size of the input vector and the current element is smaller than the element at the previous index, it also updates the value of take as 1 plus the value in the dp vector for the previous element and the current index.
+
+&   Finally, it updates the value in the dp vector for the current element and previous index as the maximum of take and notTake.
+
+*   The time complexity of this function is O(n^2), where n is the length of the input vector, because it needs to fill all entries in the dp vector. The space complexity is also O(n^2), because it needs to store the dp vector.
+     */
+    int lengthOfLIS(vector<int> &nums)
+    {
+        vector<vector<int>> dp(nums.size() + 1, vector<int>(nums.size() + 2));
+
+        for (int i = 1; i <= nums.size(); i++)
+        {
+            for (int j = 1; j <= nums.size() + 1; j++)
+            {
+                int take = -1e8;
+                int notTake = dp[i - 1][j];
+                if (j - 1 == nums.size())
+                {
+                    take = 1 + dp[i - 1][i];
+                }
+                else if (nums[i - 1] < nums[j - 1])
+                {
+                    take = 1 + dp[i - 1][i];
+                }
+                dp[i][j] = max(take, notTake);
+            }
+        }
+        return dp[nums.size()][nums.size() + 1];
+    }
+    /*
+    @ Space optimized
+     */
+    int lengthOfLIS(vector<int> &nums)
+    {
+        vector<int> prev(nums.size() + 2), curr(nums.size() + 2);
+
+        for (int i = 1; i <= nums.size(); i++)
+        {
+            for (int j = 1; j <= nums.size() + 1; j++)
+            {
+                int take = -1e8;
+                int notTake = prev[j];
+                if (j - 1 == nums.size())
+                {
+                    take = 1 + prev[i];
+                }
+                else if (nums[i - 1] < nums[j - 1])
+                {
+                    take = 1 + prev[i];
+                }
+                curr[j] = max(take, notTake);
+            }
+            prev = curr;
+        }
+        return prev[nums.size() + 1];
+    }
+
+    /*
+
+    @ Tabulation type with a single row
+    ~ Use this to print the LIS
+    ~ hash array is used to store index which can be further used to find the LIS
+
+
+&   1. Initialize a dynamic programming array `dp` of size `n` and set all elements to &   1. This array will store the lengths of the longest increasing subsequences ending at each index.
+
+&   2. Initialize a variable `maxi` to keep track of the maximum length of the increasing subsequence found so far. Set `maxi` to 1 initially, as the minimum length of an increasing subsequence is 1.
+
+&   3. Iterate over each element in the array `a[]` starting from index 0:
+
+   a. For each element at index `i`, iterate over all the previous elements at indices `j` such that `j` is less than `i`.
+
+   b. Compare the current element `a[j]` with the element `a[i]`. If `a[j]` is less than `a[i]`, it means that we can extend the increasing subsequence ending at index `j` by including `a[i]` as well.
+
+   c. Update the length of the increasing subsequence ending at index `i` in the `dp` array. The length is calculated as the maximum of two values: `1 + dp[j]` (length of the subsequence ending at index `j` plus the current element `a[i]`) and the current value of `dp[i]`. This ensures that we choose the maximum length among all possible subsequences ending at index `i`.
+
+   d. Update `maxi` with the maximum value between `maxi` and the updated `dp[i]` to keep track of the maximum length found so far.
+
+&   4. After processing all elements, `maxi` will contain the length of the longest increasing subsequence in the array.
+
+~ The intuition behind the code is that it iterates through each element of the array and for each element, checks all the previous elements to find the longest increasing subsequence that ends at that element. By storing the lengths in the `dp` array, the code avoids recalculating the lengths of the subsequences multiple times.
+
+ ~ The time complexity of the code is O(n^2) since it uses a nested loop to iterate over all pairs of elements. The space complexity is O(n) since it uses an additional array `dp` of size `n` to store the lengths of the subsequences.
+     */
+    int longestSubsequence(int n, int a[])
+    {
+        vector<int> dp(n, 1);
+        vector<int> hash(n); // to print LIS
+        int maxi = 1;
+        int lastIndex = 0;
+        for (int i = 0; i < n; i++)
+        {
+            hash.at(i) = i;
+            for (int j = 0; j < i; j++)
+            {
+                // if (a[j] < a[i])
+                // {
+                //     dp[i] = max(1 + dp[j], dp[i]);
+                // }
+                if (a[j] < a[i] && 1 + dp[j] > dp[i])
+                {
+                    dp[i] = 1 + dp[j];
+                    hash.at(i) = j;
+                }
+            }
+
+            if (dp.at(i) > maxi)
+            {
+                maxi = dp.at(i);
+                lastIndex = i;
+            }
+            maxi = max(maxi, dp[i]);
+        }
+        vector<int> temp;
+        temp.emplace_back(a[lastIndex]);
+        while (hash[lastIndex] != lastIndex)
+        {
+            lastIndex = hash[lastIndex];
+            temp.push_back(a[lastIndex]);
+        }
+        reverse(temp.begin(), temp.end());
+        //? print the temp vector it stores the LIS
+        return maxi;
+    }
+    /*
+    @ Simplified version of above
+     */
+    int lengthOfLIS(vector<int> &v)
+    {
+
+        const int n = v.size();
+
+        vector<int> dp(n, 1);
+
+        int res = -1;
+
+        for (int i = 0; i < n; ++i)
+        {
+
+            for (int prev = 0; prev < i; prev++)
+            {
+
+                if (v[i] > v[prev])
+                {
+
+                    dp[i] = max(dp[i], 1 + dp[prev]);
+                }
+            }
+
+            res = max(res, dp[i]);
+        }
+
+        int mx = res;
+
+        vector<int> lis;
+
+        for (int i = n - 1; i >= 0; --i)
+        {
+
+            if (dp[i] == mx)
+            {
+
+                lis.emplace_back(v[i]);
+
+                mx--;
+            }
+        }
+
+        reverse(begin(lis), end(lis));
+
+        for (auto &it : lis)
+            cout << it << " ";
+
+        cout << "\n";
+
+        return res;
+    }
+    /*
+    @ Using LCS approach
+    %  We can store the elements of the array without duplicates in increasing order (Can be easily done with the help of TreeSet in java or set in cpp). Then again store these elements in a new array and find the LCS of the original array and the newly computed array. The LCS of these 2 arrays will be the LIS. For printing the LIS, we can use the same approach used for printing LCS.
+     */
+    /*
+    @ BEST APPROACH using Binary Search (lower_bound)
+&    The function initializes a variable maxi to store the maximum length of the increasing subsequence and a vector dp to store the intermediate results. It then iterates through each element in the input array and uses the lower_bound function to find the first element in the dp vector that is greater than or equal to the current element. If such an element is not found, it means that the current element is greater than all elements in the dp vector and can be added to the end of the longest increasing subsequence. In this case, it adds the current element to the end of the dp vector.
+
+&   If such an element is found, it means that the current element can be used to update an existing subsequence. In this case, it calculates the index of the found element and updates its value with the current element. It then updates the value of maxi as the maximum of its current value and the size of the dp vector.
+
+*The time complexity of this function is O(n * log n), where n is the length of the input array, because it needs to iterate through all elements in the input array and use binary search to find the first element in the dp vector that is greater than or equal to the current element. The space complexity is O(n), because it needs to store the dp vector.
+    * O(NlogN) T.C || O(N) S.C
+     */
+    int longestSubsequence(int n, int a[])
+    {
+        int maxi = 1;
+        vector<int> dp;
+        for (int i = 0; i < n; i++)
+        {
+            auto it = lower_bound(dp.begin(), dp.end(), a[i]);
+            if (it == dp.end())
+            {
+                dp.emplace_back(a[i]);
+            }
+            else
+            {
+                int ind = it - dp.begin();
+                dp.at(ind) = a[i];
+            }
+            maxi = max(maxi, (int)dp.size());
+        }
+        return maxi;
+    }
+};
+//^ Largest divisible subset (LIS)
+class LDS
+{
+public: /*
+        @ Recursion approach [dp array wasn't used in this]
+        ! Exponential T.C | O(N) Extra space
+  */
+    void f(int ind, int prevInd, vector<int> &nums, vector<vector<int>> &dp, vector<int> &ans, vector<int> &ds)
+    {
+        if (ind >= nums.size())
+        {
+            if (ds.size() > ans.size())
+                ans = ds;
+            return;
+        }
+        f(ind + 1, prevInd, nums, dp, ans, ds);
+        if (prevInd == -1)
+        {
+            ds.emplace_back(nums[ind]);
+            f(ind + 1, ind, nums, dp, ans, ds);
+            ds.pop_back();
+        }
+        else if (nums[ind] % nums[prevInd] == 0)
+        {
+            ds.emplace_back(nums[ind]);
+            f(ind + 1, ind, nums, dp, ans, ds);
+            ds.pop_back();
+        }
+    }
+    vector<int> largestDivisibleSubset(vector<int> &nums)
+    {
+        sort(nums.begin(), nums.end());
+        int n = nums.size();
+        vector<vector<int>> dp(n, vector<int>(n, -1));
+        vector<int> ans;
+        vector<int> ds;
+        f(0, -1, nums, dp, ans, ds);
+        return ans;
+    }
+
+    /*
+    @ Using LIS Method
+
+    * O(n^2) T.C | O(n) S.C
+     */
+    vector<int> lds(vector<int> &nums)
+    {
+        sort(nums.begin(), nums.end());
+        int n = nums.size(), maxIndex = 0, ans = INT_MIN;
+        vector<int> dp(n, 1), parent(n, -1), sol; //? dp[i] = maxLength of subset till ith index & parent[i] is used to store the index of element included before we include ith element
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                if ((nums[j] % nums[i] == 0 || nums[i] % nums[j] == 0) && dp[i] < dp[j] + 1)
+                {
+                    dp[i] = dp[j] + 1;
+                    parent[i] = j;
+                }
+            }
+            if (dp[i] > ans)
+            { //? update ans and index of last element included when larger subset found
+                ans = dp[i];
+                maxIndex = i;
+            }
+        }
+        while (maxIndex != -1)
+        { //? push the subset element one by one
+            sol.push_back(nums[maxIndex]);
+            maxIndex = parent[maxIndex];
+        }
+        return sol;
+    }
+};
+
+//^ Longest string chain
+class LSC
+{
+public:
+    static bool comp(string &s1, string &s2)
+    {
+        return s1.size() < s2.size();
+    }
+    bool compare(string &s, string &t)
+    {
+        int n = s.size(), m = t.size();
+        if (n + 1 != m)
+            return false;
+        int i = 0, j = 0;
+        while (i < n && j < m)
+        {
+            if (s[i] != t[j])
+            {
+                if (j - i == 1)
+                    return false;
+                j++;
+            }
+            else
+            {
+                i++;
+                j++;
+            }
+        }
+        return j - i <= 1;
+    }
+    int longestStrChain(vector<string> &words)
+    {
+        const int n = words.size();
+        vector<int> dp(n, 1);
+        sort(words.begin(), words.end(), comp);
+        int maxi = 1;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                if (compare(words[j], words[i]) && 1 + dp[j] > dp[i])
+                {
+                    dp[i] = 1 + dp[j];
+                }
+            }
+            maxi = max(maxi, dp[i]);
+        }
+        return maxi;
+    }
+};
 int main(int argc, char const *argv[])
 {
 

@@ -344,11 +344,11 @@ int kthSmallestMatrix(vector<vector<int>> &mat, int N, int K)
 class KthSmallestMatrix
 {
 private:
-/* 
-& using binary search just like in median of row wise sorted matrix , we maintain two values (startVal and endVal) and we find a value between startVal and endVal such that the number of elements less than this value = k-1, shift the range to right side if ans(elements less than startVal) is smaller than k and shift to left side if ans(elements greater than startVal) is greater than k
+    /*
+    & using binary search just like in median of row wise sorted matrix , we maintain two values (startVal and endVal) and we find a value between startVal and endVal such that the number of elements less than this value = k-1, shift the range to right side if ans(elements less than startVal) is smaller than k and shift to left side if ans(elements greater than startVal) is greater than k
 
-    * O(NlogNlogN) T.C | O(1) S.C
- */
+        * O(NlogNlogN) T.C | O(1) S.C
+     */
 public:
     int binarySEARCH(vector<vector<int>> &arr, int n, int i, int midVal)
     {
@@ -396,27 +396,31 @@ public:
     }
 };
 
-
 //^ 8 Common elements in every row of the matrix
 
-/* 
+/*
 
  & The idea is to use maps. We initially insert all elements of the first row in an map. For every other element in remaining rows, we check if it is present in the map. If it is present in the map and is not duplicated in current row, we increment count of the element in map by 1, else we ignore the element. If the currently traversed row is the last row, we print the element if it has appeared m-1 times before. 
 
  *O(R*C) T.C | O(C) space
  */
-vector<int> commonElements(vector<vector<int>> &mat){
+vector<int> commonElements(vector<vector<int>> &mat)
+{
     vector<int> ans;
     unordered_map<int, int> mp;
     //? storing the first row of matrix in a hashmap
-    for(auto &col : mat.front())
+    for (auto &col : mat.front())
         mp[col] = 1; //? initializing all occurrences as 1 to avoid duplicacy
-    
-    for(int i = 1; i < mat.size(); i++){
-        for (int j = 0; j < mat.front().size(); j++) {
-            if(mp[mat[i][j]] == i){ //? checking if the element has been present in all the rows before current row_num
+
+    for (int i = 1; i < mat.size(); i++)
+    {
+        for (int j = 0; j < mat.front().size(); j++)
+        {
+            if (mp[mat[i][j]] == i)
+            {                          //? checking if the element has been present in all the rows before current row_num
                 mp[mat[i][j]] = i + 1; //? incrementing the occurrence by 1
-                if(i == mat.size()-1 && mp[mat[i][j]] == mat.size()){ //? element is common in all rows
+                if (i == mat.size() - 1 && mp[mat[i][j]] == mat.size())
+                { //? element is common in all rows
                     ans.push_back(mat[i][j]);
                 }
             }
@@ -425,139 +429,150 @@ vector<int> commonElements(vector<vector<int>> &mat){
     return ans;
 }
 
-//^ 9 Largest rectancle in a binary matrix 
-class LargestRectangleInBinaryMatrix{
-  private:
-  /* 
-  & The idea is to use three different problems 
-  & 1. next smaller elements
-  & 2. previous smaller elements
-  & 3. Largest area of histogram
+//^ 9 Largest rectancle in a binary matrix
+class LargestRectangleInBinaryMatrix
+{
+private:
+    /*
+    & The idea is to use three different problems
+    & 1. next smaller elements
+    & 2. previous smaller elements
+    & 3. Largest area of histogram
 
-  & these three problems are solved in stack.cpp 
+    & these three problems are solved in stack.cpp
 
-  & Now, we find the area of first row of the matrix by using the function3(largest area of histogram), Now we start finding  the area of remaining rows of the matrix by adding the current row to the histogram i.e (histogram[col_num] = matrix[row_num][col_num] == 0 ? 0 : matrix[row_num][col_num] + histogram[col_num]) , and we keep updating the maximum area. The main part of this problem is the function3. For largest area of histogram we make use of the function1 and function2
+    & Now, we find the area of first row of the matrix by using the function3(largest area of histogram), Now we start finding  the area of remaining rows of the matrix by adding the current row to the histogram i.e (histogram[col_num] = matrix[row_num][col_num] == 0 ? 0 : matrix[row_num][col_num] + histogram[col_num]) , and we keep updating the maximum area. The main part of this problem is the function3. For largest area of histogram we make use of the function1 and function2
 
-  *O(Row * Col) | O(col) space
-   */
-  public:
-  vector<int> nextSmaller(vector<int> &heights){
-    // if(heights.size() < 1)return heights.size();
-    stack<int> stk;
-    vector<int> res;
-    stk.push(-1);
-    for (int i = heights.size()-1; i>=0; i--) {
-        while(!stk.empty() && heights[stk.top()] >= heights[i])
-            stk.pop();
-        if(stk.empty()){
-            res.push_back(-1);
+    *O(Row * Col) | O(col) space
+     */
+public:
+    vector<int> nextSmaller(vector<int> &heights)
+    {
+        // if(heights.size() < 1)return heights.size();
+        stack<int> stk;
+        vector<int> res;
+        stk.push(-1);
+        for (int i = heights.size() - 1; i >= 0; i--)
+        {
+            while (!stk.empty() && heights[stk.top()] >= heights[i])
+                stk.pop();
+            if (stk.empty())
+            {
+                res.push_back(-1);
+            }
+            else
+            {
+                res.push_back(stk.top());
+            }
+            stk.push(i);
         }
-        else{
-            res.push_back(stk.top());
-        }
-        stk.push(i);
+        reverse(res.begin(), res.end());
+        return res;
     }
-    reverse(res.begin(),res.end());
-    return res;
-} 
 
-vector<int> prevSmaller(vector<int> &heights){
-    stack<int> stk;
-    vector<int> res;
-    stk.push(-1);
-    for (int i = 0; i < heights.size(); i++) {
-        while(!stk.empty() && heights[stk.top()] >= heights[i])
-            stk.pop();
-        if(stk.empty()){
-            res.push_back(-1);
+    vector<int> prevSmaller(vector<int> &heights)
+    {
+        stack<int> stk;
+        vector<int> res;
+        stk.push(-1);
+        for (int i = 0; i < heights.size(); i++)
+        {
+            while (!stk.empty() && heights[stk.top()] >= heights[i])
+                stk.pop();
+            if (stk.empty())
+            {
+                res.push_back(-1);
+            }
+            else
+            {
+                res.push_back(stk.top());
+            }
+            stk.push(i);
         }
-        else{
-            res.push_back(stk.top());
-        }
-        stk.push(i);
+        return res;
     }
-    return res;
-}
 
-int largestRectHistogram(vector<int> &heights){
-    vector<int> next = nextSmaller(heights);
-    vector<int> prev = prevSmaller(heights);
-    int length,breadth,area=INT_MIN;
-    for(int i = 0; i < heights.size(); i++){
-        length = heights[i];
-        if(next[i] == -1){
-            next[i] = heights.size();
+    int largestRectHistogram(vector<int> &heights)
+    {
+        vector<int> next = nextSmaller(heights);
+        vector<int> prev = prevSmaller(heights);
+        int length, breadth, area = INT_MIN;
+        for (int i = 0; i < heights.size(); i++)
+        {
+            length = heights[i];
+            if (next[i] == -1)
+            {
+                next[i] = heights.size();
+            }
+            breadth = next[i] - prev[i] - 1;
+            area = max(area, length * breadth);
         }
-        breadth = next[i] - prev[i] - 1;
-        area = max(area,length*breadth);
+        // cout << area<< "\n";
+        return area;
     }
-    // cout << area<< "\n";
-    return area;
-}
-    int maxArea(int M[100][100], int n, int m) {
-        vector<int> histogram(m); 
-        for(int j = 0; j < m; j++)
+    int maxArea(int M[100][100], int n, int m)
+    {
+        vector<int> histogram(m);
+        for (int j = 0; j < m; j++)
             histogram[j] = M[0][j];
-            
-        int maximumArea = largestRectHistogram(histogram);  //? get the maximum area of 1st row/level
-        
-        for(int i = 1; i < n; i++){
-            for(int j = 0; j < m; j++)
-            histogram[j]=(M[i][j] == 0)?0:(M[i][j]+histogram[j]); //? taking care of M[i][j] == 0 because if the base of histogram is 0 then the whole histogram collapses(building with base removed if that makes sense) 
-            maximumArea = max(maximumArea,largestRectHistogram(histogram)); 
-            
+
+        int maximumArea = largestRectHistogram(histogram); //? get the maximum area of 1st row/level
+
+        for (int i = 1; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+                histogram[j] = (M[i][j] == 0) ? 0 : (M[i][j] + histogram[j]); //? taking care of M[i][j] == 0 because if the base of histogram is 0 then the whole histogram collapses(building with base removed if that makes sense)
+            maximumArea = max(maximumArea, largestRectHistogram(histogram));
         }
         return maximumArea;
-        
     }
 };
-
 
 //^ 10 find the maximum difference : mat[c][d] - mat[a][b] such that c > a & d > b
 
 int findMaxValue(vector<vector<int>> &mat)
 {
     int N = mat.size();
-	//stores maximum value
-	int maxValue = INT_MIN;
+    // stores maximum value
+    int maxValue = INT_MIN;
 
-	// maxMatrix[i][j] stores max of elements in matrix
-	// from (i, j) to (N-1, N-1)
-	int maxMatrix[mat.size()][mat.front().size()];
+    // maxMatrix[i][j] stores max of elements in matrix
+    // from (i, j) to (N-1, N-1)
+    int maxMatrix[mat.size()][mat.front().size()];
 
-	// last element of maxMatrix will be same's as of
-	// the input matrix
-	maxMatrix[N-1][N-1] = mat[N-1][N-1];
+    // last element of maxMatrix will be same's as of
+    // the input matrix
+    maxMatrix[N - 1][N - 1] = mat[N - 1][N - 1];
 
-	// preprocess last row
-	int maxv = mat[N-1][N-1]; // Initialize max
-	for (int j = N - 2; j >= 0; j--)
-	{
-		maxv=max(maxv,mat[N-1][j]);
-		maxMatrix[N-1][j] = maxv;
-	}
+    // preprocess last row
+    int maxv = mat[N - 1][N - 1]; // Initialize max
+    for (int j = N - 2; j >= 0; j--)
+    {
+        maxv = max(maxv, mat[N - 1][j]);
+        maxMatrix[N - 1][j] = maxv;
+    }
 
-	// preprocess last column
-	maxv = mat[N - 1][N - 1]; // Initialize max
-	for (int i = N - 2; i >= 0; i--)
-	{
-		maxv  = max(maxv,mat[i][N-1]);
-		maxMatrix[i][N - 1] = maxv;
-	}
+    // preprocess last column
+    maxv = mat[N - 1][N - 1]; // Initialize max
+    for (int i = N - 2; i >= 0; i--)
+    {
+        maxv = max(maxv, mat[i][N - 1]);
+        maxMatrix[i][N - 1] = maxv;
+    }
 
-	// preprocess rest of the matrix from bottom
-	for (int i = N-2; i >= 0; i--)
-	{
-		for (int j = N-2; j >= 0; j--)
-		{
-			// Update maxValue
-			maxValue = max(maxValue,maxMatrix[i+1][j+1] - mat[i][j]);
-			// set maxArr (i, j)
-			maxMatrix[i][j] = max(mat[i][j],max(maxMatrix[i][j + 1],maxMatrix[i + 1][j]));
-		}
-	}
+    // preprocess rest of the matrix from bottom
+    for (int i = N - 2; i >= 0; i--)
+    {
+        for (int j = N - 2; j >= 0; j--)
+        {
+            // Update maxValue
+            maxValue = max(maxValue, maxMatrix[i + 1][j + 1] - mat[i][j]);
+            // set maxArr (i, j)
+            maxMatrix[i][j] = max(mat[i][j], max(maxMatrix[i][j + 1], maxMatrix[i + 1][j]));
+        }
+    }
 
-	return maxValue;
+    return maxValue;
 }
 int main()
 {

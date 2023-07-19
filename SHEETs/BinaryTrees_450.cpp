@@ -1341,6 +1341,36 @@ class MorrisTraversals
 {
 private:
 public:
+/* 
+@ Morris supremacy
+&    The function inorderTraversal takes a pointer to the root of the binary tree as input.
+
+&    It initializes an empty vector inorder to store the inorder traversal elements.
+
+&    It also initializes a pointer curr to the root of the tree.
+
+&    The code enters a while loop, which continues until curr becomes nullptr.
+
+&    Inside the while loop, the code checks if the current node curr has a left child.
+
+&    If curr does not have a left child, it means that we have reached the leftmost node of the current subtree. In this case, the current node's value is added to the inorder vector, and the curr pointer is updated to its right child.
+
+&    If curr has a left child, the code finds the predecessor of the current node by traversing to the rightmost node of the left subtree. This is done by finding the rightmost node of the left subtree by following the right child pointers until reaching the end.
+
+&    If the predecessor node's right child is null, it means that we haven't visited this node before. In this case, the right child pointer of the predecessor is set to the current node curr, establishing a temporary link from the predecessor to the current node.
+
+&    After setting the temporary link, the curr pointer is updated to its left child, as we need to explore the left subtree.
+
+&    If the predecessor's right child is already set to the current node curr, it means that we have visited this node before. In this case, the temporary link is removed by setting the predecessor's right child to nullptr, indicating that we have completed traversing the left subtree of the current node. The current node's value is added to the inorder vector, and the curr pointer is updated to its right child.
+
+&    The process continues until all nodes have been visited and the curr pointer becomes nullptr.
+
+&    Finally, the inorder vector containing the inorder traversal elements is returned.
+
+~ The code essentially simulates the process of the recursive inorder traversal using an iterative approach. It uses a temporary link established by modifying the right child pointers to keep track of the predecessor node, allowing us to traverse both the left and right subtrees iteratively.
+
+* The time complexity of this approach is O(n), where n is the number of nodes in the binary tree, as each node is visited exactly once. The space complexity is O(1) since no additional data structures are used except for the inorder vector to store the traversal elements, which is required by the problem's specifications.
+ */
     vector<int> morrisInorder(TreeNode *root)
     {
         vector<int> inorder;

@@ -3957,6 +3957,43 @@ Finally, it calculates and stores the result as the maximum of take and notTake 
         }
         return maxi;
     }
+
+    //^ Number of LIS
+    /* 
+    * O(N^2) T.C + O(1) S.C
+     */
+    int numberOfLIS(vector<int> arr)
+    {
+        const int n = arr.size();
+        vector<int> dp(arr.size(), 1);
+        vector<int> count(n, 1);
+        int maxlen = 0;
+        for (int i = 0; i < arr.size(); i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                if (arr[i] > arr[j] && 1 + dp[j] > dp[i])
+                {
+                    dp[i] = 1 + dp[j];
+                    count[i] = count[j];
+                }
+                else if (1 + dp[j] == dp[i] && arr[i] > arr[j])
+                {
+                    count[i] += (count[j]);
+                }
+            }
+            maxlen = max(maxlen, dp[i]);
+        }
+
+        int res = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if (dp[i] == maxlen)
+                res += count[i];
+        }
+
+        return res;
+    }
 };
 //^ Largest divisible subset (LIS)
 class LDS
@@ -4083,6 +4120,56 @@ public:
         return maxi;
     }
 };
+
+//^ Longest bitonic subsequence
+class LBS
+{
+public:
+    /*
+    @ using LIS and LDS
+    &- This code is an implementation of the Longest Bitonic Subsequence (LBS) problem. The LBS of an array is defined as the longest subsequence that is first strictly increasing and then strictly decreasing. The code uses dynamic programming to solve this problem.
+
+&- The function LIS_Array calculates the Longest Increasing Subsequence (LIS) of the given array. It takes an array arr as input and returns a vector dp of the same size as arr. Each element dp[i] represents the length of the LIS ending at index i.
+
+&- The function LongestBitonicSequence takes an array nums as input and returns the length of the LBS of nums. &- First, it calculates the LIS of nums using the function LIS_Array. &- Then, it reverses the array nums and calculates its LIS again using the function LIS_Array. This gives us the Longest Decreasing Subsequence (LDS) of the original array. &- Finally, it iterates over all elements in nums and calculates the maximum length of LBS by considering each element as the peak element.
+
+*- The time complexity of this code is O(n^2), where n is the size of the input array. This is because both functions, LIS_Array and LongestBitonicSequence, have two nested loops that run for n iterations each.
+
+*- The space complexity is O(n), where n is the size of the input array. This is because both functions use an additional vector of size n to store intermediate results.
+     */
+    vector<int> LIS_Array(vector<int> &arr)
+    {
+        vector<int> dp(arr.size(), 1);
+        for (int i = 0; i < arr.size(); i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                if (arr[i] > arr[j] && 1 + dp[j] > dp[i])
+                {
+                    dp[i] = 1 + dp[j];
+                }
+            }
+        }
+        return dp;
+    }
+    int LongestBitonicSequence(vector<int> nums)
+    {
+        // code here
+        const int n = nums.size();
+        vector<int> LIS = LIS_Array(nums);
+        reverse(nums.begin(), nums.end());
+        vector<int> LDS = LIS_Array(nums);
+
+        int length = 0;
+        for (int i = 0; i < n; i++)
+        {
+            int sum = LDS[n - i - 1] + LIS[i] - 1; // -1 to take care of the same element being counted twice
+            length = max(length, max(sum, max(LIS[i], LDS[n - i - 1])));
+        }
+        return length;
+    }
+};
+
 int main(int argc, char const *argv[])
 {
 

@@ -3959,8 +3959,8 @@ Finally, it calculates and stores the result as the maximum of take and notTake 
     }
 
     //^ Number of LIS
-    /* 
-    * O(N^2) T.C + O(1) S.C
+    /*
+     * O(N^2) T.C + O(1) S.C
      */
     int numberOfLIS(vector<int> arr)
     {
@@ -4170,6 +4170,257 @@ public:
     }
 };
 
+//^ Partition DP
+/*
+ ~ Solve a problem in a particular pattern (When different patterns gives different results)
+
+? Start with entire block (i:start , j:end)
+? Try all partitions (run another for loop to try all partitions)
+? return the best possible partition
+ */
+//^ Matrix chain multiplication (MCM)
+class MatrixChainMultiplication
+{
+private:
+public:
+    /*
+    @ Recursive (don't understand ? watch striver : read this)
+    Here’s how the code works:
+     &- The function MCM_recursive takes three arguments: i, j, and arr. It returns the minimum number of scalar multiplications required to multiply the matrices from index i to index j in the sequence.
+     &- If i is equal to j, then there is only one matrix, so no multiplication is required and the function returns 0.
+     &- Otherwise, the function iterates over all possible values of k from i to j-1. For each value of k, it calculates the number of scalar multiplications required to multiply the matrices from index i to index k, and from index k+1 to index j, and then multiply the two resulting matrices together. This is done using recursion.
+     &- The function keeps track of the minimum number of scalar multiplications required and returns it.
+
+    ~ The function MCM takes an array arr as input and returns the minimum number of scalar multiplications required to multiply all the matrices in the sequence. It does this by calling the function MCM_recursive with arguments 1 and arr.size()-1.
+
+    !   The time complexity of this code is O(n^3), where n is the size of the input array. This is because the function MCM_recursive has two nested loops that run for n iterations each, and it makes a recursive call for each iteration.
+
+    !   The space complexity is O(n), where n is the size of the input array. This is because the function uses a constant amount of space for each recursive call, and there can be at most n recursive calls on the call stack at any given time.
+     */
+    int MCM_recursive(int i, int j, vector<int> &arr)
+    {
+        if (i == j)
+        {
+            return 0;
+        }
+        int mini = 1e8;
+        for (int k = 1; k < j; k++)
+        {
+            int steps = arr[i - 1] * arr[k] * arr[j] + MCM_recursive(i, k, arr) + MCM_recursive(k + 1, j, arr);
+            mini = min(mini, steps);
+        }
+        return mini;
+    }
+    int MCM(vector<int> arr)
+    {
+        return MCM_recursive(1, arr.size() - 1, arr);
+    }
+    /*
+    @ Memoization
+    &- The function MCM_memo takes four arguments: i, j, arr, and dp. It returns the minimum number of scalar multiplications required to multiply the matrices from index i to index j in the sequence.
+
+&- If i is equal to j, then there is only one matrix, so no multiplication is required and the function returns 0.
+
+&- If the value of dp[i][j] is not equal to -1, then this subproblem has already been solved and its result is stored in the table dp. In this case, the function returns the stored result.
+
+&- Otherwise, the function iterates over all possible values of k from i to j-1. For each value of k, it calculates the number of scalar multiplications required to multiply the matrices from index i to index k, and from index k+1 to index j, and then multiply the two resulting matrices together. This is done using recursion, by calling the function MCM_memo with arguments i, k, arr, and dp, and with arguments k+1, j, arr, and dp. The total number of scalar multiplications required for this particular value of k is calculated as:
+
+* O(N^3) T.C || O(N^2) + O(N) S.C
+     */
+    int MCM_memo(int i, int j, vector<int> &arr, vector<vector<int>> &dp)
+    {
+        if (i == j)
+            return 0;
+
+        if (dp[i][j] != -1)
+            return dp[i][j];
+        int mini = 1e8;
+        for (int k = i; k < j; k++)
+        {
+            int steps = arr[i - 1] * arr[k] * arr[j] + MCM_memo(i, k, arr, dp) + MCM_memo(k + 1, j, arr, dp);
+            mini = min(mini, steps);
+        }
+        return dp[i][j] = mini;
+    }
+    /*
+    @ Tabulation
+    & move i from N-1 to 1 and move j from i + 1 (j has to be ahead of i) to N - 1
+    & copy recurrence relation and good to go
+
+    * O(N^3) T.C | O(N^2) S.C
+     */
+    int matrixMultiplication(int N, int arr[])
+    {
+        vector<vector<int>> dp(N, vector<int>(N));
+        for (int i = N - 1; i >= 1; i--)
+        {
+            for (int j = i + 1; j < N; j++)
+            {
+                int mini = 1e9;
+                for (int k = i; k < j; k++)
+                {
+                    int steps = arr[i - 1] * arr[j] * arr[k] + dp[i][k] + dp[k + 1][j];
+                    mini = min(mini, steps);
+                }
+                dp[i][j] = mini;
+            }
+        }
+        return dp[1][N - 1];
+    }
+};
+//^ Minimum cost to cut a rod of length N
+class MinimumCostToCut
+{
+public:
+    int f(int i, int j, vector<int> &cuts, vector<vector<int>> &dp)
+    {
+        if (i > j)
+            return 0;
+        ;
+        int minimumCost = 1e9;
+        if (dp.at(i).at(j) != -1)
+            return dp.at(i).at(j);
+        for (int k = i; k <= j; k++)
+        {
+            int cost = cuts.at(j + 1) - cuts.at(i - 1) + f(i, k - 1, cuts, dp) + f(k + 1, j, cuts, dp);
+            minimumCost = min(cost, minimumCost);
+        }
+        return dp.at(i).at(j) = minimumCost;
+    }
+    int minCost(int n, vector<int> &cuts)
+    {
+        cuts.emplace_back(n);
+        cuts.emplace_back(0);
+        sort(cuts.begin(), cuts.end());
+        vector<vector<int>> dp(cuts.size(), vector<int>(cuts.size(), -1));
+        return f(1, cuts.size() - 2, cuts, dp);
+    }
+};
+
+//^ Burst balloons
+class BurstBalloons
+{
+private:
+    /*
+    @ Partition dp problem read article at takeuforward for proper explanation
+     */
+public:
+    int f(int i, int j, vector<int> &nums, vector<vector<int>> &dp)
+    {
+        if (i > j)
+            return 0;
+        int maximumCoins = -1e9;
+        if (dp.at(i).at(j) != -1)
+            return dp.at(i).at(j);
+        for (int k = i; k <= j; k++)
+        {
+            int coins = nums.at(i - 1) * nums.at(k) * nums.at(j + 1) + f(i, k - 1, nums, dp) + f(k + 1, j, nums, dp);
+            maximumCoins = max(maximumCoins, coins);
+        }
+        return dp[i][j] = maximumCoins;
+    }
+    int maxCoins(vector<int> &nums)
+    {
+        nums.insert(nums.begin(), 1);
+        nums.emplace_back(1);
+        vector<vector<int>> dp(nums.size(), vector<int>(nums.size(), -1));
+        return f(1, nums.size() - 2, nums, dp);
+    }
+    /*
+    @ Tabulation
+     */
+    int maxCoins_tabulation(vector<int> &nums)
+    {
+        nums.insert(nums.begin(), 1);
+        nums.emplace_back(1);
+        vector<vector<int>> dp(nums.size(), vector<int>(nums.size()));
+        const int n = nums.size();
+        for (int i = n - 2; i >= 1; i--)
+        {
+            for (int j = i; j < n - 1; j++)
+            {
+                int maxi = -1e9;
+                for (int k = i; k <= j; k++)
+                {
+                    int cost = nums.at(i - 1) * nums.at(k) * nums.at(j + 1) + dp[i][k - 1] + dp[k + 1][j];
+                    maxi = max(maxi, cost);
+                }
+                dp[i][j] = maxi;
+            }
+        }
+        return dp[1][n - 2];
+    }
+};
+
+//^
+class BooleanParenthesis
+{
+public:
+    /*
+    @ Memoization
+    & For proper explanation go to takeuforward.org
+     */
+    int solve(int i, int j, bool isTrue, string &exp, vector<vector<vector<int>>> &dp)
+    {
+        if (i > j)
+            return 0;
+        if (i == j)
+        {
+            return (isTrue) ? exp[i] == 'T' : exp[i] == 'F';
+        }
+        int ways = 0;
+        if (dp[i][j][isTrue] != -1)
+            return dp[i][j][isTrue];
+        for (int k = i + 1; k <= j - 1; k += 2)
+        {
+            int leftFalsePartition = solve(i, k - 1, false, exp, dp);
+            int leftTruePartition = solve(i, k - 1, true, exp, dp);
+            int rightFalsePartition = solve(k + 1, j, false, exp, dp);
+            int rightTruePartition = solve(k + 1, j, true, exp, dp);
+
+            if (exp[k] == '&')
+            {
+                if (isTrue)
+                {
+                    ways += (leftTruePartition * rightTruePartition);
+                }
+                else
+                {
+                    ways += (leftFalsePartition * rightTruePartition + leftTruePartition * rightFalsePartition + leftFalsePartition * rightFalsePartition);
+                }
+            }
+            else if (exp[k] == '|')
+            {
+                if (isTrue)
+                {
+                    ways += (leftTruePartition * rightTruePartition + leftFalsePartition * rightTruePartition + leftTruePartition * rightFalsePartition);
+                }
+                else
+                {
+                    ways += leftFalsePartition * rightFalsePartition;
+                }
+            }
+            else if (exp[k] == '^')
+            {
+                if (isTrue)
+                {
+                    ways += (leftFalsePartition * rightTruePartition + leftTruePartition * rightFalsePartition);
+                }
+                else
+                {
+                    ways += (leftTruePartition * rightTruePartition + leftFalsePartition * rightFalsePartition);
+                }
+            }
+        }
+        return dp[i][j][isTrue] = ways % 1003;
+    }
+    int countWays(int N, string S)
+    {
+        // code here
+        vector<vector<vector<int>>> dp(N, vector<vector<int>>(N, vector<int>(2, -1)));
+        return solve(0, N - 1, true, S, dp);
+    }
+};
 int main(int argc, char const *argv[])
 {
 

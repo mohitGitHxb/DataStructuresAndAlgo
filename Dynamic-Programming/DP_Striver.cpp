@@ -250,6 +250,23 @@ public:
 class FrogJump
 {
 public:
+    /*
+    &- This code is a recursive implementation of a problem where a frog wants to climb from the 0th stair to the (N-1)th stair, and can climb either one or two steps at a time. The energy consumed in each jump is the absolute difference between the heights of the two stairs. The goal is to find the minimum energy that can be used by the frog to jump from stair 0 to stair N-1.
+
+    &- The function findMinCost takes three arguments: idx, arr, and pathCost. It returns the minimum energy required for the frog to jump from stair idx to stair 0.
+
+    &- If idx is equal to 0, then the frog has reached its destination, so the function returns the current value of pathCost.
+
+    &- Otherwise, the function calculates the minimum energy required for the frog to jump from stair idx to stair 0 in two ways:
+    ~-- By jumping one step back from stair idx to stair idx-1. This is done by calling the function findMinCost with arguments idx-1, arr, and pathCost, and adding the energy consumed in this jump, which is abs(arr[idx] - arr[idx-1]).
+
+
+    ~-- By jumping two steps back from stair idx to stair idx-2, if this is possible (i.e., if idx-2 >= 0). This is done by calling the function findMinCost with arguments idx-2, arr, and pathCost, and adding the energy consumed in this jump, which is abs(arr[idx] - arr[idx-2]). &- The function returns the minimum of these two values.
+
+    !- The time complexity of this code is O(2^n), where n is the size of the input array. This is because the function makes two recursive calls for each call, and the number of recursive calls grows exponentially with the size of the input array.
+
+    !- The space complexity is O(n), where n is the size of the input array. This is because the function uses a constant amount of space for each recursive call, and there can be at most n recursive calls on the call stack at any given time.
+     */
     int findMinCost(int idx, vector<int> &arr, int pathCost)
     {
         if (idx == 0)
@@ -268,6 +285,10 @@ public:
             return pathCost;
         }
     }
+    /*
+    @ Memoization
+    * O(N) T.C | O(N) S.C
+     */
 
     int findMinCost_dp(int idx, vector<int> &dp, vector<int> &arr)
     {
@@ -289,6 +310,22 @@ public:
             return dp[idx];
         }
     }
+    /*
+    @ Tabulation
+    &- The function findMinCost_dp_tabulation takes two arguments: dp and arr. It returns the minimum energy required for the frog to jump from stair 0 to stair N-1, where N is the size of the array arr.
+
+    &- The function initializes dp[0] to 0, since no energy is required for the frog to stay on stair 0.
+
+    &- It also initializes dp[1] to abs(arr[1] - arr[0]), which is the energy required for the frog to jump from stair 0 to stair 1.
+
+    &- Then, the function iterates over all stairs from index 2 to N-1. For each stair idx, it calculates the minimum energy required for the frog to jump from stair 0 to stair idx in two ways: &-- By jumping one step from stair idx-1 to stair idx. The energy consumed in this jump is abs(arr[idx] - arr[idx-1]). &-- By jumping two steps from stair idx-2 to stair idx. The energy consumed in this jump is abs(arr[idx] - arr[idx-2]). &- The function stores the minimum of these two values in dp[idx].
+
+    &- Finally, it returns the value of dp[N-1], which is the minimum energy required for the frog to jump from stair 0 to stair N-1.
+
+    *- The time complexity of this code is O(n), where n is the size of the input array. This is because the function has a single loop that runs for n iterations.
+
+    *- The space complexity is O(n), where n is the size of the input array. This is because the function uses an additional vector of size n to store intermediate results.
+     */
     int findMinCost_dp_tabulation(vector<int> &dp, vector<int> &arr)
     {
         dp[0] = 0;
@@ -317,7 +354,30 @@ public:
     }
 
     //^ Follow up Question : allowed K jumps
+    /*
+    @ Tabulation
+^    This code is a dynamic programming implementation of a problem where a frog wants to climb from the 0th stair to the (N-1)th stair, and can climb up to k steps at a time. The energy consumed in each jump is the absolute difference between the heights of the two stairs. The goal is to find the minimum energy that can be used by the frog to jump from stair 0 to stair N-1.
 
+Here’s how the code works:
+
+&- The function frogJump takes three arguments: n, heights, and k. It returns the minimum energy required for the frog to jump from stair 0 to stair N-1, where N is the size of the array heights.
+
+&- The function initializes a vector dp of size n with all elements set to INT_MAX. This vector will be used to store intermediate results.
+
+&- It also initializes dp[0] to 0, since no energy is required for the frog to stay on stair 0.
+
+&- Then, the function iterates over all stairs from index 1 to N-1. For each stair i, it calculates the minimum energy required for the frog to jump from stair 0 to stair i by considering all possible jumps of size up to k:
+
+&-- It iterates over all possible jump sizes from 1 to k. For each jump size j, it checks if a jump of size j is possible (i.e., if i >= j). If it is, it calculates the energy required for the frog to jump from stair i-j to stair i, which is dp[i-j] + abs(heights[i] - heights[i-j]).
+
+&-- The function stores the minimum of these values in dp[i].
+
+&- Finally, it returns the value of dp[N-1], which is the minimum energy required for the frog to jump from stair 0 to stair N-1.
+
+*   The time complexity of this code is O(nk), where n is the size of the input array and k is the maximum jump size. This is because the function has two nested loops that run for n and k iterations, respectively.
+
+*   The space complexity is O(n), where n is the size of the input array. This is because the function uses an additional vector of size n to store intermediate results.
+     */
     int frogJump(int n, vector<int> &heights, int k)
     {
 
@@ -355,6 +415,20 @@ public:
         this->n = n;
         this->dp.resize(n, -1);
     }
+    /*
+    @ Recursion
+    &- The function solve takes two arguments: arr and idx. It returns the maximum amount of money that the thief can rob from houses 0 to idx.
+
+    &- If idx is equal to 0, then there is only one house, so the function returns the value of arr[idx], which is the amount of money in that house.
+
+    &- If idx is less than 0, then there are no houses, so the function returns 0.
+
+    &- Otherwise, the function calculates the maximum amount of money that the thief can rob from houses 0 to idx in two ways: &-- By robbing house idx. In this case, the thief cannot rob house idx-1, so the maximum amount of money that can be robbed is arr[idx] + solve(arr, idx-2). &-- By not robbing house idx. In this case, the maximum amount of money that can be robbed is solve(arr, idx-1). &- The function returns the maximum of these two values.
+
+    !- The time complexity of this code is O(2^n), where n is the size of the input array. This is because the function makes two recursive calls for each call, and the number of recursive calls grows exponentially with the size of the input array.
+
+    !- The space complexity is O(n), where n is the size of the input array. This is because the function uses a constant amount of space for each recursive call, and there can be at most n recursive calls on the call stack at any given time.
+     */
     int solve(vector<int> &arr, int idx)
     {
         if (idx == 0)
@@ -407,6 +481,13 @@ public:
         return prev1;
     }
     //^ House Robber 2 [Follow up] what if the last house is adjacent to the first house
+    /*
+&    The solution provided uses dynamic programming to solve this problem. The main function rob takes as input a vector of integers representing the amount of money in each house. It first checks if there is only one house, in which case it returns the money in that house. Otherwise, it creates two temporary vectors temp1 and temp2, which represent the houses without the first and last house, respectively. These vectors are then passed to the helper function maximumSumWithoutRotation to find the maximum sum of money that can be robbed without alerting the police.
+
+& The helper function maximumSumWithoutRotation takes as input a vector of integers representing the amount of money in each house. It uses two variables prev and prev2 to keep track of the maximum sum that can be robbed up to the current house, considering whether or not the previous house was robbed. For each house, it calculates the maximum sum that can be robbed if the current house is robbed (take) or not (notPick). The maximum of these two values is then stored in curr, which represents the maximum sum that can be robbed up to the current house. The values of prev and prev2 are then updated for the next iteration.
+
+* The time complexity of this solution is O(n), where n is the number of houses, since it iterates over all houses once. The space complexity is also O(n), since it creates two temporary vectors of size n/2.
+     */
     int maximumSumWithoutRotation(vector<int> &nums)
     {
         int n = nums.size();
@@ -4419,6 +4500,146 @@ public:
         // code here
         vector<vector<vector<int>>> dp(N, vector<vector<int>>(N, vector<int>(2, -1)));
         return solve(0, N - 1, true, S, dp);
+    }
+};
+
+//^ Pallindrome partitioning 2
+class PallindromePartition
+{
+public:
+    /*
+    ? This is a different pattern of the partition dp
+    todo: Substract 1 from each answer because the functions performs partition beyond the last element too. so actual answer = result from function - 1;(applicable for all approaches )
+    @ Recursion
+
+    !O(exp) T.C | O(N) S.C
+     */
+    bool isPallindrome(int low, int high, const string &str)
+    {
+        if (low > high)
+            return false;
+        while (low < high)
+        {
+            if (str[low] != str[high])
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    int solve_recursive(int ind, const string &s)
+    {
+        if (ind == s.size())
+            return 0;
+        int minCost = 1e9;
+        for (int partition = ind; partition < s.size(); partition++)
+        {
+            if (isPallindrome(ind, partition, s))
+            {
+                minCost = min(minCost, 1 + solve_recursive(partition + 1, s));
+            }
+        }
+        return minCost;
+    }
+
+    int solve_memo(int ind, const string &s, vector<int> &dp)
+    {
+        if (ind == s.size())
+            return 0;
+        int minCost = 1e9;
+        if (dp[ind] != -1)
+            return dp[ind];
+        for (int partition = 0; partition < s.size(); partition++)
+        {
+            if (isPallindrome(ind, partition, s))
+            {
+                minCost = min(minCost, 1 + solve_memo(partition + 1, s, dp));
+            }
+        }
+        return dp[ind] = minCost;
+    }
+    /*
+    @ Tabulation
+     */
+    int solve_tabulation(const string &s)
+    {
+        vector<int> dp(s.size() + 1);
+        for (int i = s.size() - 1; i >= 0; i--)
+        {
+            int minCost = 1e9;
+            for (int partition = i; partition < s.size(); partition++)
+            {
+                if (isPallindrome(i, partition, s))
+                {
+                    minCost = min(minCost, 1 + dp[partition + 1]);
+                }
+            }
+            dp[i] = minCost;
+        }
+        return dp.front() - 1;
+    }
+};
+
+//^ Parition the array into k parts to get maximum possible sum
+class MaxSumPartition
+{
+public:
+    /*
+    @ Recursive [parition dp similar as above]
+     */
+    int maxSumPartition(int ind, int k, vector<int> &arr)
+    {
+        if (ind == arr.size())
+            return 0;
+        int maxSum = -1e9, len = 0, maxi = -1e9;
+        for (int partition = ind; partition < min(ind + k, (int)arr.size()); partition++)
+        {
+            len++;
+            maxi = max(maxi, arr.at(partition));
+            int sum = len * maxi + maxSumPartition(partition + 1, k, arr);
+            maxSum = max(maxSum, sum);
+        }
+        return maxSum;
+    }
+    /*
+    @ Memoization
+     */
+    int maxSumParition_memo(int ind, int k, vector<int> &arr, vector<int> &dp)
+    {
+        if (ind == arr.size())
+            return 0;
+        if (dp[ind] != -1)
+            return dp[ind];
+        int maxSum = -1e9, len = 0, maxi = -1e9;
+        for (int partition = ind; partition < min(ind + k, (int)arr.size()); partition++)
+        {
+            len++;
+            maxi = max(maxi, arr.at(partition));
+            int sum = len * maxi + maxSumParition_memo(partition + 1, k, arr, dp);
+            maxSum = max(maxSum, sum);
+        }
+        return dp[ind] = maxSum;
+    }
+    /*
+    @ Tabulation
+     */
+    int maxSumAfterPartitioning_tabulation(vector<int> &arr, int k)
+    {
+        vector<int> dp(arr.size() + 1);
+        for (int i = arr.size() - 1; i >= 0; i--)
+        {
+            int maxSum = -1e9, len = 0, maxi = -1e9;
+            for (int partition = i; partition < min(i + k, (int)arr.size()); partition++)
+            {
+                len++;
+                maxi = max(maxi, arr[partition]);
+                int sum = len * maxi + dp[partition + 1];
+                maxSum = max(maxSum, sum);
+            }
+            dp[i] = maxSum;
+        }
+        return dp.front();
     }
 };
 int main(int argc, char const *argv[])

@@ -13,7 +13,8 @@
         "string": "cpp",
         "chrono": "cpp",
         "random": "cpp",
-        "limits": "cpp"
+        "limits": "cpp",
+        "*.tcc": "cpp"
     },
     "cSpell.words": [
         "getnode",

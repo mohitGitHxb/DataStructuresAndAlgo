@@ -708,7 +708,10 @@ public:
     }
     /*
     @ Bottom G view
-
+    & Same as top view just one change:
+    & Rather than checking whether the x coordinate (horizontal distance) already exists... we always update the mp[x] regardless whether we have encountered same x before
+    & This will get the bottom most node (top nodes will be kept updating!)
+    * O(NlogN) T.C | O(N) S.C
      */
     vector<int> bottomView(Node *root)
     {
@@ -794,7 +797,7 @@ public:
 * Since the algorithm visits each node once and performs constant-time operations, the time complexity is O(n), where n is the number of nodes in the binary tree. The space complexity is also O(n) in the worst case, as the queue may store all the nodes in the binary tree in the case of a skewed tree
  */
 
-//^ 17
+//^ 17 diagonal traversal of a binary tree
 vector<int> diagonal(Node *root)
 {
     if (!root)

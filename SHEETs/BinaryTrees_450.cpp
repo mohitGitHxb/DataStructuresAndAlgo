@@ -320,6 +320,11 @@ public:
 };
 
 //^ 7 Diameter of a binary tree
+/*
+& Get the left height and right height of a binary tree (we need to maximize the sum of the heights)
+& declare a variable dia which will store the maximum of left height + right height and dia (max(dia,lh+rh));
+& return 1 + max(lh,rh); (this is how we find the height of the tree)
+ */
 class FindDiameter
 {
 public:
@@ -357,8 +362,8 @@ Node *Mirror(Node *root)
     return root;
 }
 
-//^ 9 Minimum path sum in a binary tree
-class MinPathSum
+//^ 9 Maximum path sum in a binary tree
+class MaxPathSum
 {
 private:
     /*
@@ -366,21 +371,21 @@ private:
 
     If root is nullptr, indicating an empty node, the function returns 0.
 
-    The function recursively calls solve on the left and right subtrees of root, storing the returned values in the variables left and right, respectively. The values are calculated by taking the maximum between 0 and the result of the recursive calls. This ensures that negative values are not considered in the path sum.
+&    The function recursively calls solve on the left and right subtrees of root, storing the returned values in the variables left and right, respectively. The values are calculated by taking the maximum between 0 and the result of the recursive calls. This ensures that negative values are not considered in the path sum.
 
-    The maximum path sum that includes the current root node is calculated as left + right + root->val. This is compared with the current maximum sum maxi, and the greater value is stored in maxi. This step finds the maximum sum path that includes the current node.
+&    The maximum path sum that includes the current root node is calculated as left + right + root->val. This is compared with the current maximum sum maxi, and the greater value is stored in maxi. This step finds the maximum sum path that includes the current node.
 
-    The function returns the maximum path sum starting from the current root node, which is calculated as root->val + max(right, left). This step considers whether to include the current node in the path sum or not, by choosing the maximum between the sums of the left and right subtrees.
+&    The function returns the maximum path sum starting from the current root node, which is calculated as root->val + max(right, left). This step considers whether to include the current node in the path sum or not, by choosing the maximum between the sums of the left and right subtrees.
 
     The maxPathSum function initializes the maxi variable to a very small value.
 
-    It calls the solve function with the root node and the maxi variable as parameters. This updates the maxi variable with the maximum path sum in the tree.
+&    It calls the solve function with the root node and the maxi variable as parameters. This updates the maxi variable with the maximum path sum in the tree.
 
-    Finally, the maxi variable, which now holds the maximum path sum, is returned as the result of the function.
+&    Finally, the maxi variable, which now holds the maximum path sum, is returned as the result of the function.
 
-The time complexity of this code is O(N), where N is the number of nodes in the binary tree. This is because we perform a DFS traversal of the tree, visiting each node once.
+*   The time complexity of this code is O(N), where N is the number of nodes in the binary tree. This is because we perform a DFS traversal of the tree, visiting each node once.
 
-The space complexity is O(H), where H is the height of the binary tree. This is because the recursion stack will have at most H frames at any given time, corresponding to the maximum depth of the tree. In the worst case, when the tree is skewed, the height can be equal to N, resulting in a space complexity of O(N). However, in a balanced tree, the height is typically logarithmic in the number of nodes, resulting in a space complexity of O(log N).
+*   The space complexity is O(H), where H is the height of the binary tree. This is because the recursion stack will have at most H frames at any given time, corresponding to the maximum depth of the tree. In the worst case, when the tree is skewed, the height can be equal to N, resulting in a space complexity of O(N). However, in a balanced tree, the height is typically logarithmic in the number of nodes, resulting in a space complexity of O(log N).
     * O(N) T.C | O(N) S.C
      */
 public:
@@ -820,7 +825,7 @@ vector<int> diagonal(Node *root)
     return res;
 }
 
-//^ 18 Root to a given node path
+//^ 18 Root to a given node path [Important concept]
 /*
 & Traverse using Inorder traversal technique (DFS algorithm)
 & getPath functions checks whether the node is present in the tree or not
@@ -934,6 +939,15 @@ int widthOfBinaryTree(TreeNode *root)
 }
 
 //^ 21 Children sum property [hard]
+/*
+&- The given problem statement asks to write a program that converts any binary tree to one that follows the children sum property. The children sum property is defined as, for every node of the tree, the value of a node is equal to the sum of values of its children (left child and right child). The node values can be increased by 1 any number of times but decrement of any node value is not allowed. A value for a NULL node can be assumed as 0. You are not allowed to change the structure of the given binary tree.
+
+&- The provided solution is a recursive function changeTree that takes a Node pointer root as an argument. The function first checks if the root is NULL, if it is, then it returns. Otherwise, it calculates the sum of the values of its left and right children and stores it in the variable childSum. If childSum is greater than or equal to the value of the root, then it updates the value of the root to childSum. Otherwise, it updates the values of its left and right children to the value of the root. Then, it recursively calls itself on its left and right children. Finally, it calculates the sum of its left and right children again and updates its value to the maximum of its current value and the calculated sum.
+
+*- The time complexity of this solution is O(n) where n is the number of nodes in the tree since we are visiting each node once.
+*-The space complexity is O(h) where h is the height of the tree since we are using recursion and at most h function calls will be present in the call stack at any point in time.
+
+ */
 void changeTree(Node *root)
 {
     if (!root)
@@ -976,7 +990,7 @@ void changeTree(Node *root)
     root->data = max(root->data, sum);
 }
 
-//^ 22 All nodes at a distance k in a binary tree
+//^ 22 All nodes at a distance k in a binary tree [IMPORTANT CONCEPT]
 class DistanceK
 {
 private:
@@ -1267,7 +1281,7 @@ private:
 
 * The time complexity of this function is O(n^2) where n is the number of nodes in the binary tree. This is because in each call to the function, it needs to search for an element in array “in”, which takes O(n) time. Since there are n calls to the function (one for each node), the total time complexity is O(n^2). The space complexity is O(n) since it uses a recursive call stack that can grow up to n levels deep.
 
-The “buildTree” function takes in three arguments: two arrays of integers “in” and “pre” representing the inorder and preorder traversals of a binary tree, and an integer “n” representing the number of nodes in the binary tree. The function returns a pointer to the root of the binary tree constructed from these traversals.
+~ The “buildTree” function takes in three arguments: two arrays of integers “in” and “pre” representing the inorder and preorder traversals of a binary tree, and an integer “n” representing the number of nodes in the binary tree. The function returns a pointer to the root of the binary tree constructed from these traversals.
 
 & The function first calls the “helper” function with arguments “pre”, 0, “n-1”, “in”, 0, “n-1”, and “n” to construct the binary tree. It then returns this result.
 
@@ -1344,36 +1358,36 @@ class MorrisTraversals
 {
 private:
 public:
-/* 
-@ Morris supremacy
-&    The function inorderTraversal takes a pointer to the root of the binary tree as input.
+    /*
+    @ Morris supremacy
+    &    The function inorderTraversal takes a pointer to the root of the binary tree as input.
 
-&    It initializes an empty vector inorder to store the inorder traversal elements.
+    &    It initializes an empty vector inorder to store the inorder traversal elements.
 
-&    It also initializes a pointer curr to the root of the tree.
+    &    It also initializes a pointer curr to the root of the tree.
 
-&    The code enters a while loop, which continues until curr becomes nullptr.
+    &    The code enters a while loop, which continues until curr becomes nullptr.
 
-&    Inside the while loop, the code checks if the current node curr has a left child.
+    &    Inside the while loop, the code checks if the current node curr has a left child.
 
-&    If curr does not have a left child, it means that we have reached the leftmost node of the current subtree. In this case, the current node's value is added to the inorder vector, and the curr pointer is updated to its right child.
+    &    If curr does not have a left child, it means that we have reached the leftmost node of the current subtree. In this case, the current node's value is added to the inorder vector, and the curr pointer is updated to its right child.
 
-&    If curr has a left child, the code finds the predecessor of the current node by traversing to the rightmost node of the left subtree. This is done by finding the rightmost node of the left subtree by following the right child pointers until reaching the end.
+    &    If curr has a left child, the code finds the predecessor of the current node by traversing to the rightmost node of the left subtree. This is done by finding the rightmost node of the left subtree by following the right child pointers until reaching the end.
 
-&    If the predecessor node's right child is null, it means that we haven't visited this node before. In this case, the right child pointer of the predecessor is set to the current node curr, establishing a temporary link from the predecessor to the current node.
+    &    If the predecessor node's right child is null, it means that we haven't visited this node before. In this case, the right child pointer of the predecessor is set to the current node curr, establishing a temporary link from the predecessor to the current node.
 
-&    After setting the temporary link, the curr pointer is updated to its left child, as we need to explore the left subtree.
+    &    After setting the temporary link, the curr pointer is updated to its left child, as we need to explore the left subtree.
 
-&    If the predecessor's right child is already set to the current node curr, it means that we have visited this node before. In this case, the temporary link is removed by setting the predecessor's right child to nullptr, indicating that we have completed traversing the left subtree of the current node. The current node's value is added to the inorder vector, and the curr pointer is updated to its right child.
+    &    If the predecessor's right child is already set to the current node curr, it means that we have visited this node before. In this case, the temporary link is removed by setting the predecessor's right child to nullptr, indicating that we have completed traversing the left subtree of the current node. The current node's value is added to the inorder vector, and the curr pointer is updated to its right child.
 
-&    The process continues until all nodes have been visited and the curr pointer becomes nullptr.
+    &    The process continues until all nodes have been visited and the curr pointer becomes nullptr.
 
-&    Finally, the inorder vector containing the inorder traversal elements is returned.
+    &    Finally, the inorder vector containing the inorder traversal elements is returned.
 
-~ The code essentially simulates the process of the recursive inorder traversal using an iterative approach. It uses a temporary link established by modifying the right child pointers to keep track of the predecessor node, allowing us to traverse both the left and right subtrees iteratively.
+    ~ The code essentially simulates the process of the recursive inorder traversal using an iterative approach. It uses a temporary link established by modifying the right child pointers to keep track of the predecessor node, allowing us to traverse both the left and right subtrees iteratively.
 
-* The time complexity of this approach is O(n), where n is the number of nodes in the binary tree, as each node is visited exactly once. The space complexity is O(1) since no additional data structures are used except for the inorder vector to store the traversal elements, which is required by the problem's specifications.
- */
+    * The time complexity of this approach is O(n), where n is the number of nodes in the binary tree, as each node is visited exactly once. The space complexity is O(1) since no additional data structures are used except for the inorder vector to store the traversal elements, which is required by the problem's specifications.
+     */
     vector<int> morrisInorder(TreeNode *root)
     {
         vector<int> inorder;
@@ -1382,8 +1396,8 @@ public:
         {
             if (!curr->left)
             {
-                inorder.emplace_back(curr->val);
-                curr = curr->right;
+                inorder.emplace_back(curr->val); //? Insert this element into the vector since it is root node ( Left -> root -> right)
+                curr = curr->right;              //? If curr->right wouldn't exist the loop will terminate however due to prev->right = curr (creates a thread between right child with the root) we'll reach the root instead of terminating the loop
             }
             else
             {
@@ -1394,12 +1408,12 @@ public:
                 }
                 if (!prev->right)
                 {
-                    prev->right = curr;
+                    prev->right = curr; //? important to make thread because curr is the root which is on the right side of the prev.
                     curr = curr->left;
                 }
                 if (prev->right == curr)
                 {
-                    prev->right = nullptr;
+                    prev->right = nullptr; //? curr == prev->right means we ended up where we started (there was already a thread b/w node and root) hence add this element to the inorder vector below and break the thread.
                     inorder.emplace_back(curr->val);
                     curr = curr->right;
                 }
@@ -1442,8 +1456,8 @@ public:
         return preorder;
     }
 
-    vector<int> morrisPostorder(TreeNode* root){
-        
+    vector<int> morrisPostorder(TreeNode *root)
+    {
     }
 };
 int main()

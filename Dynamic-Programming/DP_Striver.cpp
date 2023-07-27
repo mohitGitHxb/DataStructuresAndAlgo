@@ -3170,11 +3170,11 @@ public:
     {
         if (j < 0)
         {
-            return j + 1;
+            return i + 1;
         }
         if (i < 0)
         {
-            return i + 1;
+            return j + 1;
         }
         if (s[i] == t[j])
         {

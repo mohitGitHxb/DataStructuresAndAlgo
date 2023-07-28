@@ -45,6 +45,13 @@ vector<int> findOccurrences(int arr[], int n , int x )
         }
     }
     return {firstOccur,lastOccur};
+    /* 
+    @ Using lower and upper bound
+     */
+    int first = lower_bound(arr,arr+n,x) - arr;
+    int last = upper_bound(arr,arr+n,x) - arr - 1;
+    if(first>=n || arr[first]!=x)   return {-1,-1};
+    else return {first,last};
 }
 
 //^2 Value equal to the index in Unsorted array
@@ -898,6 +905,76 @@ class subsetSum{
         return count;
     }
 };
+
+//^ -------------------------------------------------------------------------------
+//? Additional questions from striver SDE sheet [BINARY SEARCH]
+
+//^ Search in a rotated sorted array with duplicates
+/* 
+    Initialize low and high as the starting and ending indices of the array, respectively.
+
+    Use a while loop to perform binary search until low is less than or equal to high.
+
+    Calculate the mid index as the average of low and high.
+
+    Compare the element at mid with the target. If they are equal, return true as the target is found in the array.
+
+    Check if arr[low] is equal to arr[high]. This condition is used to handle duplicate elements in the array.
+
+    If arr[low] is equal to arr[high], and target is equal to arr[low], return true as the target is found.
+
+    Otherwise, increment low and decrement high to skip the duplicate elements at both ends of the array.
+
+    Check if the left half of the array is sorted (i.e., arr[low] <= arr[mid]).
+
+    If the left half is sorted and the target lies between arr[low] and arr[mid], then update high to mid - 1 to search in the left half.
+
+    If the target does not lie in the left half, update low to mid + 1 to search in the right half.
+
+    If the right half of the array is sorted (i.e., arr[mid] <= arr[high]).
+
+    If the right half is sorted and the target lies between arr[mid] and arr[high], then update low to mid + 1 to search in the right half.
+
+    If the target does not lie in the right half, update high to mid - 1 to search in the left half.
+
+    Repeat steps 3 to 13 until the target is found or low becomes greater than high.
+
+    If the target is not found after the while loop, return false.
+
+~   The intuition behind this code is to use binary search to efficiently find the target element in the rotated sorted array. The code handles cases of duplicates by incrementing low and decrementing high when they are equal to skip the duplicate elements.
+
+*   The time complexity of the code is O(log n) as it uses binary search, where n is the number of elements in the array. The space complexity is O(1) as it uses only a constant amount of extra space for variables.
+
+ */
+
+    bool search(vector<int>& arr, int target) {
+        int low = 0,high = arr.size() - 1;
+        while(low<=high){
+            int mid = (low + high) / 2;
+            if(arr[mid] == target)
+                return true;
+            if(arr[low] == arr[high]){
+                if(target == arr[low])return true;
+                low++;
+                high--;
+            }
+            else if(arr[low] <= arr[mid]){
+                if(target<arr[mid] && target>=arr[low]){
+                    high = mid - 1;
+                }
+                else
+                    low = mid + 1;
+            }
+            else if(arr[high] >= arr[mid]){
+                if(target>arr[mid] && target<=arr[high]){
+                    low = mid + 1;
+                }
+                else
+                    high = mid - 1;
+            }
+        }
+        return false;
+    }
 int main(int argc, char const *argv[])
 {
     

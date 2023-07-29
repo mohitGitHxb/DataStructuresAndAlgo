@@ -897,6 +897,22 @@ public:
 };
 
 //^ 20 Maximum Width of a binary tree [LeetCode]
+/*
+~  The given code calculates the maximum width of a binary tree using a breadth-first search (BFS) algorithm. The basic idea is to traverse the tree level by level and keep track of the leftmost and rightmost non-null nodes on each level. The width of each level is calculated as the difference between the indices of the leftmost and rightmost nodes plus one. The maximum width of the tree is then the maximum width among all levels.
+
+&-  First, the code checks if the root is null. If it is, it returns 0 since an empty tree has a width of 0. Otherwise, it creates a queue of pairs, where each pair consists of a tree node and its index. The index of a node is calculated based on its position in the tree. For example, the index of the root node is 0, the index of its left child is 1, and the index of its right child is 2. In general, if the index of a node is i, then the indices of its left and right children are 2 * i + 1 and 2 * i + 2, respectively.
+
+&-  The code then initializes the maximum width ans to 1 and enters a while loop that processes each level of the tree one by one. Inside the loop, it first gets the size of the queue, which represents the number of nodes on the current level. It also gets the index of the parent node parent_id by retrieving the second element of the first pair in the queue.
+
+&-  Next, it initializes two variables first and last to store the indices of the first and last non-null nodes on the current level. It then enters a for loop that iterates over all nodes on the current level. For each node, it calculates its index cur_id by subtracting parent_id from its original index. It also retrieves its pointer p from the first element of the first pair in the queue.
+
+&-  After retrieving these values, it pops the first pair from the queue and checks if it is processing either the first or last node on this level. If it is processing either one, it updates either first or last with cur_id. It then checks if p has any children. If it does, it adds them to the queue along with their indices.
+
+&-  After processing all nodes on this level, it calculates its width as last - first + 1 and updates ans if necessary. It then continues to process the next level until there are no more levels to process.
+.
+
+*   In terms of time complexity, since the code processes each node in the tree exactly once, its time complexity is O(n), where n is the number of nodes in the tree. In terms of space complexity, since the code uses a queue to store nodes on each level, its space complexity is O(w), where w is the maximum width of the tree.
+ */
 int widthOfBinaryTree(TreeNode *root)
 {
     if (!root)
@@ -1352,7 +1368,7 @@ public:
     }
 };
 
-//^ Morris traversals [inorder,postorder,preorder];
+//^ 27 Morris traversals [inorder,postorder,preorder];
 
 class MorrisTraversals
 {
@@ -1460,6 +1476,160 @@ public:
     {
     }
 };
+
+//^ 28 Serialize and deSerialize binary tree
+class Codec
+{
+private:
+    /*
+    @ Proper explanation watch striver
+     */
+public:
+    string serialize(TreeNode *root)
+    {
+        if (!root)
+            return "";
+        string ans = "";
+        queue<TreeNode *> q;
+        q.emplace(root);
+        while (!q.empty())
+        {
+            TreeNode *node = q.front();
+            q.pop();
+            if (!node)
+            {
+                ans.append("N,");
+            }
+            else
+            {
+                ans.append(to_string(node->val) + ",");
+                q.emplace(node->left);
+                q.emplace(node->right);
+            }
+        }
+        return ans;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode *deserialize(string data)
+    {
+        if (data.empty())
+            return nullptr;
+        queue<TreeNode *> q;
+        string str;
+        stringstream ss(data);
+        getline(ss, str, ',');
+        TreeNode *root = new TreeNode(stoi(str));
+        q.emplace(root);
+        while (!q.empty())
+        {
+            TreeNode *node = q.front();
+            q.pop();
+            getline(ss, str, ',');
+            if (str == "N")
+            {
+                node->left = nullptr;
+            }
+            else
+            {
+                node->left = new TreeNode(stoi(str));
+                q.emplace(node->left);
+            }
+            getline(ss, str, ',');
+            if (str == "N")
+            {
+                node->right = nullptr;
+            }
+            else
+            {
+                node->right = new TreeNode(stoi(str));
+                q.emplace(node->right);
+            }
+        }
+        return root;
+    }
+};
+
+//^ 29 Flatten a tree into a singly linked list [Preorder/Leetcode]
+class FlattenTree
+{
+public:
+    /*
+    @ Naive approach
+     */
+    void flatten(TreeNode *root)
+    {
+        if (!root)
+            return;
+        //?store preorder and turn it into linked list
+        stack<TreeNode *> s;
+        s.push(root);
+        vector<int> arr;
+        while (!s.empty())
+        {
+            TreeNode *node = s.top();
+            s.pop();
+            arr.emplace_back(node->val);
+            if (node->right)
+                s.push(node->right);
+            if (node->left)
+                s.push(node->left);
+        }
+        root->left = nullptr;
+        root->right = nullptr;
+        TreeNode *curr = root;
+        for (int i = 1; i < arr.size(); i++)
+        {
+            curr->right = new TreeNode(arr.at(i));
+            curr->left = nullptr;
+            curr = curr->right;
+        }
+        curr->right = nullptr;
+    }
+    /*
+    @ Recursive approach
+    & Do a "REVERSE PRE ORDER TRAVERSAL A.K.A Right -> left -> root"
+    & maintain a previous pointer which will act like a head of the building linked list.
+
+     */
+    TreeNode *prev = nullptr;
+    void flatten_recursive(TreeNode *root)
+    {
+        if (!root)
+            return;
+        flatten_recursive(root->right);
+        flatten_recursive(root->left);
+        root->left = nullptr;
+        root->right = prev;
+        prev = root;
+    }
+    /*
+    @ Morris traversal
+     */
+    void flatten_morris(TreeNode *root)
+    {
+        auto now = root;
+
+        while (now)
+        {
+            if (now->left)
+            {
+                auto prev = now->left;
+                while (prev->right)
+                    prev = prev->right;
+                prev->right = now->right;
+                now->right = now->left;
+                now->left = nullptr;
+            }
+            now = now->right;
+        }
+    }
+};
+
+
+//^ ----------------------------------------------------------------------------
+
+//? Additional questions from Love babbar sheet!
 int main()
 {
     return 0;

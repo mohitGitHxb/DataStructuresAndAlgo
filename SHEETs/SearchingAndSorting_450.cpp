@@ -1094,7 +1094,7 @@ bool search(vector<int> &arr, int target)
 }
 
 //^ 26 Find minimum in a rotated sorted array using binary search
-/* 
+/*
 &- Initialize low and high as the starting and ending indices of the array, respectively.
 
 &- Check if the array is already sorted in non-decreasing order by comparing the first and last elements. If it is, return the first element as it is the minimum.
@@ -1151,7 +1151,7 @@ int findMin_bs(int arr[], int n)
 }
 
 //^ 27 Find how many times the array is rotated.
-/* 
+/*
 &- The given code aims to find the number of times a sorted array has been rotated. It uses a modified binary search to efficiently find the rotation count.
 
 &- The algorithm initializes low and high as the starting and ending indices of the array, respectively. It also sets ans to a large value (1e9) and minIndex to 0 to keep track of the minimum element and its index found so far.
@@ -1222,7 +1222,9 @@ class SingleElement
 {
 public:
     /*
-    @ Using Xor operator
+    @ Using Xor operator 
+    ? Works even for non sorted arrays
+    ! O(N) T.C | O(1) S.C
      */
     int singleNonDuplicate(vector<int> &nums)
     {
@@ -1296,7 +1298,7 @@ public:
     }
 };
 
-//^ Peak element in a array
+//^ 29 Peak element in a array
 class PeakElement
 {
 public:
@@ -1361,6 +1363,253 @@ public:
             }
         }
         return -1;
+    }
+};
+
+//^ 30 Nth root of a number
+class NthRoot
+{
+public:
+    long long customPow(int mid, int n, int m)
+    {
+        long long ans = 1;
+        for (int i = 1; i <= n; i++)
+        {
+            ans = ans * mid;
+            if (ans > m)
+            {
+                return 2;
+            }
+        }
+        if (ans == m)
+        {
+            return 1;
+        }
+        return 0;
+    }
+    int NthRoot_Bs(int n, int m)
+    {
+        // Code here.
+        if (m == 1)
+            return 1;
+        if (n > m)
+        {
+            return -1;
+        }
+        int low = 1, high = m / n;
+        int ans = -1;
+        while (low <= high)
+        {
+            int mid = (low + high) / 2;
+            long long calc = customPow(mid, n, m);
+            // cout << mid << ", "<<calc<< "\n";
+            if (calc == 1)
+            {
+                return mid;
+            }
+            else if (calc == 0)
+            {
+                low = mid + 1;
+            }
+            else
+                high = mid - 1;
+        }
+        return ans;
+    }
+};
+//~ Search space problems
+//^ 31 Koko eating bananas
+class Koko
+{
+public:
+    class Solution
+    {
+    public:
+        bool isValid(int mid, vector<int> &piles, int h)
+        {
+            int hoursTaken = 0;
+            for (int &i : piles)
+            {
+                int res = hoursTaken + ceil((double)i / mid);
+
+                if (res > h)
+                {
+                    return false;
+                }
+                hoursTaken = res;
+                // cout << "hoursTaken: "<<hoursTaken<<"\n";
+            }
+            // cout << "hoursTaken: "<<hoursTaken<<"\n";
+            return hoursTaken <= h;
+        }
+        int minEatingSpeed(vector<int> &piles, int h)
+        {
+            int high = *max_element(piles.begin(), piles.end());
+            int low = 1;
+            int k = 1e9;
+            while (low <= high)
+            {
+                int mid = low + (high - low) / 2;
+                // cout << "mid: "<<mid<<"\n";
+                if (isValid(mid, piles, h))
+                {
+                    k = min(k, mid);
+                    high = mid - 1;
+                }
+                else
+                {
+                    low = mid + 1;
+                }
+            }
+            return k;
+        }
+    };
+};
+
+//^ 32 Minimum days to make m bouquets
+class MinimumDays
+{
+public:
+    bool isValid(int mid, int m, int k, vector<int> &bloomDay)
+    {
+        int bouquets = 0;
+        int counter = 0;
+        for (int &i : bloomDay)
+        {
+            if (i <= mid)
+            {
+                counter++;
+            }
+            else
+            {
+                bouquets += (counter / k);
+                counter = 0;
+            }
+        }
+        bouquets += (counter / k);
+        return bouquets >= m;
+    }
+    int minDays(vector<int> &bloomDay, int m, int k)
+    {
+        if ((long long)m * k > bloomDay.size())
+            return -1;
+        auto range = minmax_element(bloomDay.begin(), bloomDay.end());
+        int low = *range.first, high = *range.second;
+        int ans = 1e9;
+        while (low <= high)
+        {
+            int mid = low + (high - low) / 2;
+            if (isValid(mid, m, k, bloomDay))
+            {
+                ans = min(ans, mid);
+                high = mid - 1;
+            }
+            else
+            {
+                low = mid + 1;
+            }
+        }
+        return ans;
+    }
+};
+
+//^ 33 Find a smallest divisor given a threshold
+class SmallestDivisor
+{
+public:
+    bool isValid(int mid, vector<int> &nums, int threshold)
+    {
+        int result = 0;
+        for (int &i : nums)
+        {
+            result += ceil((double)i / mid);
+            if (result > threshold)
+            {
+                break;
+            }
+        }
+        return result <= threshold;
+    }
+    int smallestDivisor(vector<int> &nums, int threshold)
+    {
+        int high = *max_element(nums.begin(), nums.end());
+        int low = 1;
+        int ans = 1e9;
+        while (low <= high)
+        {
+            int mid = low + (high - low) / 2;
+            if (isValid(mid, nums, threshold))
+            {
+                ans = min(ans, mid);
+                high = mid - 1;
+            }
+            else
+            {
+                low = mid + 1;
+            }
+        }
+        return ans;
+    }
+};
+
+//^ 34 Capacity To Ship Packages Within D Days
+
+class ShipCapacity
+{
+public:
+    bool isValid(int mid, vector<int> &weights, int days)
+    {
+        int dayCounter = 1, capacity = 0;
+        for (int &i : weights)
+        {
+            capacity += i;
+            if (capacity > mid)
+            {
+                dayCounter++;
+                capacity = i;
+            }
+            if (dayCounter > days)
+            {
+                break;
+            }
+        }
+        return dayCounter <= days;
+    }
+    int shipWithinDays(vector<int> &weights, int days)
+    {
+        int high = accumulate(weights.begin(), weights.end(), 0);
+        int low = *max_element(weights.begin(), weights.end());
+        int ans = high;
+        while (low <= high)
+        {
+            int mid = low + (high - low) / 2;
+            if (isValid(mid, weights, days))
+            {
+                ans = min(mid, ans);
+                high = mid - 1;
+            }
+            else
+            {
+                low = mid + 1;
+            }
+        }
+        return ans;
+    }
+};
+
+//^ 35 Kth missing positive number
+class KthMissing{
+public:
+/*
+@ Linear search
+! O(N) T.C | O(1) S.C 
+ */
+    int findKthPositive(vector<int>& arr, int k) {
+        for(int &i : arr){
+            if(i<=k)k++;
+            else break;
+        }
+        return k;
     }
 };
 int main(int argc, char const *argv[])

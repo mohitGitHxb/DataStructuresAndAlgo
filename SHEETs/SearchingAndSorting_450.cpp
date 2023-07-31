@@ -1222,7 +1222,7 @@ class SingleElement
 {
 public:
     /*
-    @ Using Xor operator 
+    @ Using Xor operator
     ? Works even for non sorted arrays
     ! O(N) T.C | O(1) S.C
      */
@@ -1598,18 +1598,154 @@ public:
 };
 
 //^ 35 Kth missing positive number
-class KthMissing{
+class KthMissing
+{
 public:
-/*
-@ Linear search
-! O(N) T.C | O(1) S.C 
- */
-    int findKthPositive(vector<int>& arr, int k) {
-        for(int &i : arr){
-            if(i<=k)k++;
-            else break;
+    /*
+    @ Linear search
+    ! O(N) T.C | O(1) S.C
+     */
+    int findKthPositive(vector<int> &arr, int k)
+    {
+        for (int &i : arr)
+        {
+            if (i <= k)
+                k++;
+            else
+                break;
         }
         return k;
+    }
+    /*
+    @ Leetcode solution
+     */
+    int KthMissingElement(int a[], int n, int k)
+    {
+        int low = 0, high = n - 1;
+        while (low <= high)
+        {
+            int mid = low + (high - low) / 2;
+            int missing = a[mid] - (mid + 1); //* counting missing numbers ex: (2 3 4 7 11) <-> (1 1 1 3 6)
+            if (missing < k)
+            {
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid - 1;
+            }
+        }
+        //? high is pointing at the location of the starting point of the answer's range ex:7;
+        //? low is pointing at the location of the ending point of the answer's range ex:11;
+        //~ missing number = a[high] + (more numbers) but more numbers = k - (a[high] - (high + 1))
+        //~ solving above we get = high + 1 + k or (low) + k as high + 1 == low
+        return low + k;
+    }
+    /*
+    @ GFG solution
+     */
+    int KthMissingElement(int a[], int n, int k)
+    {
+        // Consider starting element as the first element of the array.
+        int low = 0, high = n - 1;
+        while (low <= high)
+        {
+            int mid = low + (high - low) / 2;
+            int missing = a[mid] - (mid + a[0]);
+            if (missing < k)
+            {
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid - 1;
+            }
+        }
+        if (low + k + a[0] - 1 < a[n - 1])
+            return low + k + a[0] - 1;
+
+        return -1;
+    }
+};
+
+//^ 36 Magnetic force between two BALLS :-p
+class MagneticForce
+{
+public:
+/* 
+@ Same as aggressive cows
+ */
+    bool isValid(unsigned mid, vector<int> &position, int m)
+    {
+        unsigned balls = 1, lastPos = position.front();
+        for (unsigned i = 0; i < position.size(); i++)
+        {
+            if (position.at(i) - lastPos >= mid)
+            {
+                balls++;
+                lastPos = position.at(i);
+            }
+            if (balls >= m)
+            {
+                return true;
+            }
+        }
+        return balls >= m;
+    }
+    int maxDistance(vector<int> &position, int m)
+    {
+        sort(position.begin(), position.end());
+        unsigned low = 1;
+        unsigned high = position.back() - position.front();
+        unsigned ans = 0;
+        while (low <= high)
+        {
+            unsigned mid = low + (high - low) / 2;
+            if (isValid(mid, position, m))
+            {
+                ans = max(ans, mid);
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid - 1;
+            }
+        }
+        return ans;
+    }
+};
+
+//^ 37 Split array largest sum [Allocation of min number of pages / painter's partition]
+class SplitArray {
+public:
+    bool isValid(int mid,int k,vector<int> &nums){
+        int subarrays = 1, currSum = nums.front();
+        for(int i = 1; i < nums.size(); i++){
+            currSum += nums.at(i);
+            if(currSum > mid){
+                subarrays++;
+                currSum = nums.at(i);
+            }
+            if(subarrays>k){
+                return false;
+            }
+        }
+        return true;
+    }
+    int splitArray(vector<int>& nums, int k) {
+        int high = accumulate(nums.begin(),nums.end(),0);
+        int low = *max_element(nums.begin(),nums.end());
+
+        while(low <= high){
+            int mid = low + (high - low) / 2;
+            if(isValid(mid,k,nums)){
+                high = mid - 1;
+            }
+            else{
+                low = mid + 1;
+            }
+        }
+        return low;
     }
 };
 int main(int argc, char const *argv[])

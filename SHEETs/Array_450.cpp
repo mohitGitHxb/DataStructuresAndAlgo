@@ -10,18 +10,17 @@ void printArray(int arr[], int size)
     cout << endl;
 }
 
-
-void printMatrix(vector<vector<int>> &mat){
-    for (int i = 0; i < mat.size(); i++){
-            for (auto &&j : mat[i])
-            {
-                cout << j << " "; 
-            }
-            cout << ",";
+void printMatrix(vector<vector<int>> &mat)
+{
+    for (int i = 0; i < mat.size(); i++)
+    {
+        for (auto &&j : mat[i])
+        {
+            cout << j << " ";
+        }
+        cout << ",";
     }
     cout << "\n";
-        
-            
 }
 
 void printArray(vector<int> &arr)
@@ -320,7 +319,7 @@ vector<int> unionOfArrays(vector<int> &A, vector<int> &B)
     }
 
     while (j < B.size())
-            res.push_back(B[j++]);
+        res.push_back(B[j++]);
 }
 
 vector<int> intersectionOfArrays(vector<int> A, vector<int> B)
@@ -342,69 +341,65 @@ vector<int> intersectionOfArrays(vector<int> A, vector<int> B)
     return res;
 }
 
-
-
 //^ 7 Cyclically rotate array 'D' places
 
-/* 
+/*
 ~    Reverse the first ‘d’ elements
 ~    Reverse last (N-d) elements
 ~    Reverse the whole array.
 ~      O(N) time and O(1) space
  */
-void rotateArrayByD(vector<int> &arr,int d){
+void rotateArrayByD(vector<int> &arr, int d)
+{
     int k = d % arr.size();
-    reverse(arr.begin(),arr.begin()+k);
-    reverse(arr.begin()+k,arr.end());
-    reverse(arr.begin(),arr.end());
+    reverse(arr.begin(), arr.begin() + k);
+    reverse(arr.begin() + k, arr.end());
+    reverse(arr.begin(), arr.end());
 }
 
-
 //^ 8 largest sum contiguous array (Kadane's algorithm)
-int largestSumContiguousArray(vector<int> &arr){
+int largestSumContiguousArray(vector<int> &arr)
+{
     int res = arr[0], maxEnding = arr[0];
     for (int i = 1; i < arr.size(); i++)
     {
-        maxEnding = max(maxEnding+arr[i],arr[i]);
-        res = max(maxEnding,res);
+        maxEnding = max(maxEnding + arr[i], arr[i]);
+        res = max(maxEnding, res);
     }
     return res;
 
     /*
 
 &    To print the subarray with the maximum sum the idea is to maintain start index & of maximum_sum_ending_here at current index so that whenever maximum_sum_so_far is & updated with maximum_sum_ending_here then start index and end index of subarray can be updated with start and current index
-    
-     */
-/*     int max_so_far = 0,maxEnding=0;
-    int start_index = 0 ,end_index = 0, s = 0;
-    for (int i = 0; i < arr.size(); i++)
-    {
-        maxEnding += arr[i];
-        if (max_so_far < maxEnding)
-        {
-            max_so_far = maxEnding;
-            start_index = s;
-            end_index = i;
-        }
-        if(maxEnding < 0)
-        {
-            maxEnding = 0;
-            s = i+1;
-        }
-        
-    }
-    cout << "Maximum contiguous sum is " << max_so_far
-    << endl;
-        cout << "Starting index " << start_index << endl
-    << "Ending index " << end_index << endl; */
-    
-    
-}
 
+     */
+    /*     int max_so_far = 0,maxEnding=0;
+        int start_index = 0 ,end_index = 0, s = 0;
+        for (int i = 0; i < arr.size(); i++)
+        {
+            maxEnding += arr[i];
+            if (max_so_far < maxEnding)
+            {
+                max_so_far = maxEnding;
+                start_index = s;
+                end_index = i;
+            }
+            if(maxEnding < 0)
+            {
+                maxEnding = 0;
+                s = i+1;
+            }
+
+        }
+        cout << "Maximum contiguous sum is " << max_so_far
+        << endl;
+            cout << "Starting index " << start_index << endl
+        << "Ending index " << end_index << endl; */
+}
 
 // ^ 8 Minimize the maximum difference in an array
 
-/* 
+/*
 
  &   The function getMinDiff takes two arguments: a reference to a vector arr representing the tower heights, and an integer k representing the adjustment value.
 
@@ -431,36 +426,39 @@ Intuition:
 
 *   The time complexity of the code is O(n log n) due to the initial sorting operation using sort. The loop iterates over the sorted array, which has a complexity of O(n). Thus, the overall time complexity is dominated by the sorting operation.
 
-* The space complexity is O(1) as the code uses only a constant amount of additional space. 
+* The space complexity is O(1) as the code uses only a constant amount of additional space.
  */
 
 //~ O(NlogN) T.C | O(1) space
-int getMinDiff(vector<int> &arr,int k){
-    sort(arr.begin(),arr.end());
+int getMinDiff(vector<int> &arr, int k)
+{
+    sort(arr.begin(), arr.end());
     int minDiff = arr.back() - arr.front();
     for (int i = 1; i < arr.size(); i++)
     {
         if (arr[i] - k >= 0)
         {
-        int tempMax,tempMin;
-        tempMax = max(arr[i-1]+k,arr.back()-k); //? Max element when we subtract k to whole array
-        tempMin = min(arr.front()+k,arr[i]-k); //? Minimum element when we add k to whole array
-        minDiff = min(tempMax-tempMin,minDiff);
+            int tempMax, tempMin;
+            tempMax = max(arr[i - 1] + k, arr.back() - k); //? Max element when we subtract k to whole array
+            tempMin = min(arr.front() + k, arr[i] - k);    //? Minimum element when we add k to whole array
+            minDiff = min(tempMax - tempMin, minDiff);
         }
-        
     }
-        return minDiff;
+    return minDiff;
 }
 
 //^ 9 Minimum number of jumps to reach the end of the array
 //~ O(N) T.C | O(1) space
-bool canReachEndOfArray(vector<int> &arr){
-    if(arr.size() == 1) return true;
-    if(arr.size() == 0 || arr.front() == 0) return false;
+bool canReachEndOfArray(vector<int> &arr)
+{
+    if (arr.size() == 1)
+        return true;
+    if (arr.size() == 0 || arr.front() == 0)
+        return false;
     int maximumReach = arr[0];
     for (int i = 0; i < arr.size(); i++)
     {
-        if(maximumReach >= arr.size()) //? reached the end...
+        if (maximumReach >= arr.size()) //? reached the end...
             return true;
         if (maximumReach < i) //? further steps are impossible now...
         {
@@ -468,10 +466,9 @@ bool canReachEndOfArray(vector<int> &arr){
         }
 
         maximumReach = max(maximumReach, arr[i] + i);
-        
     }
 }
-/* 
+/*
     The function minJumps takes two arguments: a reference to a vector arr representing the array, and an integer n representing the size of the array.
 
     The code first checks for special cases:
@@ -499,31 +496,39 @@ The code uses a greedy approach to find the minimum number of jumps required to 
 The time complexity of the code is O(n) since it iterates over the array once.
 The space complexity is O(1) as the code uses only a constant amount of additional space.
  */
-int minJumps(vector<int> &arr, int n){
-        
-        if(arr[0] == 0 && n>1)return -1;
-        if(n < 2)return 0; 
-        int jumps=1;
-        int steps=arr[0];
-        int maxRange=arr[0];
-        for(int i = 1; i<n; i++){
-           if( i == n-1){
-               return jumps;
-           }
-           maxRange = max(maxRange,arr[i]+i);
-           steps--;
-           if(steps == 0){
-              jumps++;
-              if(maxRange <= i)return -1;
-              steps = maxRange - i;
-           }
-        }
+int minJumps(vector<int> &arr, int n)
+{
+
+    if (arr[0] == 0 && n > 1)
         return -1;
+    if (n < 2)
+        return 0;
+    int jumps = 1;
+    int steps = arr[0];
+    int maxRange = arr[0];
+    for (int i = 1; i < n; i++)
+    {
+        if (i == n - 1)
+        {
+            return jumps;
+        }
+        maxRange = max(maxRange, arr[i] + i);
+        steps--;
+        if (steps == 0)
+        {
+            jumps++;
+            if (maxRange <= i)
+                return -1;
+            steps = maxRange - i;
+        }
     }
+    return -1;
+}
 
 // ^ 10 Find duplicate in an array of N+1 integers
 
-int getDuplicate(vector<int> &arr){
+int getDuplicate(vector<int> &arr)
+{
     /*
 
 &    Sort the input array (arr).
@@ -532,73 +537,75 @@ int getDuplicate(vector<int> &arr){
 
 !  O(NlogN) T.C | O(1) S.C
       */
-  /*    sort(arr.begin(), arr.end());
-        for (int i = 1; i < arr.size(); i++) {
-            if (arr[i] == arr[i - 1])
-                return arr[i];
-        }
-        return -1; */
-/* 
+    /*    sort(arr.begin(), arr.end());
+          for (int i = 1; i < arr.size(); i++) {
+              if (arr[i] == arr[i - 1])
+                  return arr[i];
+          }
+          return -1; */
+    /*
 
-&    In order to achieve linear time complexity, we need to be able to insert elements into a data structure and look them up in constant time. A HashSet/unordered_set is well suited for this purpose. Initialize an empty hashset, seen.
+    &    In order to achieve linear time complexity, we need to be able to insert elements into a data structure and look them up in constant time. A HashSet/unordered_set is well suited for this purpose. Initialize an empty hashset, seen.
 
-&    Iterate over the array and first check if the current element exists in the hashset (seen).
-&        If it does exist in the hashset, that number is the duplicate and can be returned right away.
+    &    Iterate over the array and first check if the current element exists in the hashset (seen).
+    &        If it does exist in the hashset, that number is the duplicate and can be returned right away.
 
-&    Otherwise, insert the current element into seen, move to the next element in the array and repeat step 2.
+    &    Otherwise, insert the current element into seen, move to the next element in the array and repeat step 2.
 
-! O(N) T.C | O(N) S.C
- */
-/* unordered_set<int> seen;
-        for (auto &num : arr) {
-            if (seen.count(num))
-                return num;
-            seen.insert(num);
-        }
-        return -1;
- */
-   /*  
-   
-&   Iterate over the array, evaluating each element (let's call the current element cur).
-
-&    Since we use negative marking, we must ensure that the current element (cur) is positive (i.e. if cur is negative, then use its absolute value).
-
-&    Check if nums[cur] is negative.
-
-&        If it is, then we have already performed this operation for the same number, and hence cur is the duplicate number. Store cur as the duplicate and exit the loop.
-
-&        Otherwise, flip the sign of nums[cur](i.e. make it negative). Move to the next element and repeat step 3.
-
-&    Once we've identified the duplicate, we could just return the duplicate number. However, even though we were not able to meet the problem constraints, we can show that we are mindful of the constraints by restoring the array. This is done by changing all negative numbers to positive. 
-
-* O(N) T.C | O(1) S.C 
-
-*/
-
-        int duplicate = -1;
-        for (int i = 0; i < arr.size(); i++) {
-            int cur = abs(arr[i]);
-            if (arr[cur] < 0) {
-                duplicate = cur;
-                break;
+    ! O(N) T.C | O(N) S.C
+     */
+    /* unordered_set<int> seen;
+            for (auto &num : arr) {
+                if (seen.count(num))
+                    return num;
+                seen.insert(num);
             }
-            arr[cur] *= -1;
-        }
-        for (auto &&i : arr) 
-        {
-            i = abs(i);
-        }
-        
-/* 
-    & using Fast and Slow pointers (Linked list) method
-*   O(N) T.C | O(1) space   
+            return -1;
+     */
+    /*
+
+ &   Iterate over the array, evaluating each element (let's call the current element cur).
+
+ &    Since we use negative marking, we must ensure that the current element (cur) is positive (i.e. if cur is negative, then use its absolute value).
+
+ &    Check if nums[cur] is negative.
+
+ &        If it is, then we have already performed this operation for the same number, and hence cur is the duplicate number. Store cur as the duplicate and exit the loop.
+
+ &        Otherwise, flip the sign of nums[cur](i.e. make it negative). Move to the next element and repeat step 3.
+
+ &    Once we've identified the duplicate, we could just return the duplicate number. However, even though we were not able to meet the problem constraints, we can show that we are mindful of the constraints by restoring the array. This is done by changing all negative numbers to positive.
+
+ * O(N) T.C | O(1) S.C
+
  */
+
+    int duplicate = -1;
+    for (int i = 0; i < arr.size(); i++)
+    {
+        int cur = abs(arr[i]);
+        if (arr[cur] < 0)
+        {
+            duplicate = cur;
+            break;
+        }
+        arr[cur] *= -1;
+    }
+    for (auto &&i : arr)
+    {
+        i = abs(i);
+    }
+
+    /*
+        & using Fast and Slow pointers (Linked list) method
+    *   O(N) T.C | O(1) space
+     */
 
     int slow = arr[0];
     int fast = arr[0];
     do
     {
-        slow = arr[slow]; 
+        slow = arr[slow];
         fast = arr[arr[fast]];
     } while (slow != fast); //? moving the slow ptr by 1 and fast by 2
     fast = arr[0];
@@ -607,45 +614,45 @@ int getDuplicate(vector<int> &arr){
         slow = arr[slow];
         fast = arr[fast];
     }
-    return slow;       
-
+    return slow;
 }
 
 //^ 9 Merge two sorted arrays
-void mergeArray(vector<int> &A, vector<int> &B){
-    /* 
+void mergeArray(vector<int> &A, vector<int> &B)
+{
+    /*
 &    Create an array arr3[] of size n1 + n2.
 &    Simultaneously traverse A[] and B[]. 
 &    Pick smaller of current elements in A[] and B[], copy this smaller element to next position in arr3[] and move ahead in arr3[] and the array whose element is picked.
 &    If there are remaining elements in A[] or B[], copy them also in arr3[].
      */
-/* 
-    vector<int> C(A.size()+B.size());
-    int i=0,j=0;
-    int k=0;
-    while (i<A.size() && j<B.size()) 
-    {
-        if(A[i] > B[j]){
-            C[k++] = B[j++];
+    /*
+        vector<int> C(A.size()+B.size());
+        int i=0,j=0;
+        int k=0;
+        while (i<A.size() && j<B.size())
+        {
+            if(A[i] > B[j]){
+                C[k++] = B[j++];
+            }
+            else if(A[i] <= B[j])
+            {
+                C[k++] = A[i++];
+            }
+
         }
-        else if(A[i] <= B[j])
+        while (i < A.size())
         {
             C[k++] = A[i++];
         }
-        
-    }
-    while (i < A.size())
-    {
-        C[k++] = A[i++];
-    }
-    while (j < B.size())
-    {
-        C[k++] = B[j++];
-    }
-    @ 'C' is the resultant merged Array..
-     */
+        while (j < B.size())
+        {
+            C[k++] = B[j++];
+        }
+        @ 'C' is the resultant merged Array..
+         */
 
-    /* 
+    /*
 
     % Insertion Sort Method
 &    Sort list 1 by always comparing with the head/first of list 2 and swap if required
@@ -653,43 +660,42 @@ void mergeArray(vector<int> &A, vector<int> &B){
 &    For every swapped item from list 1, perform insertion sort in list 2 to find its correct position so that when list 1 is sorted, list 2 is also sorted
     ~ O(MN) T.C and O(1) space
      */
-    int n=A.size();
-    int m=B.size();
-/*    int i = 0;
-	int j = 0;
-	while (i < n && j < m) {
-		//? if A[i] <= B[j] then both array is already
-		//? sorted
-		if (A[i] <= B[j]) {
-			i++;
-		}
-		else if (A[i] > B[j]) {
-			//? if A[i]>B[j] then first we swap both
-			//? element so that A[i] become smaller means
-			//? A[] become sorted then we check that
-			//? B[j] is smaller than all other element in
-			//? right side of B[j] if B[] is not sorted
-			//? then we linearly do sorting
-			//? means while adjacent element are less than
-			//? new B[j] we do sorting like by changing
-			//? position of element by shifting one position
-			//? toward left
-			swap(A[i], B[j]);
-			i++;
-			if (j < m - 1 && B[j + 1] < B[j]) {
-				int temp = B[j];
-				int tempj = j + 1;
-				while (B[tempj] < temp && tempj < m) {
-					B[tempj - 1] = B[tempj];
-					tempj++;
-				}
-				B[tempj - 1] = temp;
-			}
-		}
-	} */
+    int n = A.size();
+    int m = B.size();
+    /*    int i = 0;
+        int j = 0;
+        while (i < n && j < m) {
+            //? if A[i] <= B[j] then both array is already
+            //? sorted
+            if (A[i] <= B[j]) {
+                i++;
+            }
+            else if (A[i] > B[j]) {
+                //? if A[i]>B[j] then first we swap both
+                //? element so that A[i] become smaller means
+                //? A[] become sorted then we check that
+                //? B[j] is smaller than all other element in
+                //? right side of B[j] if B[] is not sorted
+                //? then we linearly do sorting
+                //? means while adjacent element are less than
+                //? new B[j] we do sorting like by changing
+                //? position of element by shifting one position
+                //? toward left
+                swap(A[i], B[j]);
+                i++;
+                if (j < m - 1 && B[j + 1] < B[j]) {
+                    int temp = B[j];
+                    int tempj = j + 1;
+                    while (B[tempj] < temp && tempj < m) {
+                        B[tempj - 1] = B[tempj];
+                        tempj++;
+                    }
+                    B[tempj - 1] = temp;
+                }
+            }
+        } */
 
-    
-    /* 
+    /*
 &    The idea: We start comparing elements that are far from each other rather than adjacent. 
 &For every pass, we calculate the gap and compare the elements towards the right of the gap. Every pass, the gap reduces to the ceiling value of dividing by 2.
 
@@ -697,168 +703,172 @@ void mergeArray(vector<int> &A, vector<int> &B){
 
      */
 
-    int gap = ((n+m)%2==0) ? (n+m)/2 : (n+m)/2 + 1;
-    int i=0,j=0;
+    int gap = ((n + m) % 2 == 0) ? (n + m) / 2 : (n + m) / 2 + 1;
+    int i = 0, j = 0;
     while (gap != 0)
     {
-        for(i = 0; i + gap < n; i++){
-            if(A[i] > A[i+gap]){
-                swap(A[i],A[i+gap]);
+        for (i = 0; i + gap < n; i++)
+        {
+            if (A[i] > A[i + gap])
+            {
+                swap(A[i], A[i + gap]);
             }
         }
 
-        for (j = (gap > n)? gap-n:0; j < m && i < n; j++,i++)
+        for (j = (gap > n) ? gap - n : 0; j < m && i < n; j++, i++)
         {
             if (A[i] > B[j])
             {
-                swap(A[i],B[j]);
+                swap(A[i], B[j]);
             }
         }
 
-        if (j<m)
+        if (j < m)
         {
-            for (j = 0; j + gap < m ; j++)
+            for (j = 0; j + gap < m; j++)
             {
-                if (B[j] > B[j+gap])
+                if (B[j] > B[j + gap])
                 {
-                    swap(B[j],B[j+gap]);
+                    swap(B[j], B[j + gap]);
                 }
             }
         }
-        
-        gap =(gap>1) ? (gap/2) + gap%2:0;        
+
+        gap = (gap > 1) ? (gap / 2) + gap % 2 : 0;
     }
 
-
-
-    /* 
+    /*
     @ Euclidean Division Lemma Method
 
-&    Suppose we have a number A and we want to 
-&    convert it to a number B and there is also a 
-&    constraint that we can recover number A any 
-&    time without using other variable.To achieve 
-&    this we chose a number N which is greater 
+&    Suppose we have a number A and we want to
+&    convert it to a number B and there is also a
+&    constraint that we can recover number A any
+&    time without using other variable.To achieve
+&    this we chose a number N which is greater
 &    than both numbers and add B*N in A.
 &    so A --> A+B*N
 
-&    To get number B out of (A+B*N) 
+&    To get number B out of (A+B*N)
 &    we divide (A+B*N) by N.
 &    so (A+B*N)/N = B.
 
-&    To get number A out of (A+B*N) 
+&    To get number A out of (A+B*N)
 &    we take modulo with N.
 &    so (A+B*N)%N = A.
 
-&    -> In short by taking modulo 
-&    we get old number back and taking divide 
+&    -> In short by taking modulo
+&    we get old number back and taking divide
 &    we new number.
 
 
 &   We first find the maximum element of both arrays and increment it by one to avoid collision of 0 and maximum element during modulo operation. The idea is to traverse both arrays from starting simultaneously. Let’s say an element in a is a[i] and in b is b[j] and k is the position at where the next minimum number will come. Now update value a[k] if k<n else b[k-n] by adding min(a[i],b[j])*maximum_element. After updating all the elements divide all the elements by maximum_element so we get the updated array back. 
-    
+
      */
 
-  /*   int mx = 0;
-	
-	//? Find maximum element of both array
-	for (int i = 0; i < n; i++) {
-		mx = max(mx, A[i]);
-	}
-	for (int i = 0; i < m; i++) {
-		mx = max(mx, B[i]);
-	}
-	
-	//? increment by one to avoid collision of 0 and maximum
-	//? element of array in modulo operation
-	mx++;
-	int i = 0, j = 0, k = 0;
-	while (i < n && j < m && k < (n + m)) {
-		
-		// recover back original element to compare
-		int e1 = A[i] % mx;
-		int e2 = B[j] % mx;
-		if (e1 <= e2) {
-			
-			// update element by adding multiplication
-			// with new number
-			if (k < n)
-				A[k] += (e1 * mx);
-			else
-				B[k - n] += (e1 * mx);
-			i++;
-			k++;
-		}
-		else {
-			
-			// update element by adding multiplication
-			// with new number
-			if (k < n)
-				A[k] += (e2 * mx);
-			else
-				B[k - n] += (e2 * mx);
-			j++;
-			k++;
-		}
-	}
-	
-	// process those elements which are left in array a
-	while (i < n) {
-		int el = A[i] % mx;
-		if (k < n)
-			A[k] += (el * mx);
-		else
-			B[k - n] += (el * mx);
-		i++;
-		k++;
-	}
-	
-	// process those elements which are left in array b
-	while (j < m) {
-		int el = B[j] % mx;
-		if (k < n)
-			A[k] += (el * mx);
-		else
-			B[k - n] += (el * mx);
-		j++;
-		k++;
-	}
-	
-	// finally update elements by dividing
-	// with maximum element
-	for (int i = 0; i < n; i++)
-		A[i] = A[i] / mx;
+    /*   int mx = 0;
 
-	// finally update elements by dividing
-	// with maximum element
-	for (int i = 0; i < m; i++)
-		B[i] = B[i] / mx;
-     */
+      //? Find maximum element of both array
+      for (int i = 0; i < n; i++) {
+          mx = max(mx, A[i]);
+      }
+      for (int i = 0; i < m; i++) {
+          mx = max(mx, B[i]);
+      }
+
+      //? increment by one to avoid collision of 0 and maximum
+      //? element of array in modulo operation
+      mx++;
+      int i = 0, j = 0, k = 0;
+      while (i < n && j < m && k < (n + m)) {
+
+          // recover back original element to compare
+          int e1 = A[i] % mx;
+          int e2 = B[j] % mx;
+          if (e1 <= e2) {
+
+              // update element by adding multiplication
+              // with new number
+              if (k < n)
+                  A[k] += (e1 * mx);
+              else
+                  B[k - n] += (e1 * mx);
+              i++;
+              k++;
+          }
+          else {
+
+              // update element by adding multiplication
+              // with new number
+              if (k < n)
+                  A[k] += (e2 * mx);
+              else
+                  B[k - n] += (e2 * mx);
+              j++;
+              k++;
+          }
+      }
+
+      // process those elements which are left in array a
+      while (i < n) {
+          int el = A[i] % mx;
+          if (k < n)
+              A[k] += (el * mx);
+          else
+              B[k - n] += (el * mx);
+          i++;
+          k++;
+      }
+
+      // process those elements which are left in array b
+      while (j < m) {
+          int el = B[j] % mx;
+          if (k < n)
+              A[k] += (el * mx);
+          else
+              B[k - n] += (el * mx);
+          j++;
+          k++;
+      }
+
+      // finally update elements by dividing
+      // with maximum element
+      for (int i = 0; i < n; i++)
+          A[i] = A[i] / mx;
+
+      // finally update elements by dividing
+      // with maximum element
+      for (int i = 0; i < m; i++)
+          B[i] = B[i] / mx;
+       */
 }
 //^ 10 Merge Intervals
 //* O(NlogN) T.C | O(N) space
-vector<vector<int>> mergeIntervals(vector<vector<int>>& intervals) {
+vector<vector<int>> mergeIntervals(vector<vector<int>> &intervals)
+{
 
-        sort(intervals.begin(), intervals.end());
+    sort(intervals.begin(), intervals.end());
 
-        vector<vector<int>> merged;
-        for (auto interval : intervals) {
-            //? if the list of merged intervals is empty or if the current
-            //? interval does not overlap with the previous, simply append it.
-            if (merged.empty() || merged.back()[1] < interval[0]) {
-                merged.push_back(interval);
-            }
-            //? otherwise, there is overlap, so we merge the current and previous
-            //? intervals.
-            else {
-                merged.back()[1] = max(merged.back()[1], interval[1]);
-            }
+    vector<vector<int>> merged;
+    for (auto interval : intervals)
+    {
+        //? if the list of merged intervals is empty or if the current
+        //? interval does not overlap with the previous, simply append it.
+        if (merged.empty() || merged.back()[1] < interval[0])
+        {
+            merged.push_back(interval);
         }
-        return merged;
+        //? otherwise, there is overlap, so we merge the current and previous
+        //? intervals.
+        else
+        {
+            merged.back()[1] = max(merged.back()[1], interval[1]);
+        }
     }
+    return merged;
+}
 
 //^ 11 Next Permutations
-/* 
+/*
 &    Iterate over the given array from end and find the first index (pivot) which doesn’t follow property of non-increasing suffix, (i.e,  arr[i] < arr[i + 1]).
 &    Check if pivot index does not exist 
 &        This means that the given sequence in the array is the largest as possible. So, swap the complete array.
@@ -868,66 +878,75 @@ vector<vector<int>> mergeIntervals(vector<vector<int>>& intervals) {
 
 *   O(N) T.C | O(1) space
  */
- void nextPermutation(vector<int>& nums) {
-        if(nums.size() == 0 || nums.size() == 1){
-            return;
+void nextPermutation(vector<int> &nums)
+{
+    if (nums.size() == 0 || nums.size() == 1)
+    {
+        return;
+    }
+    int pivot = INT_MIN;
+    for (int i = nums.size() - 2; i >= 0; i--)
+    {
+        if (nums[i] < nums[i + 1])
+        {
+            pivot = i;
+            break;
         }
-        int pivot = INT_MIN;
-        for(int i = nums.size()-2; i >= 0; i--){
-            if(nums[i] < nums[i + 1]){
-                pivot = i;
-                break;
-            }
-        }
+    }
 
-        if( pivot < 0){
-            reverse(nums.begin(),nums.end());
-            return;
+    if (pivot < 0)
+    {
+        reverse(nums.begin(), nums.end());
+        return;
+    }
+    for (int i = nums.size() - 1; i >= pivot; i--)
+    {
+        if (nums[i] > nums[pivot])
+        {
+            swap(nums[i], nums[pivot]);
+            break;
         }
-        for(int i = nums.size() - 1; i >= pivot ; i--){
-            if(nums[i] > nums[pivot]){
-                swap(nums[i],nums[pivot]);
-                break;
-            }
-        }
-        reverse(nums.begin() + pivot + 1 , nums.end());
+    }
+    reverse(nums.begin() + pivot + 1, nums.end());
 }
 
-
-
 //^ 12 Count Inversions
-int countInversions(vector<int> &arr){
-    /* 
+int countInversions(vector<int> &arr)
+{
+    /*
     & Traverse through the array, and for every index, find the number of smaller elements on its right side of the array. This can be done using a nested loop. Sum up the counts for all indices in the array and print the sum.
 
     ! O(N^2) T.C || O(1) S.C
      */
-        int c = 0;
-        int N = arr.size();
-        for(long i = 0; i<N; i++){
-            long curr = arr[i];
-            for(long j = i + 1; j < N; j++){
-                if(arr[j] < curr){
-                    c++;
-                }
+    int c = 0;
+    int N = arr.size();
+    for (long i = 0; i < N; i++)
+    {
+        long curr = arr[i];
+        for (long j = i + 1; j < N; j++)
+        {
+            if (arr[j] < curr)
+            {
+                c++;
             }
         }
-        return c;
+    }
+    return c;
 
-        //! O(N^2) worst case T.C but performs better on average 
-  /*       if(N == 0)return 0;
-        multiset<long long> s;
-        s.insert(arr[0]);
-        long long inversions = 0;
-        for(long i = 1 ; i < N; i++){
-            s.insert(arr[i]);
-            auto it = s.upper_bound(arr[i]);
-            inversions += distance(it,s.end());
-        }
-        return inversions; */
+    //! O(N^2) worst case T.C but performs better on average
+    /*       if(N == 0)return 0;
+          multiset<long long> s;
+          s.insert(arr[0]);
+          long long inversions = 0;
+          for(long i = 1 ; i < N; i++){
+              s.insert(arr[i]);
+              auto it = s.upper_bound(arr[i]);
+              inversions += distance(it,s.end());
+          }
+          return inversions; */
 }
 
-/* 
+/*
 &    The idea is similar to merge sort, divide the array into two equal or almost equal halves in each step until the base case is reached.
 & Create a function merge that counts the number of inversions when two halves of the array are merged, 
 
@@ -941,231 +960,252 @@ int countInversions(vector<int> &arr){
 * O(NlogN) T.C | O(N) S.C
  */
 
-class countInversions{
-    private:
-    long long ans=0;
-    public:
-     void mergeSort(long long arr[], long long lo, long long hi) {
-        if(lo<hi) {
-            long long mid = lo + (hi-lo)/2;
+class countInversions
+{
+private:
+    long long ans = 0;
+
+public:
+    void mergeSort(long long arr[], long long lo, long long hi)
+    {
+        if (lo < hi)
+        {
+            long long mid = lo + (hi - lo) / 2;
             mergeSort(arr, lo, mid);
-            mergeSort(arr, mid+1, hi);
+            mergeSort(arr, mid + 1, hi);
             merge(arr, lo, mid, hi);
         }
     }
-    
-    void merge(long long arr[], long long lo, long long mid, long long hi) {
-        long long  n1 = mid-lo+1, n2 = hi-mid;
+
+    void merge(long long arr[], long long lo, long long mid, long long hi)
+    {
+        long long n1 = mid - lo + 1, n2 = hi - mid;
         long long arr1[n1], arr2[n2];
-        for(long i=0; i<n1; i++) arr1[i] = arr[lo+i];
-        for(long i=0; i<n2; i++) arr2[i] = arr[mid+i+1];
-        long long i=0, j=0, k=lo;
-        while(i<n1 && j<n2) {
-            if(arr1[i]<=arr2[j]) arr[k++] = arr1[i++];
-            else {
-                ans += n1 - i;  //% single additional line... 
+        for (long i = 0; i < n1; i++)
+            arr1[i] = arr[lo + i];
+        for (long i = 0; i < n2; i++)
+            arr2[i] = arr[mid + i + 1];
+        long long i = 0, j = 0, k = lo;
+        while (i < n1 && j < n2)
+        {
+            if (arr1[i] <= arr2[j])
+                arr[k++] = arr1[i++];
+            else
+            {
+                ans += n1 - i; //% single additional line...
                 arr[k++] = arr2[j++];
             }
         }
-        while(i<n1) arr[k++] = arr1[i++];
-        while(j<n2) arr[k++] = arr2[j++];
+        while (i < n1)
+            arr[k++] = arr1[i++];
+        while (j < n2)
+            arr[k++] = arr2[j++];
     }
     long long int inversionCount(long long arr[], long long N)
     {
         // Your Code Here
-        if(N == 0)return 0;
-        mergeSort(arr,0,N-1);
+        if (N == 0)
+            return 0;
+        mergeSort(arr, 0, N - 1);
         return ans;
-}
-
-
+    }
 };
 
-
-   
-
 //^ 13 Best time to sell stock
-int maxProfit(vector<int>& prices) {
-        //* O(N) T.C | O(1) space (one transaction allowed)
-/*         int profit = 0;
-        int minimumPrice = prices[0];
-        for(int i = 1; i < prices.size(); i++){
-            minimumPrice = min(minimumPrice,prices[i]);
-            profit = max(profit,prices[i] - minimumPrice);
-        }
-        return profit; */
-
-
-        //* O(N) T.C | O(1) space (infinite transaction allowed)
-         int profit = 0,curr=0;
-        for(int i = 1; i < prices.size(); i++){
-            if(prices[i-1] < prices[i]){
-                curr += prices[i] - prices[i-1];
+int maxProfit(vector<int> &prices)
+{
+    //* O(N) T.C | O(1) space (one transaction allowed)
+    /*         int profit = 0;
+            int minimumPrice = prices[0];
+            for(int i = 1; i < prices.size(); i++){
+                minimumPrice = min(minimumPrice,prices[i]);
+                profit = max(profit,prices[i] - minimumPrice);
             }
-                profit = max(profit,curr);
+            return profit; */
+
+    //* O(N) T.C | O(1) space (infinite transaction allowed)
+    int profit = 0, curr = 0;
+    for (int i = 1; i < prices.size(); i++)
+    {
+        if (prices[i - 1] < prices[i])
+        {
+            curr += prices[i] - prices[i - 1];
         }
-        return profit;
+        profit = max(profit, curr);
+    }
+    return profit;
 }
 
-
 //^ 14 Count pairs with given sum
-    int getPairsCount(vector<int> &arr ,  int k) {
-        // code here
-        int n = arr.size();
-        int count  = 0;
-        unordered_map<int,int> s;
-        for(int i=0;i<n;i++){
-            
-            if(s.find(k - arr[i]) != s.end()){
-                count += s[k - arr[i]];
-            }
-            s[arr[i]]++;
-        }
-        return count;
-    }
+int getPairsCount(vector<int> &arr, int k)
+{
+    // code here
+    int n = arr.size();
+    int count = 0;
+    unordered_map<int, int> s;
+    for (int i = 0; i < n; i++)
+    {
 
+        if (s.find(k - arr[i]) != s.end())
+        {
+            count += s[k - arr[i]];
+        }
+        s[arr[i]]++;
+    }
+    return count;
+}
 
 //^ 15 Common elements in 3 sorted arrays
-/* 
+/*
 ~ Three pointer technique
 * O(n1+n2+n3) T.C | O(1) S.C (not taking into account the space required for ans)
  */
- vector <int> commonElements (int A[], int B[], int C[], int n1, int n2, int n3)
+vector<int> commonElements(int A[], int B[], int C[], int n1, int n2, int n3)
+{
+    // code here.
+    int A1 = 0;
+    int B1 = 0;
+    int C1 = 0;
+    vector<int> ans;
+    int prev = -10000; //? to take care of the duplicates
+    while (A1 < n1 && B1 < n2 && C1 < n3)
+    {
+        if (A[A1] == B[B1] && B[B1] == C[C1])
         {
-            //code here.
-            int A1 = 0;
-            int B1 = 0;
-            int C1 = 0;
-            vector<int> ans;
-            int prev = -10000; //? to take care of the duplicates
-            while(A1 < n1 && B1 < n2 && C1 < n3){
-                if(A[A1] == B[B1] && B[B1] == C[C1]){
-                    if(prev != -10000 && prev == C[C1]){
-                    A1++;
-                    B1++;
-                    C1++;
-                    continue;   
-                    }
-                    prev = C[C1];
-                    ans.push_back(C[C1]);
-                    A1++;
-                    B1++;
-                    C1++;
-                }
-                else if(A[A1] < B[B1]){ //? A[A1] is smallest among three elements
-                    A1++;
-                }
-                else if(B[B1] < C[C1]){ //? B[B1] is smallest among three elements
-                    B1++;
-                }
-                else{ //? C[C1] is smallest among three elements
-                    C1++;
-                }
+            if (prev != -10000 && prev == C[C1])
+            {
+                A1++;
+                B1++;
+                C1++;
+                continue;
             }
-            return ans;
+            prev = C[C1];
+            ans.push_back(C[C1]);
+            A1++;
+            B1++;
+            C1++;
+        }
+        else if (A[A1] < B[B1])
+        { //? A[A1] is smallest among three elements
+            A1++;
+        }
+        else if (B[B1] < C[C1])
+        { //? B[B1] is smallest among three elements
+            B1++;
+        }
+        else
+        { //? C[C1] is smallest among three elements
+            C1++;
+        }
+    }
+    return ans;
 }
-
 
 //^ 16 Rearrange array in alternating positive & negative items
 
-void rearrangeArray(vector<int> &arr){
-/* 
-&    We can store the positive values and negative values in two separate data structures.
-&    We will start filling the original array with alternating negative and positive values in the same order 
-&    in which it appears in the original array.
+void rearrangeArray(vector<int> &arr)
+{
+    /*
+    &    We can store the positive values and negative values in two separate data structures.
+    &    We will start filling the original array with alternating negative and positive values in the same order 
+    &    in which it appears in the original array.
 
-* O(N) T.C | O(N) space (Order is preserved) 
- */
-/* 
-    vector<int> negative_values;
-    vector<int> positive_values;
-    for (auto &&i : arr)
-    {
-        if (i >= 0)
-        {
-            positive_values.push_back(i);
-        }
-        else{
-            negative_values.push_back(i);
-        }
-    }
-    int i=0,j = 0,k=0;
-    bool flag=false;
-    for (i = 0; i < arr.size() && j < positive_values.size() && k < negative_values.size(); i++)
-    {
-        if(flag){
-            arr[i] = positive_values[j++];
-            flag = !flag;
-        }
-        else{
-            arr[i] = negative_values[k++];
-            flag = !flag;
-        }
-    }
-    if(flag){
-        while (j < positive_values.size()) 
-        {
-            arr[i++] = positive_values[j++];
-        }
-    }
-    else
-    {
-        while (k < negative_values.size())
-        {
-         
-        arr[i++] = negative_values[k++];
-        }
-        
-    }
+    * O(N) T.C | O(N) space (Order is preserved)
      */
+    /*
+        vector<int> negative_values;
+        vector<int> positive_values;
+        for (auto &&i : arr)
+        {
+            if (i >= 0)
+            {
+                positive_values.push_back(i);
+            }
+            else{
+                negative_values.push_back(i);
+            }
+        }
+        int i=0,j = 0,k=0;
+        bool flag=false;
+        for (i = 0; i < arr.size() && j < positive_values.size() && k < negative_values.size(); i++)
+        {
+            if(flag){
+                arr[i] = positive_values[j++];
+                flag = !flag;
+            }
+            else{
+                arr[i] = negative_values[k++];
+                flag = !flag;
+            }
+        }
+        if(flag){
+            while (j < positive_values.size())
+            {
+                arr[i++] = positive_values[j++];
+            }
+        }
+        else
+        {
+            while (k < negative_values.size())
+            {
+
+            arr[i++] = negative_values[k++];
+            }
+
+        }
+         */
 
     //~ if order is not maintained it can be solved using O(1) space..
     int n = arr.size();
-    int i = 0,j=n-1;
+    int i = 0, j = n - 1;
     //? shifting all negative values to the end
     while (i < j)
     {
-        while(i <= n-1 && arr[i] > 0)
+        while (i <= n - 1 && arr[i] > 0)
             i++;
         while (j >= 0 && arr[j] < 0)
             j--;
-        if(i < j){
+        if (i < j)
+        {
             swap(arr[i], arr[j]);
         }
     }
     //? 'i' has index of leftmost negative element
-    if( i==0 || i == n)return;
+    if (i == 0 || i == n)
+        return;
     //? start with first positive
     //? element at index 0
     //? Rearrange array in alternating
     //? positive & negative items
 
-    int  k = 0;
-    while (k < n && i < n) 
+    int k = 0;
+    while (k < n && i < n)
     {
-        swap(arr[k] , arr[i++]);
-        k+=2;
+        swap(arr[k], arr[i++]);
+        k += 2;
     }
 }
 
 //^ 17 Subarray with zero sum
 
-bool SubWithZeroSum(vector<int> &arr){
-            int prefixSum = 0;
-        unordered_set<int> s;
-        for(int i = 0; i < arr.size(); i++){
-            prefixSum += arr[i];
-            if(s.find(prefixSum) != s.end() || prefixSum == 0 || arr[i] == 0){
-                return true;
-            }
-            s.insert(prefixSum);
+bool SubWithZeroSum(vector<int> &arr)
+{
+    int prefixSum = 0;
+    unordered_set<int> s;
+    for (int i = 0; i < arr.size(); i++)
+    {
+        prefixSum += arr[i];
+        if (s.find(prefixSum) != s.end() || prefixSum == 0 || arr[i] == 0)
+        {
+            return true;
         }
-        return false;
+        s.insert(prefixSum);
+    }
+    return false;
 }
 
-
 //^ 18 Factorial of a large number
-/* 
+/*
 
 &    Create an array res[] of MAX size where MAX is a number of maximum digits in output. 
 &    Initialize value stored in res[] as 1 and initialize res_size (size of ‘res[]’) as 1. 
@@ -1180,134 +1220,140 @@ bool SubWithZeroSum(vector<int> &arr){
 &        Put all digits of carry in res[] and increase res_size by the number of digits in carry.
  */
 
-int multiply(int x, vector<int> &ans, int ans_size){
-        int carry = 0;
-        for(int i=0;i<ans_size;i++){
-            int product = ans[i] * x + carry;
-            ans[i] = product % 10;
-            carry = product / 10;
-        }
-        
-        while(carry != 0){
-            ans[ans_size] = carry % 10;
-            carry = carry / 10;
-            ans_size++;
-        }
-        return ans_size;
-    }
-    vector<int> factorial(int N){
-        vector<int> ans(3000);
-        ans[0] = 1;
-        int ans_size = 1;
-        for(int x = 2; x <= N; x++){
-            ans_size = multiply(x,ans,ans_size);
-        }
-        reverse(ans.begin() , ans.begin() + ans_size);
-        vector<int> res(ans.begin() , ans.begin() + ans_size);
-        return res;
+int multiply(int x, vector<int> &ans, int ans_size)
+{
+    int carry = 0;
+    for (int i = 0; i < ans_size; i++)
+    {
+        int product = ans[i] * x + carry;
+        ans[i] = product % 10;
+        carry = product / 10;
     }
 
+    while (carry != 0)
+    {
+        ans[ans_size] = carry % 10;
+        carry = carry / 10;
+        ans_size++;
+    }
+    return ans_size;
+}
+vector<int> factorial(int N)
+{
+    vector<int> ans(3000);
+    ans[0] = 1;
+    int ans_size = 1;
+    for (int x = 2; x <= N; x++)
+    {
+        ans_size = multiply(x, ans, ans_size);
+    }
+    reverse(ans.begin(), ans.begin() + ans_size);
+    vector<int> res(ans.begin(), ans.begin() + ans_size);
+    return res;
+}
 
-//^ 19 maximum product subarray 
-long long maximumProductSubarray(vector<int> &arr){
+//^ 19 maximum product subarray
+long long maximumProductSubarray(vector<int> &arr)
+{
 
     //! Brute force O(N^2) T.C | O(1) S.C
-/*     int res = arr[0];
-    for (int i = 0; i < arr.size(); i++)
-    {
-        int curr = arr[i];
-        if (curr == 0)
+    /*     int res = arr[0];
+        for (int i = 0; i < arr.size(); i++)
         {
-            continue;
-        }
-        
-        for (int j = i + 1; j < arr.size(); j++){
-            if (arr[j] == 0)
+            int curr = arr[i];
+            if (curr == 0)
             {
-                break;
+                continue;
             }
-            curr *= arr[j];
-            res = max(res, curr);
+
+            for (int j = i + 1; j < arr.size(); j++){
+                if (arr[j] == 0)
+                {
+                    break;
+                }
+                curr *= arr[j];
+                res = max(res, curr);
+            }
+                res = max(res, curr);
         }
-            res = max(res, curr);
-    }
-    return res; */
+        return res; */
 
     //* O(N) T.C | O(1) space
-    if(arr.empty()) return arr.size();
-	    long long res = INT_MIN;
-	    long long product = 1; 
-	    for(int i = 0; i<arr.size(); i++){
-	        product = product * arr[i];
-	        res = max(res,product);
-	        if(product == 0) //? handling cases where arr[i] becomes 0 as 0 times anything is 0 so to avoid product stuck at 0 we change product to 1 as 1 times the number is number itself...
-	            product = 1;
-	    }
-	    product = 1;
-        //? traversing from the other side also to counter cases when only first element is negative or maximum product subarray exists after some 0 entries...
-	    for(int i = arr.size() -1;i>=0;i--){
-	        
-	        product = product * arr[i];
-	        res = max(res,product);
-	        if(product == 0)
-	            product = 1;
-	    }
-	    
-	    return res;
+    if (arr.empty())
+        return arr.size();
+    long long res = INT_MIN;
+    long long product = 1;
+    for (int i = 0; i < arr.size(); i++)
+    {
+        product = product * arr[i];
+        res = max(res, product);
+        if (product == 0) //? handling cases where arr[i] becomes 0 as 0 times anything is 0 so to avoid product stuck at 0 we change product to 1 as 1 times the number is number itself...
+            product = 1;
+    }
+    product = 1;
+    //? traversing from the other side also to counter cases when only first element is negative or maximum product subarray exists after some 0 entries...
+    for (int i = arr.size() - 1; i >= 0; i--)
+    {
 
-        /* 
-        &    Here we use 3 variables called max_so_far, max_ending_here & min_ending_here
+        product = product * arr[i];
+        res = max(res, product);
+        if (product == 0)
+            product = 1;
+    }
+
+    return res;
+
+    /*
+    &    Here we use 3 variables called max_so_far, max_ending_here & min_ending_here
 &    For every index, the maximum number ending at that index will be the maximum(arr[i], max_ending_here * arr[i], min_ending_here[i]*arr[i])
 &    Similarly, the minimum number ending here will be the minimum of these 3
 &    Thus we get the final value for the maximum product subarray
-        
-        * O(N) solution with single traversal
-         */
 
-        long long max_so_far = INT_MIN,max_ending=0,min_ending=0;
-        for (long i = 0;i < arr.size();i++)
-        {
-            max_ending = (max_ending == 0)?i:max_ending*arr[i];
-            min_ending = (min_ending == 0)?i:min_ending*arr[arr.size() - i - 1];
-            max_so_far = max(max_so_far,max(min_ending,max_ending));
-        }
-        return max_so_far;
-        
-    
+    * O(N) solution with single traversal
+     */
+
+    long long max_so_far = INT_MIN, max_ending = 0, min_ending = 0;
+    for (long i = 0; i < arr.size(); i++)
+    {
+        max_ending = (max_ending == 0) ? i : max_ending * arr[i];
+        min_ending = (min_ending == 0) ? i : min_ending * arr[arr.size() - i - 1];
+        max_so_far = max(max_so_far, max(min_ending, max_ending));
+    }
+    return max_so_far;
 }
 
 //^ 20 Longest consecutive subsequence
-int longest_sequences(vector<int> &arr){
+int longest_sequences(vector<int> &arr)
+{
     int N = arr.size();
 
-    /* 
+    /*
 & sort the array and initialize two variables maxLength and currLength which stores maxLength and length till current element of a consecutive subsequence respectively
 
-& update maxLength when currLength is greater than maxLength 
-& if arr[i] != arr[i-1] + 1 then currLength = 1 (starting of next subsequence) 
+& update maxLength when currLength is greater than maxLength
+& if arr[i] != arr[i-1] + 1 then currLength = 1 (starting of next subsequence)
 
     ! O(NlogN) solution O(1) extra space ... (O(logN) space i.e sorting)
      */
- /*    sort(arr.begin(),arr.end());
-      int maxLength = -100000,currLength=1;
-      for(int i = 1; i < N; i++){
-          if(arr[i] == arr[i - 1]){
-              continue;
-          }
-          if(arr[i] == arr[i-1] + 1 ){
-            currLength++;
-            maxLength = max(maxLength,currLength);
-          }
-          else{
-          currLength = 1;
-              
-          }
-      }
-      return maxLength; */
+    /*    sort(arr.begin(),arr.end());
+         int maxLength = -100000,currLength=1;
+         for(int i = 1; i < N; i++){
+             if(arr[i] == arr[i - 1]){
+                 continue;
+             }
+             if(arr[i] == arr[i-1] + 1 ){
+               currLength++;
+               maxLength = max(maxLength,currLength);
+             }
+             else{
+             currLength = 1;
 
+             }
+         }
+         return maxLength; */
 
-        /* 
-        
+    /*
+
 &            Create an empty hash.
 &    Insert all array elements to hash.
 &    Do the following for every element arr[i]
@@ -1315,73 +1361,79 @@ int longest_sequences(vector<int> &arr){
 &    If this element is the first element, then count the number of elements in the consecutive starting with this element. Iterate from arr[i] + 1 till the last element that can be found.
 &    If the count is more than the previous longest subsequence found, then update this.
 
-    * O(N) T.C | O(N) S.C
-         */
+* O(N) T.C | O(N) S.C
+     */
 
-            unordered_set<int> s(arr.begin(),arr.begin()+N);
-      int maxLength = 0;
-      for(int i = 0; i < N; i++){
-          if(s.find(arr[i]-1) == s.end()){
-              int currLength = 1;
-              while(s.find(arr[i] + currLength)!=s.end()){
-                  currLength++;
-              }
-              
-              maxLength = max(currLength,maxLength);
-          }
-      }
-      return (maxLength==0)?1:maxLength;
-} 
+    unordered_set<int> s(arr.begin(), arr.begin() + N);
+    int maxLength = 0;
+    for (int i = 0; i < N; i++)
+    {
+        if (s.find(arr[i] - 1) == s.end())
+        {
+            int currLength = 1;
+            while (s.find(arr[i] + currLength) != s.end())
+            {
+                currLength++;
+            }
 
-//^ 21 find all elements that appear more than N/K times 
-//* O(N) T.C and S.C
-int getOccurence(vector<int>& arr,int k){
-    int n = arr.size();
-      unordered_map<int,int> mp;
-        for(int i=0;i<n;i++)
-            mp[arr[i]]++;
-        int count=0;
-        for(auto &x : mp){
-            count = (x.second > n/k)?count+1:count;
+            maxLength = max(currLength, maxLength);
         }
-        return count;
+    }
+    return (maxLength == 0) ? 1 : maxLength;
+}
+
+//^ 21 find all elements that appear more than N/K times
+//* O(N) T.C and S.C
+int getOccurence(vector<int> &arr, int k)
+{
+    int n = arr.size();
+    unordered_map<int, int> mp;
+    for (int i = 0; i < n; i++)
+        mp[arr[i]]++;
+    int count = 0;
+    for (auto &x : mp)
+    {
+        count = (x.second > n / k) ? count + 1 : count;
+    }
+    return count;
 }
 
 //^ 22 find a triplet whose sum is equal to X
-bool find3sum(vector<int> &A,int X){
+bool find3sum(vector<int> &A, int X)
+{
     int n = A.size();
-    /* 
+    /*
     & using set and applying similar logic of two sum
     ! O(n^2) T.C | O(N) space
      */
-/*      unordered_set<int> s;
-        sort(A.begin(),A.begin()+n);
-        for(int i = 0; i < n; i++){
-            int twoSum = X - A[i];
-            for(int j = i + 1; j < n; j++){
-                if(s.find(twoSum-A[j]) != s.end())return true;
-                s.insert(A[j]);
+    /*      unordered_set<int> s;
+            sort(A.begin(),A.begin()+n);
+            for(int i = 0; i < n; i++){
+                int twoSum = X - A[i];
+                for(int j = i + 1; j < n; j++){
+                    if(s.find(twoSum-A[j]) != s.end())return true;
+                    s.insert(A[j]);
+                }
+                s.clear();
             }
-            s.clear();
-        }
-        return false; */
+            return false; */
 
-// * O(N^2) T.C | O(1) space
-            int l, r;
+    // * O(N^2) T.C | O(1) space
+    int l, r;
     //? Sorting the elements.
     sort(A.begin(), A.end());
 
     //? Traversing the array elements.
-    for (int i = 0; i < n-2; i++)
+    for (int i = 0; i < n - 2; i++)
     {
         //? Taking two pointers. One at element after ith index and another
         //? at the last index.
-        l = i + 1; 
-        r = n-1; 
+        l = i + 1;
+        r = n - 1;
         while (l < r)
         {
             //? If sum of elements at indexes i, l and r is equal to required number, we return true.
-            if( A[i] + A[l] + A[r] == X)
+            if (A[i] + A[l] + A[r] == X)
                 return 1;
             //? Else if the sum is less than required number, it means we need
             //? to increase the sum so we increase the left pointer l.
@@ -1389,53 +1441,54 @@ bool find3sum(vector<int> &A,int X){
                 l++;
             //? Else the sum is more than required number and we need to
             //? decrease the sum so we decrease the right pointer r.
-            else 
+            else
                 r--;
         }
     }
 
-    //returning false if no triplet sum equal to required number is present.
+    // returning false if no triplet sum equal to required number is present.
     return 0;
-
-
 }
 
-//^ 23 buy and sell stock (2 transactions) 
-int maxProfit3(vector<int>&price){
-    /* 
+//^ 23 buy and sell stock (2 transactions)
+int maxProfit3(vector<int> &price)
+{
+    /*
 &    Suppose you make some profit p1 by doing your first transaction in the stock market. Now you are excited to purchase another stock to earn more profit. Suppose the price of the second stock you aim to buy is x. Now, for you, the net effective price that you are spending from your pocket for this stock will be x-p1, because you already have p1 bucks in your hand. Now, if you sell the second stock at price y your net profit p2 will be p2 = y - (x-p1). You have to do nothing but maximize this profit p2.
 
 * O(N) T.C | O(1) space
     */
-    
-    if(price.empty())return 0;
+
+    if (price.empty())
+        return 0;
     int firstBuy = INT_MAX;
     int firstProfit = 0;
     int secondBuy = INT_MAX;
     int secondProfit = 0;
-    for(auto &i : price){
-        firstBuy = min(firstBuy,i);
+    for (auto &i : price)
+    {
+        firstBuy = min(firstBuy, i);
         firstProfit = max(firstProfit, i - firstBuy);
-        secondBuy  = min(secondBuy, i - firstProfit);
-        secondProfit = max(secondProfit,i - secondBuy);
+        secondBuy = min(secondBuy, i - firstProfit);
+        secondProfit = max(secondProfit, i - secondBuy);
     }
     return secondProfit;
 }
 
-
 //^ 24 Array subset of other array
 
-bool isSubset(vector<int>& arr,vector<int>&other){
+bool isSubset(vector<int> &arr, vector<int> &other)
+{
     if (other.size() > arr.size())
     {
         return false;
     }
-    unordered_map<int,int> mp;
-    for (auto &&i : arr) 
+    unordered_map<int, int> mp;
+    for (auto &&i : arr)
     {
         mp[i]++;
     }
-    for (auto &&i : other) 
+    for (auto &&i : other)
     {
         if (mp.find(i) == mp.end())
         {
@@ -1445,7 +1498,8 @@ bool isSubset(vector<int>& arr,vector<int>&other){
         {
             return false;
         }
-        else{
+        else
+        {
             mp[i]--;
         }
     }
@@ -1454,79 +1508,86 @@ bool isSubset(vector<int>& arr,vector<int>&other){
 }
 
 //^ 25 Trapping rain water problem
- int trappingWater(vector<int> &height){
+int trappingWater(vector<int> &height)
+{
 
     //! O(N) T.C | O(N) space
-/*        int n = height.size();
-        //? left[i] contains height of tallest bar to the 
-        //? left of bar at ith index including itself.
-        vector<int> left(n, 0);
-      
-        //? right[i] contains height of tallest bar to 
-        //? the right of bar at ith index including itself. 
-        vector<int> right(n, 0); 
-      
-        int water = 0;
-      
-        //? Storing values of tallest bar from first index till ith index.
-        left[0] = height[0];
-        for (int i = 1;i < n;i++) {
-            left[i] = max(left[i - 1], height[i]);
-        }
-      
-        //? Storing values of tallest bar from last index till ith index. 
-        right[n-1] = height[n-1]; 
-        for (int i = n - 2;i >= 0;i--) {
-            right[i] = max(right[i + 1], height[i]);
-        }
-      
-        //? Storing the result by choosing the minimum of heights of tallest bar to
-        //? the right and left of the bar at current index and also subtracting the
-        //? value of current index to get water accumulated at current index.
-        for (int i = 0;i < n;i++) {
-            water += max(0, min(left[i], right[i]) - height[i]);
-        }
-        // returning the result.
-        return water; */
+    /*        int n = height.size();
+            //? left[i] contains height of tallest bar to the
+            //? left of bar at ith index including itself.
+            vector<int> left(n, 0);
 
-        /* 
-    &   initialize left ptr = 0 and right ptr = size - 1
-    &   while left < right do{
-    &   if height[left] < height[right]
-    &       if(height[left] > leftMax) update leftMax
-    &       else add leftMax - height[left] to ans
-    &       Add 1 to left
-    &   else 
-    &       if(height[left] > rightMax) update rightMax
-    &       else add rightMax - height[right] to ans
-    &       subtract 1 from right }
+            //? right[i] contains height of tallest bar to
+            //? the right of bar at ith index including itself.
+            vector<int> right(n, 0);
 
-    * O(N) T.C | O(1) space
-         */
-     if (height.size()==0) return 0; 
-        int left = 0, right = height.size()-1; 
-        int leftMax=0, rightMax=0; 
-        int ans = 0; 
-        while (left < right) {
-            if (height[left] > leftMax) leftMax = height[left]; 
-            if (height[right] > rightMax) rightMax = height[right];
-            if (leftMax < rightMax) {
-                ans += max(0, leftMax-height[left]); 
-                left++; 
-            } else {
-                ans += max(0, rightMax-height[right]); 
-                right--; 
+            int water = 0;
+
+            //? Storing values of tallest bar from first index till ith index.
+            left[0] = height[0];
+            for (int i = 1;i < n;i++) {
+                left[i] = max(left[i - 1], height[i]);
             }
+
+            //? Storing values of tallest bar from last index till ith index.
+            right[n-1] = height[n-1];
+            for (int i = n - 2;i >= 0;i--) {
+                right[i] = max(right[i + 1], height[i]);
+            }
+
+            //? Storing the result by choosing the minimum of heights of tallest bar to
+            //? the right and left of the bar at current index and also subtracting the
+            //? value of current index to get water accumulated at current index.
+            for (int i = 0;i < n;i++) {
+                water += max(0, min(left[i], right[i]) - height[i]);
+            }
+            // returning the result.
+            return water; */
+
+    /*
+&   initialize left ptr = 0 and right ptr = size - 1
+&   while left < right do{
+&   if height[left] < height[right]
+&       if(height[left] > leftMax) update leftMax
+&       else add leftMax - height[left] to ans
+&       Add 1 to left
+&   else
+&       if(height[left] > rightMax) update rightMax
+&       else add rightMax - height[right] to ans
+&       subtract 1 from right }
+
+* O(N) T.C | O(1) space
+     */
+    if (height.size() == 0)
+        return 0;
+    int left = 0, right = height.size() - 1;
+    int leftMax = 0, rightMax = 0;
+    int ans = 0;
+    while (left < right)
+    {
+        if (height[left] > leftMax)
+            leftMax = height[left];
+        if (height[right] > rightMax)
+            rightMax = height[right];
+        if (leftMax < rightMax)
+        {
+            ans += max(0, leftMax - height[left]);
+            left++;
         }
-        return ans; 
+        else
+        {
+            ans += max(0, rightMax - height[right]);
+            right--;
+        }
+    }
+    return ans;
 }
-
-
 
 //^ 26 smallest subarray with sum greater than 'x'
 
-int smallest_subarray(vector<int> &arr,int x){
-    /* 
+int smallest_subarray(vector<int> &arr, int x)
+{
+    /*
 & using sliding window and two pointers approach to solve
 & first find the first subarray whose sum is greater than x
 & then, start = 0 and end = subarray.length - 1 find the minSize
@@ -1535,67 +1596,74 @@ int smallest_subarray(vector<int> &arr,int x){
 & minimize the size of minSize and current subarray size(obtainable from start,end)
 * O(N) T.C | O(1) S.C
      */
-/*      int n = arr.size();
-        int start = 0;
-        int end = -1;
-        int currSum = 0;
-        for(int i = 0; i < n; i++){
-            currSum+=arr[i];
-            if(currSum>x){
-                end = i;
-                break;
+    /*      int n = arr.size();
+            int start = 0;
+            int end = -1;
+            int currSum = 0;
+            for(int i = 0; i < n; i++){
+                currSum+=arr[i];
+                if(currSum>x){
+                    end = i;
+                    break;
+                }
             }
-        }
-        if(end == -1)return 0;
-        int minSize = end - start + 1;
-        while(start<=end && end < n){
-            currSum -= arr[start++];
-            while(currSum <= x && end < n){
-                currSum += arr[++end];
+            if(end == -1)return 0;
+            int minSize = end - start + 1;
+            while(start<=end && end < n){
+                currSum -= arr[start++];
+                while(currSum <= x && end < n){
+                    currSum += arr[++end];
+                }
+                if(currSum > x)
+                minSize = min(minSize,end-start+1);
             }
-            if(currSum > x)
-            minSize = min(minSize,end-start+1);
+            return minSize; */
+    //* simplified version
+    int i = 0, j = 0, sum = arr[0], mini = INT_MAX;
+    while (j < arr.size())
+    {
+        if (sum <= x)
+        {
+            j++;
+            sum = sum + arr[j];
         }
-        return minSize; */
-        //* simplified version 
-          int i=0, j=0, sum = arr[0], mini = INT_MAX;
-       while(j<arr.size()) {
-           if(sum <= x) {
-               j++;
-               sum = sum + arr[j];
-           }
-           else if(sum > x) {
-               mini = min(mini, j-i+1);
-               sum = sum - arr[i];
-               i++;
-           }
-       }
-       return mini;
+        else if (sum > x)
+        {
+            mini = min(mini, j - i + 1);
+            sum = sum - arr[i];
+            i++;
+        }
+    }
+    return mini;
 }
-
 
 // ^ 27 Three way partitioning
 //* O(N) T.C | O(1) S.C {same approach as sort 0,1,2 array}
- void threeWayPartition(vector<int>& arr,int a, int b)
+void threeWayPartition(vector<int> &arr, int a, int b)
+{
+    if (b < a || arr.size() < 2)
+        return;
+    int low = 0, high = arr.size() - 1;
+    int mid = low;
+    while (mid <= high)
     {
-        if(b<a || arr.size() < 2)return;
-        int low = 0, high = arr.size()-1;
-        int mid = low;
-        while(mid<=high){
-            if(arr[mid]<a){
-                swap(arr[low++],arr[mid++]);
-            }
-            else if(arr[mid]>=a && arr[mid] <= b){
-                mid++;
-            }
-            else{
-                swap(arr[high--],arr[mid]);
-            }
+        if (arr[mid] < a)
+        {
+            swap(arr[low++], arr[mid++]);
+        }
+        else if (arr[mid] >= a && arr[mid] <= b)
+        {
+            mid++;
+        }
+        else
+        {
+            swap(arr[high--], arr[mid]);
         }
     }
+}
 
 //^ 28 Minimum swap to group elements <= k
-/* 
+/*
     * O(N) T.C | O(1) S.C
 
 &    Find count of all elements which are less than or equals to ‘k’. Let’s say the count is ‘cnt’
@@ -1603,115 +1671,176 @@ int smallest_subarray(vector<int> &arr,int x){
 &    Repeat step 2, for every window of length ‘cnt’ and take minimum of count ‘bad’ among them. This will be the final answer.
 
  */
-int minSwap(vector<int>& arr, int k){
-        int windowSize=0,start=0,end=0;
-        for(int i = 0; i < arr.size(); i++){
-            if(arr[i] <= k){
-                windowSize++;
-            }
+int minSwap(vector<int> &arr, int k)
+{
+    int windowSize = 0, start = 0, end = 0;
+    for (int i = 0; i < arr.size(); i++)
+    {
+        if (arr[i] <= k)
+        {
+            windowSize++;
         }
-        if(windowSize == 0 || arr.size() < 2)return 0;
-        end = windowSize - 1;
-        int favorable=0,notfavourable=0,res;
-        for(int i = start; i <= end; i++){
-            if(arr[i] <= k)
-                favorable++;
-            else
-                notfavourable++;
-        }
-        if(favorable == windowSize){
-            return 0;
-        }
-        res = notfavourable;
-        while(end<arr.size()){
-            res = min(res,notfavourable);
-            end++;
-            if(end < arr.size() && arr[end]>k)notfavourable++;
-            if(start < arr.size() && arr[start]>k)notfavourable--;
-            start++;
-            
-        }
-        return res;
-
     }
+    if (windowSize == 0 || arr.size() < 2)
+        return 0;
+    end = windowSize - 1;
+    int favorable = 0, notfavourable = 0, res;
+    for (int i = start; i <= end; i++)
+    {
+        if (arr[i] <= k)
+            favorable++;
+        else
+            notfavourable++;
+    }
+    if (favorable == windowSize)
+    {
+        return 0;
+    }
+    res = notfavourable;
+    while (end < arr.size())
+    {
+        res = min(res, notfavourable);
+        end++;
+        if (end < arr.size() && arr[end] > k)
+            notfavourable++;
+        if (start < arr.size() && arr[start] > k)
+            notfavourable--;
+        start++;
+    }
+    return res;
+}
 
 //^ 29/30 Median of two sorted Arrays
-double MedianOfArrays(vector<int>& arr, vector<int>& brr)
+double MedianOfArrays(vector<int> &arr, vector<int> &brr)
+{
+    /*
+    &     The function takes two vectors of integers, arr and brr, as input.
+& If the size of brr is smaller than the size of arr, the function swaps the arrays and calls itself recursively. This ensures that arr is always the smaller array.
+&   Initialize variables n1 and n2 to store the sizes of arr and brr respectively.
+&   Set the beginning index begin to 0 and the ending index end to n1. These indices define the range of elements in arr that will be considered for partitioning.
+& Enter a while loop that continues as long as begin is less than or equal to end.
+& Calculate the partition indices i1 and i2 using binary search. The index i1 represents the partition between the left and right parts of arr, and i2 represents the partition between the left and right parts of brr.
+& Determine the minimum and maximum elements on the left and right sides of the partitions:
+&     min1 stores the minimum element in the right part of arr (INT_MAX if the partition i1 is at the end of arr).
+&     min2 stores the minimum element in the right part of brr (INT_MAX if the partition i2 is at the end of brr).
+&     max1 stores the maximum element in the left part of arr (INT_MIN if the partition i1 is at the beginning of arr).
+&    max2 stores the maximum element in the left part of brr (INT_MIN if the partition i2 is at the beginning of brr).
+& Check if the current partitions satisfy the condition for finding the median of the combined array:
+&     If max1 <= min2 and max2 <= min1, it means the elements on the left side of both arrays are smaller than the elements on the right side, indicating a valid partition.
+&     In this case, calculate the maximum and minimum elements among max1, max2, min1, and min2.
+&     If the total number of elements in both arrays is even ((n1 + n2) % 2 == 0), return the average of the maximum and minimum values as the median.
+&     If the total number of elements is odd, return the maximum value as the median.
+& If the current partitions do not satisfy the condition, adjust the partitions by updating end or begin based on the comparisons max1 > min2 and max2 > min1.
+& Repeat steps 6-9 until a valid partition is found or the search range is exhausted.
+If no valid partition is found, return 0.0 as the median.
+    * O(min(logN,logM)) T.C | O(1) space using binary search
+      */
+    if (brr.size() < arr.size())
+        return MedianOfArrays(brr, arr);
+    int n1 = arr.size();
+    int n2 = brr.size();
+    int begin = 0, end = n1;
+
+    while (begin <= end)
     {
-        /*
-        &     The function takes two vectors of integers, arr and brr, as input.
-   & If the size of brr is smaller than the size of arr, the function swaps the arrays and calls itself recursively. This ensures that arr is always the smaller array.
-    &   Initialize variables n1 and n2 to store the sizes of arr and brr respectively.
-    &   Set the beginning index begin to 0 and the ending index end to n1. These indices define the range of elements in arr that will be considered for partitioning.
-   & Enter a while loop that continues as long as begin is less than or equal to end.
-   & Calculate the partition indices i1 and i2 using binary search. The index i1 represents the partition between the left and right parts of arr, and i2 represents the partition between the left and right parts of brr.
-   & Determine the minimum and maximum elements on the left and right sides of the partitions:
-   &     min1 stores the minimum element in the right part of arr (INT_MAX if the partition i1 is at the end of arr).
-   &     min2 stores the minimum element in the right part of brr (INT_MAX if the partition i2 is at the end of brr).
-   &     max1 stores the maximum element in the left part of arr (INT_MIN if the partition i1 is at the beginning of arr).
-    &    max2 stores the maximum element in the left part of brr (INT_MIN if the partition i2 is at the beginning of brr).
-   & Check if the current partitions satisfy the condition for finding the median of the combined array:
-   &     If max1 <= min2 and max2 <= min1, it means the elements on the left side of both arrays are smaller than the elements on the right side, indicating a valid partition.
-   &     In this case, calculate the maximum and minimum elements among max1, max2, min1, and min2.
-   &     If the total number of elements in both arrays is even ((n1 + n2) % 2 == 0), return the average of the maximum and minimum values as the median.
-   &     If the total number of elements is odd, return the maximum value as the median.
-   & If the current partitions do not satisfy the condition, adjust the partitions by updating end or begin based on the comparisons max1 > min2 and max2 > min1.
-   & Repeat steps 6-9 until a valid partition is found or the search range is exhausted.
-    If no valid partition is found, return 0.0 as the median.
-        * O(min(logN,logM)) T.C | O(1) space using binary search 
-          */
-        if(brr.size() < arr.size())return MedianOfArrays(brr,arr);
-        int n1 = arr.size();
-       int n2 = brr.size();
-       int begin = 0, end = n1;
-       
-       while(begin <= end)
-       {
-           int i1 = (begin + end)/2;
-           int i2 = (n1 + n2 + 1)/2 - i1;
-           int min1 = (i1 == n1) ? INT_MAX : arr[i1];
-           int min2 = (i2 == n2) ? INT_MAX : brr[i2];
-           int max1 = (i1 == 0) ? INT_MIN : arr[i1- 1];
-           int max2 = (i2 == 0) ? INT_MIN : brr[i2- 1];
-           
-           if((max1 <= min2) && (max2 <= min1))
-           {
-               int maximum = max(max1,max2);
-               int minimum = min(min1,min2);
-               if((n1 + n2) % 2 == 0)
-                   return (double)((maximum + minimum) / 2.0);
-               else
-                   return (double)maximum;
-           }
-           else if(max1 > min2)
-               end = i1 - 1;
-           else
-               begin = i1 + 1;
-       }
+        int i1 = (begin + end) / 2;
+        int i2 = (n1 + n2 + 1) / 2 - i1;
+        int min1 = (i1 == n1) ? INT_MAX : arr[i1];
+        int min2 = (i2 == n2) ? INT_MAX : brr[i2];
+        int max1 = (i1 == 0) ? INT_MIN : arr[i1 - 1];
+        int max2 = (i2 == 0) ? INT_MIN : brr[i2 - 1];
+
+        if ((max1 <= min2) && (max2 <= min1))
+        {
+            int maximum = max(max1, max2);
+            int minimum = min(min1, min2);
+            if ((n1 + n2) % 2 == 0)
+                return (double)((maximum + minimum) / 2.0);
+            else
+                return (double)maximum;
+        }
+        else if (max1 > min2)
+            end = i1 - 1;
+        else
+            begin = i1 + 1;
+    }
     return 0.0;
 }
 
 //^ 31 Chocolate distribution problem
-long long findMinDiff(vector<long long> a, long long n, long long m){
-    /* 
-    
+long long findMinDiff(vector<long long> a, long long n, long long m)
+{
+    /*
+
      */
-        if(m > n || a.empty())return 0;
-    sort(a.begin() , a.end());
+    if (m > n || a.empty())
+        return 0;
+    sort(a.begin(), a.end());
     long long ans = INT_MAX;
-    long long minEle,maxEle;
-    for(int i = 0; i < n && m + i <= n; i++){
+    long long minEle, maxEle;
+    for (int i = 0; i < n && m + i <= n; i++)
+    {
         minEle = a[i];
-        maxEle = a[m+i-1];
-        ans = min(maxEle - minEle,ans);
+        maxEle = a[m + i - 1];
+        ans = min(maxEle - minEle, ans);
+    }
+    return ans;
+}
+
+//^ 32 Largest sum subarray with size atleast K
+/*
+
+&- The algorithm first initializes variables `ans` and `currSum` to store the maximum sum found so far and the current sum of the subarray, respectively.
+
+&- Then, it calculates the initial `currSum` by summing the first K elements of the array.
+
+&- The algorithm sets `ans` to `currSum` as the initial answer.
+
+&- The algorithm then enters a loop from `currentPointer = K` to `n-1`, where `currentPointer` represents the rightmost element of the current subarray being considered.
+
+&- In each iteration, the algorithm updates `currSum` by adding the element at `currentPointer` and subtracting the element at `frontPointer`, where `frontPointer` represents the leftmost element of the current subarray.
+
+&- The algorithm also updates `front_sum` by adding the element at `frontPointer`. If `front_sum` becomes negative, it means the leftmost element of the subarray is contributing negatively to the sum, so it is discarded by subtracting it from `currSum` and setting `front_sum` to 0.
+
+&- The algorithm updates the `ans` by taking the maximum between the current `ans` and the updated `currSum`.
+
+&- Finally, the algorithm returns the maximum sum found, which represents the largest sum subarray of size at least K.
+
+~- Intuition: The algorithm uses a sliding window approach to efficiently find the largest sum subarray of size at least K. It starts by calculating the initial sum of the first K elements. Then it slides the window by adding the next element and removing the leftmost element when necessary to ensure the subarray size is at least K. This way, it efficiently finds the maximum sum subarray.
+
+*- Time Complexity: The algorithm uses a single pass through the array, so the time complexity is O(n), where n is the number of elements in the array.
+
+*- Space Complexity: The algorithm uses only a constant amount of extra space for variables, so the space complexity is O(1).
+
+*- Hints: Consider using a sliding window approach to efficiently find the largest sum subarray of size at least K. Pay attention to updating the current sum and handling negative contributions to the sum from the leftmost element of the subarray. Keep track of the maximum sum found so far to obtain the final answer.
+ */
+long long int maxSumWithK(long long int a[], long long int n, long long int k)
+{
+    // vector<vector<ll>> dp(n+1,vector<ll>(n+1,-1e9+7));
+    // return f(n-1,1,k,a,dp);
+    long long int ans = -1e9;
+    long long int currSum = 0, front_sum = 0, frontPointer = 0, currentPointer = 0;
+    for (currentPointer = 0; currentPointer < k; currentPointer++)
+        currSum += a[currentPointer];
+    ans = currSum;
+    for (; currentPointer < n; currentPointer++)
+    {
+        currSum += a[currentPointer];
+        front_sum += a[frontPointer++];
+        if (front_sum < 0)
+        {
+            currSum -= front_sum;
+            front_sum = 0;
+        }
+        ans = max(ans, currSum);
     }
     return ans;
 }
 int main(int argc, char const *argv[])
 {
-    vector<int> arr = {4,0,0,3,1,4,5};
+    vector<int> arr = {4, 0, 0, 3, 1, 4, 5};
     vector<int> brr = {0, 1, 2, 3, 4, 5, 6, 7};
-    vector<vector<int>> mat = {{1,4},{4,5}};
+    vector<vector<int>> mat = {{1, 4}, {4, 5}};
     // reverseArray(arr);
     // reverseArrayRecursive(arr,0,9);
     // pair<int,int> p = getMinMax(arr);
@@ -1728,6 +1857,6 @@ int main(int argc, char const *argv[])
     // rearrangeArray(arr);
     // maxProfit3(arr);
     // printArray(arr);
-    cout << smallest_subarray(arr,7);
+    cout << smallest_subarray(arr, 7);
     return 0;
 }

@@ -1672,9 +1672,9 @@ public:
 class MagneticForce
 {
 public:
-/* 
-@ Same as aggressive cows
- */
+    /*
+    @ Same as aggressive cows
+     */
     bool isValid(unsigned mid, vector<int> &position, int m)
     {
         unsigned balls = 1, lastPos = position.front();
@@ -1716,36 +1716,150 @@ public:
 };
 
 //^ 37 Split array largest sum [Allocation of min number of pages / painter's partition]
-class SplitArray {
+class SplitArray
+{
 public:
-    bool isValid(int mid,int k,vector<int> &nums){
+    bool isValid(int mid, int k, vector<int> &nums)
+    {
         int subarrays = 1, currSum = nums.front();
-        for(int i = 1; i < nums.size(); i++){
+        for (int i = 1; i < nums.size(); i++)
+        {
             currSum += nums.at(i);
-            if(currSum > mid){
+            if (currSum > mid)
+            {
                 subarrays++;
                 currSum = nums.at(i);
             }
-            if(subarrays>k){
+            if (subarrays > k)
+            {
                 return false;
             }
         }
         return true;
     }
-    int splitArray(vector<int>& nums, int k) {
-        int high = accumulate(nums.begin(),nums.end(),0);
-        int low = *max_element(nums.begin(),nums.end());
+    int splitArray(vector<int> &nums, int k)
+    {
+        int high = accumulate(nums.begin(), nums.end(), 0);
+        int low = *max_element(nums.begin(), nums.end());
 
-        while(low <= high){
+        while (low <= high)
+        {
             int mid = low + (high - low) / 2;
-            if(isValid(mid,k,nums)){
+            if (isValid(mid, k, nums))
+            {
                 high = mid - 1;
             }
-            else{
+            else
+            {
                 low = mid + 1;
             }
         }
         return low;
+    }
+};
+
+//^ 38 Minimize the maximum distance between two gas stations
+class MinimizeDistance
+{
+public:
+    /*
+    @ Brute force
+    if((arr[i] - arr[i-1]) == (dist * numberInBetween)) {
+      numberInBetween--;
+}
+     */
+    long double minimizeMaxDistance(vector<int> &stations, int k)
+    {
+        const unsigned n = stations.size();
+        vector<int> howMany(n - 1);
+        for (int gasStations = 1; gasStations <= k; gasStations++)
+        {
+            long double maxSection = -1;
+            int maxInd = -1;
+            for (int i = 0; i < n - 1; i++)
+            {
+                long double diff = stations.at(i + 1) - stations.at(i);
+                long double sectionLength = (long double)diff / (long double)(howMany.at(i) + 1);
+
+                if (sectionLength > maxSection)
+                {
+                    maxSection = sectionLength;
+                    maxInd = i;
+                }
+            }
+            howMany.at(maxInd)++;
+        }
+
+        long double maxAns = -1;
+        for (int i = 0; i < n - 1; i++)
+        {
+            long double diff = (stations.at(i + 1) - stations.at(i));
+            long double sectionLength = diff / (long double)(howMany.at(i) + 1);
+
+            maxAns = max(maxAns, sectionLength);
+        }
+        return maxAns;
+    }
+    /*
+    @ Using priority queue (max-heap)
+    * O(NlogN) + O(KlogN) T.C | O(N) S.C
+     */
+    long double minimizeMaxDistance_v2(vector<int> &stations, int k)
+    {
+        const uint32_t n = stations.size();
+        vector<int> howMany(n - 1);
+        priority_queue<pair<long double, int>> pq;
+        for (int i = 0; i < n - 1; i++)
+        {
+            pq.push({stations.at(i + 1) - stations.at(i), i});
+        }
+        for (int gasStations = 1; gasStations <= k; gasStations++)
+        {
+            auto p = pq.top();
+            pq.pop();
+            howMany.at(p.second)++;
+            long double initialDifference = stations.at(p.second + 1) - stations.at(p.second);
+
+            long double newSectionLength = initialDifference / (long double)(howMany.at(p.second) + 1);
+
+            pq.push({newSectionLength, p.second});
+        }
+
+        return pq.top().first;
+    }
+    /* 
+    @ Binary search 
+     */
+    bool isValid(long double dist,vector<int> &arr,int k){
+        int count = 0;
+        for(int i = 1; i < arr.size(); i++){
+            int numberInBetween = (arr[i] - arr[i-1])/dist;
+            if((arr[i] - arr[i-1])/dist == numberInBetween * dist){
+                numberInBetween--;
+            }
+            count += numberInBetween;
+        }
+        return count>k;
+    }
+
+    long double minimizeMaxDistance_v3(vector<int> &stations,int k){
+        const unsigned int n = stations.size();
+        long double low = 0;
+        long double high = 0;
+        for(int i = 0; i < n - 1; i++){
+            high = max(high,(long double)(stations.at(i+1)-stations.at(i)));
+        }
+        long double diff = 1e-6;
+        while(high - low > diff){
+            long double mid = low + (high - low) / 2.0;
+            if(isValid(mid,stations,k)){
+                low = mid;
+            }
+            else{
+                high = mid;
+            }
+        }
+        return high;
     }
 };
 int main(int argc, char const *argv[])

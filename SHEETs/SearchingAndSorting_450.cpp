@@ -1369,6 +1369,29 @@ public:
 //^ 30 Nth root of a number
 class NthRoot
 {
+private:
+    /*
+        &- The customPow function calculates the power of a number mid raised to the nth power and checks if the result exceeds m.
+        &- The NthRoot_Bs function is used to find the nth root of a number m using binary search.
+        &- If the value of m is 1, it means that the 1st root of any number is 1, so the function returns 1.
+        &- If n is greater than m, it is not possible to find the nth root of m, so the function returns -1.
+        &- The low variable is initialized to 1, and the high variable is set to m / n since the nth root of a number cannot be greater than m / n.
+        &- The function performs a binary search to find the nth root of m within the range [1, m / n].
+        &- In each iteration of the binary search, the middle value mid is calculated as (low + high) / 2.
+        &- The customPow function is called with mid, n, and m as arguments to check whether mid raised to the nth power is equal to m, less than m, or greater than m.
+        &- If customPow returns 1, it means mid is the nth root of m, and the function returns mid.
+        &- If customPow returns 0, it means mid raised to the nth power is less than m, so the search range is shifted to the right by setting low = mid + 1.
+        &- If customPow returns 2, it means mid raised to the nth power is greater than m, so the search range is shifted to the left by setting high = mid - 1.
+        &- If no nth root is found within the range [1, m / n], the function returns -1.
+        *- The time complexity of the code is O(log(m / n)) due to the binary search, where m / n represents the search range for the nth root.
+        *- The space complexity of the code is O(1) as it uses a constant amount of extra space.
+
+    Hints:
+
+        *- The customPow function is used to calculate the power of a number without using the standard power function to avoid overflow issues.
+        *- Binary search is employed to efficiently find the nth root of a given number within a specific range.
+        *- Be cautious with the boundary conditions of the binary search to ensure a correct result.
+     */
 public:
     long long customPow(int mid, int n, int m)
     {
@@ -1424,6 +1447,31 @@ class Koko
 public:
     class Solution
     {
+    private:
+        /*
+
+     &- The `isValid` function checks if it is possible for Koko to eat all bananas in the given `piles` of bananas within `h` hours when eating at a rate of `mid` bananas per hour.
+     &- The `hoursTaken` variable keeps track of the total hours taken by Koko to eat all bananas.
+     &- For each pile of bananas in the `piles` vector, the function calculates how many hours it would take Koko to eat that pile using the formula `ceil((double)i / mid)`, where `i` is the number of bananas in the pile. The `ceil` function is used to ensure that Koko spends enough time to eat all the bananas in the pile.
+     &- If the total hours taken exceed `h`, it means Koko cannot eat all bananas within `h` hours at the current rate `mid`, so the function returns false.
+     &- If Koko can eat all bananas within `h` hours, the function returns true.
+     &- The `minEatingSpeed` function uses binary search to find the minimum eating speed `k` at which Koko can eat all bananas within `h` hours.
+     &- The `high` variable is set to the maximum number of bananas in any pile, and the `low` variable is set to 1 as the minimum possible eating speed.
+     &- The function performs a binary search to find the minimum eating speed `k` within the range [1, max(piles)].
+     &- In each iteration of the binary search, the middle value `mid` is calculated as `low + (high - low) / 2`.
+     &- The `isValid` function is called with `mid`, `piles`, and `h` as arguments to check if Koko can eat all bananas at the eating speed `mid` within `h` hours.
+     &- If `isValid` returns true, it means Koko can eat all bananas at the current eating speed, and the function updates the value of `k` as the minimum of `k` and `mid`.
+     &- If `isValid` returns false, it means Koko cannot eat all bananas at the current eating speed, so the search range is shifted to the right by setting `low = mid + 1`.
+     &- If Koko can eat all bananas at a certain eating speed `k`, then Koko can also eat all bananas at any eating speed greater than `k`, so the search range is shifted to the left by setting `high = mid - 1` when `isValid` returns true.
+     &- The function returns `k`, which represents the minimum eating speed at which Koko can eat all bananas within `h` hours.
+     *- The time complexity of the code is O(n * log(max(piles))) due to the binary search, where `n` is the number of piles of bananas, and `max(piles)` is the maximum number of bananas in any pile.
+     *- The space complexity of the code is O(1) as it uses a constant amount of extra space.
+
+    Hints:
+     *- The problem requires finding the minimum eating speed `k` such that Koko can eat all bananas within `h` hours. This can be done using binary search as the eating speed can be considered as the search space.
+     *- The `isValid` function is used to check if Koko can eat all bananas within `h` hours at a given eating speed `mid`. It is essential to use the `ceil` function to calculate the number of hours required to eat a particular pile of bananas.
+     *- By performing binary search within the range [1, max(piles)], we can efficiently find the minimum eating speed `k` that satisfies the condition of eating all bananas within `h` hours.
+         */
     public:
         bool isValid(int mid, vector<int> &piles, int h)
         {
@@ -1469,6 +1517,33 @@ public:
 //^ 32 Minimum days to make m bouquets
 class MinimumDays
 {
+private:
+    /*
+        &- The isValid function checks if it is possible to make m bouquets with at least k flowers in each bouquet using the given bloomDay array and a maximum waiting time mid.
+        &- The function uses two variables, bouquets and counter, to keep track of the number of bouquets made and the number of consecutive flowers that have bloomed within the waiting time mid.
+        &- The function iterates through the bloomDay array and counts the number of consecutive flowers that have bloomed within mid. If the bloom day of a flower is less than or equal to mid, it increments the counter.
+        &- When the bloom day of a flower is greater than mid, it means the consecutive sequence of bloomed flowers is broken, and the function calculates how many bouquets can be made from the current sequence of consecutive flowers (using counter) and adds it to the bouquets.
+        &- After processing all the flowers, if there are any remaining consecutive flowers (with counter greater than zero), the function calculates how many additional bouquets can be made and adds it to the bouquets.
+        &- Finally, the function returns true if the total number of bouquets (bouquets) is greater than or equal to m, indicating that it is possible to make m bouquets with at least k flowers each within the waiting time mid.
+        &- The minDays function uses binary search to find the minimum waiting time ans required to make m bouquets with at least k flowers each.
+        &- The function first checks if it is possible to make m bouquets with at least k flowers each within the given bloomDay array. If not, it returns -1 as it is impossible to make the required number of bouquets.
+        &- The function then finds the minimum and maximum bloom days in the bloomDay array using minmax_element and sets the search range for the binary search as [min, max].
+        &- The function performs a binary search to find the minimum waiting time ans within the search range [min, max].
+        &- In each iteration of the binary search, the middle value mid is calculated as low + (high - low) / 2.
+        &- The isValid function is called with mid, m, k, and the bloomDay array as arguments to check if it is possible to make m bouquets with at least k flowers each within the waiting time mid.
+        &- If isValid returns true, it means it is possible to make m bouquets within mid days, so the function updates the value of ans as the minimum of ans and mid and adjusts the search range by setting high = mid - 1.
+        &- If isValid returns false, it means it is not possible to make m bouquets within mid days, so the function adjusts the search range by setting low = mid + 1.
+        &- The function returns ans, which represents the minimum waiting time required to make m bouquets with at least k flowers each.
+        *- The time complexity of the code is O(n * log(max(bloomDay))) due to the binary search, where n is the size of the bloomDay array and max(bloomDay) is the maximum bloom day in the array.
+        *- The space complexity of the code is O(1) as it uses a constant amount of extra space.
+
+    Hints:
+
+        *- The problem requires finding the minimum waiting time ans required to make m bouquets with at least k flowers each from the given bloomDay array.
+        *- Binary search can be used to efficiently find the minimum waiting time within the range of bloom days.
+        *- The isValid function checks if it is possible to make m bouquets with at least k flowers each within a given waiting time mid. It counts the number of consecutive flowers that have bloomed within mid and calculates how many bouquets can be made from this sequence of consecutive flowers.
+        *- By performing binary search within the range of minimum and maximum bloom days, we can efficiently find the minimum waiting time ans required to make m bouquets with at least k flowers each.
+     */
 public:
     bool isValid(int mid, int m, int k, vector<int> &bloomDay)
     {
@@ -1767,6 +1842,24 @@ public:
     if((arr[i] - arr[i-1]) == (dist * numberInBetween)) {
       numberInBetween--;
 }
+
+    &- The minimizeMaxDistance function aims to minimize the maximum distance between two gas stations by optimally placing k additional gas stations between the existing n gas stations represented by the stations vector.
+    &- The function starts by creating a vector howMany of size n - 1 to store the number of additional gas stations that will be placed between each pair of existing gas stations. Initially, all elements in howMany are set to 0.
+    &- The function then iterates k times to place the additional gas stations. In each iteration, it calculates the length of each section between two existing gas stations and determines which section requires an additional gas station to minimize the maximum distance. The section with the largest length is selected, and an additional gas station is added to it by incrementing the corresponding element in the howMany vector.
+    &- After all additional gas stations have been placed, the function calculates the maximum distance between two gas stations. This is done by iterating through all sections between existing gas stations and calculating the length of each section with respect to the number of additional gas stations placed between them.
+    &- Finally, the function returns the maximum distance found, which represents the minimum maximum distance achievable after optimally placing k additional gas stations.
+    !- The time complexity of the code is O(n * k), where n is the size of the stations vector and k is the number of additional gas stations to be placed. The function iterates k times, and in each iteration, it goes through all n - 1 sections between existing gas stations.
+    !- The space complexity of the code is O(n), which is used to store the howMany vector to keep track of additional gas stations placed between each pair of existing gas stations.
+
+Hints:
+
+    &- The problem requires optimizing the placement of k additional gas stations between the existing n gas stations to minimize the maximum distance between two gas stations.
+    &- The given stations vector represents the positions of existing gas stations along a line.
+    &- To solve the problem, you need to iteratively place additional gas stations between existing gas stations in a way that minimizes the maximum distance between them.
+    &- You can use a binary search approach to efficiently find the optimal positions to place the additional gas stations.
+    &- Initially, you can set up a range for the possible positions of the additional gas stations between two existing gas stations. The range can be set from the minimum distance between two existing gas stations to the maximum distance between them.
+    &- Then, you can use binary search within this range to find the optimal position to place the additional gas stations such that the maximum distance between two gas stations is minimized.
+    &- By repeating this process k times, you can iteratively optimize the placement of k additional gas stations and find the minimum maximum distance achievable.
      */
     long double minimizeMaxDistance(vector<int> &stations, int k)
     {
@@ -1802,7 +1895,21 @@ public:
     }
     /*
     @ Using priority queue (max-heap)
-    * O(NlogN) + O(KlogN) T.C | O(N) S.C
+        &- The minimizeMaxDistance_v2 function aims to minimize the maximum distance between two gas stations by optimally placing k additional gas stations between the existing n gas stations represented by the stations vector.
+    &- The function starts by creating a priority queue pq to store the lengths of all sections between existing gas stations. Each element in the priority queue is a pair containing the length of the section and the index of the corresponding section in the stations vector.
+    &- The priority queue is initialized by calculating the length of each section between adjacent gas stations and inserting them into the queue. The priority queue automatically arranges the sections in descending order of length, so the section with the largest length will be at the top of the queue.
+    &- The function then iterates k times to place the additional gas stations. In each iteration, it pops the section with the largest length from the top of the priority queue. It then increments the number of additional gas stations placed between the corresponding existing gas stations and calculates the new length of the section with the additional gas station.
+    &- After all additional gas stations have been placed, the function returns the length of the section with the largest length, which represents the minimum maximum distance achievable after optimally placing k additional gas stations.
+    *- The time complexity of the code is O(n * log n + k * log n), where n is the size of the stations vector. The n * log n part comes from initializing the priority queue with all n - 1 sections, and the k * log n part comes from the k iterations to place additional gas stations.
+    *- The space complexity of the code is O(n), which is used to store the howMany vector and the priority queue.
+
+Hints:
+
+    &- The problem requires optimizing the placement of k additional gas stations between the existing n gas stations to minimize the maximum distance between them.
+    &- The given stations vector represents the positions of existing gas stations along a line.
+    &- To solve the problem, you need to iteratively place additional gas stations between existing gas stations in a way that minimizes the maximum distance between them.
+    &- You can use a priority queue to efficiently find the section with the largest length between existing gas stations and place an additional gas station in that section.
+    &- By repeating this process k times, you can iteratively optimize the placement of k additional gas stations and find the minimum maximum distance achievable.
      */
     long double minimizeMaxDistance_v2(vector<int> &stations, int k)
     {
@@ -1827,35 +1934,43 @@ public:
 
         return pq.top().first;
     }
-    /* 
-    @ Binary search 
+    /*
+    @ Binary search
      */
-    bool isValid(long double dist,vector<int> &arr,int k){
+    bool isValid(long double dist, vector<int> &arr, int k)
+    {
         int count = 0;
-        for(int i = 1; i < arr.size(); i++){
-            int numberInBetween = (arr[i] - arr[i-1])/dist;
-            if((arr[i] - arr[i-1])/dist == numberInBetween * dist){
+        for (int i = 1; i < arr.size(); i++)
+        {
+            int numberInBetween = (arr[i] - arr[i - 1]) / dist;
+            if ((arr[i] - arr[i - 1]) / dist == numberInBetween * dist)
+            {
                 numberInBetween--;
             }
             count += numberInBetween;
         }
-        return count>k;
+        return count > k;
     }
 
-    long double minimizeMaxDistance_v3(vector<int> &stations,int k){
+    long double minimizeMaxDistance_v3(vector<int> &stations, int k)
+    {
         const unsigned int n = stations.size();
         long double low = 0;
         long double high = 0;
-        for(int i = 0; i < n - 1; i++){
-            high = max(high,(long double)(stations.at(i+1)-stations.at(i)));
+        for (int i = 0; i < n - 1; i++)
+        {
+            high = max(high, (long double)(stations.at(i + 1) - stations.at(i)));
         }
         long double diff = 1e-6;
-        while(high - low > diff){
+        while (high - low > diff)
+        {
             long double mid = low + (high - low) / 2.0;
-            if(isValid(mid,stations,k)){
+            if (isValid(mid, stations, k))
+            {
                 low = mid;
             }
-            else{
+            else
+            {
                 high = mid;
             }
         }

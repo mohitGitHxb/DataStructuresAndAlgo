@@ -4648,12 +4648,74 @@ public:
 //? Additional questions from love babbar 450 sheet !!!
 
 //^ Binomial Coefficient (nCr)
-class nCr{
-    public:
-    /* 
+class nCr
+{
+public:
+    /*
     link : https://practice.geeksforgeeks.org/problems/ncr1019/1
     written by true god of dp
      */
+};
+
+//^ Nth catalan number
+class NthCatalan
+{
+private:
+    /*
+    @ Useful info
+    Catalan numbers are defined as a mathematical sequence that consists of positive integers, which can be used to find the number of possibilities of various combinations.
+
+The nth term in the sequence denoted Cn, is found in the following formula: {(2n)!}/{(n + 1)! n!)}
+
+    The first few Catalan numbers for n = 0, 1, 2, 3, … are : 1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862, …
+
+Catalan numbers occur in many interesting counting problems like the following.
+
+    Count the number of expressions containing n pairs of parentheses that are correctly matched. For n = 3, possible expressions are ((())), ()(()), ()()(), (())(), (()()).
+    Count the number of possible Binary Search Trees with n keys (See this)
+    Count the number of full binary trees (A rooted binary tree is full if every vertex has either two children or no children) with n+1 leaves.
+    Given a number n, return the number of ways you can draw n chords in a circle with 2 x n points such that no 2 chords intersect.
+     */
+public:
+    const unsigned mod = 1e9 + 7;
+    /*
+    @ Recursive
+    ~ Follow the steps below to implement the above recursive formula
+
+    &-    Base condition for the recursive approach, when n <= 1, return 1
+    &-    Iterate from i = 0 to i < n
+    &-        Make a recursive call catalan(i) and catalan(n – i – 1) and keep adding the product of both into res.
+    &-    Return the res.
+     */
+    int findCatalan(int n)
+    {
+        if (n <= 1)
+            return 1;
+        uint32_t res = 0;
+        for (int i = 0; i < n; i++)
+        {
+            res += (findCatalan(i) % mod * findCatalan(n - i - 1) % mod);
+        }
+        return res;
+    }
+    /*
+    @ Tabulation
+     */
+    int findCatalan_tabulation(int n)
+    {
+        vector<int> dp(n + 1);
+        dp[0] = dp[1] = 1;
+        for (int i = 2; i <= n; i++)
+        {
+            uint32_t res = 0;
+            for (int j = 0; j < n; i++)
+            {
+                res += (dp.at(j) % mod * dp.at(i - j - 1) % mod);
+            }
+            dp.at(i) = res;
+        }
+        return dp.at(n);
+    }
 };
 int main(int argc, char const *argv[])
 {

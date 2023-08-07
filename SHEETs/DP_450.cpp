@@ -4717,6 +4717,56 @@ public:
         return dp.at(n);
     }
 };
+
+//^ Unique BSTs
+class UniqueBST
+{
+private:
+    /*
+        Intuition:
+        To find the number of unique BSTs, you can use dynamic programming to build up the solutions incrementally.
+        The problem can be approached using the concept of Catalan numbers.
+        The idea is to iterate through each possible root value, then calculate the number of BSTs that can be formed with that root value and combine them.
+
+    Code Explanation:
+        The code uses a vector dp to store the number of unique BSTs for each integer from 0 to N.
+        Initialize dp[0] and dp[1] with 1 because there's only one unique BST for empty and single-node trees.
+        Then, for i from 2 to N, iterate through j from 1 to i and calculate dp[i] as the sum of the products of dp[j-1] (number of BSTs on the left side) and dp[i-j] (number of BSTs on the right side).
+        The total number of unique BSTs for i is obtained by summing up the contributions from all possible root values.
+        The modulo operation (% mod) is used to keep the numbers within a manageable range to prevent overflow.
+
+    Time Complexity:
+        The code iterates through each integer from 2 to N and for each integer, it iterates from 1 to i. So, the time complexity is O(N^2).
+
+    Space Complexity:
+        The space complexity is O(N) due to the storage of the dp array.
+
+    Hints:
+        Consider the properties of binary search trees and how the number of unique BSTs can be built from smaller subtrees.
+        Utilize dynamic programming to store the intermediate results and build the solution incrementally.
+        Think about how the concept of Catalan numbers applies to this problem, and how the number of unique BSTs can be calculated recursively.
+
+The code provided implements a bottom-up dynamic programming approach to calculate the number of unique BSTs for each integer from 1 to N. It efficiently calculates the answer by building up the solution based on previously calculated values.
+     */
+public:
+    int numTrees(int N)
+    {
+        // Your code here
+        const int mod = 1e9 + 7;
+        vector<long long> dp(N + 1, 0);
+        dp[0] = 1;
+        dp[1] = 1;
+
+        for (int i = 2; i <= N; i++)
+        {
+            for (int j = 1; j <= i; j++)
+            {
+                dp[i] = (dp[i] + ((dp[j - 1] % mod) * (dp[i - j] % mod)) % mod) % mod; // catalan numbers f4=f0f3+f1f2+f2f1+f3f0;
+            }
+        }
+        return dp[N] % mod;
+    }
+};
 int main(int argc, char const *argv[])
 {
 

@@ -355,12 +355,14 @@ public:
             int size = q.size();
             while (size--)
             {
-                auto [x, y] = q.front();
+                auto it = q.front();
+                int x = it.first;
+                int y = it.second;
                 q.pop();
-                for (auto [dx, dy] : dirs)
+                for (pair<int, int> &p : dirs)
                 {
-                    int i = x + dx;
-                    int j = y + dy;
+                    int i = x + p.first;
+                    int j = y + p.second;
                     if (i >= 0 && i < m && j >= 0 && j < n && visited[i][j] == 1)
                     {
                         visited[i][j] = 2;
@@ -445,6 +447,58 @@ public:
             }
         }
         return false;
+    }
+};
+
+//^ 7 Matrix 0/1 problem (similar like rotten oranges)
+class Matrix01
+{
+public:
+    vector<vector<int>> nearest(vector<vector<int>> grid)
+    {
+        int n = grid.size();
+        int m = grid[0].size();
+        vector<vector<int>> vis(n, vector<int>(m, 0));
+        vector<vector<int>> dis(n, vector<int>(m, 0));
+        queue<pair<pair<int, int>, int>> q;
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                if (grid[i][j] == 1)
+                {
+                    vis[i][j] = 1;
+                    q.push({{i, j}, 0});
+                }
+            }
+        }
+
+        int delrow[] = {-1, 0, 1, 0};
+        int delcol[] = {0, -1, 0, 1};
+
+        while (!q.empty())
+        {
+            int row = q.front().first.first;
+            int col = q.front().first.second;
+            int steps = q.front().second;
+            q.pop();
+
+            dis[row][col] = steps;
+
+            for (int i = 0; i < 4; i++)
+            {
+                int nrow = row + delrow[i];
+                int ncol = col + delcol[i];
+
+                if (nrow >= 0 && nrow < n && ncol >= 0 && ncol < m && vis[nrow][ncol] == 0 && grid[nrow][ncol] == 0)
+                {
+                    vis[nrow][ncol] = 1;
+                    q.push({{nrow, ncol}, steps + 1});
+                }
+            }
+        }
+        return dis;
     }
 };
 int main()

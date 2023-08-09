@@ -241,10 +241,25 @@ Hints:
 class FloodFIll
 {
 public:
-/* 
-@ DFS approach
-&- Same as Number of Islands with few extra parameters(initialColor,newColor)
- */
+    /*
+    @ DFS approach
+    &- Same as Number of Islands with few extra parameters(initialColor,newColor)
+
+    The given code is an implementation of the Flood Fill algorithm. The Flood Fill algorithm is used to fill an area of connected pixels in an image with a specified color. In this case, the image is represented as a 2D grid of integers, where each integer represents a color.
+
+The main function `floodFill` takes as input a reference to the image, the row and column indices of the starting pixel `sr` and `sc`, and the new color `color`. It returns the modified image after performing the flood fill operation.
+
+First, the function calculates the dimensions of the image `m` and `n`. It then checks if the color of the starting pixel is already equal to the new color. If it is, it returns the original image without making any changes.
+
+Otherwise, it creates a 2D boolean vector `vis` to keep track of visited pixels. It then calls the helper function `dfs` to perform a depth-first search (DFS) starting from the pixel at `(sr, sc)`.
+
+The helper function `dfs` takes as input the row and column indices of the current pixel, the dimensions of the image, references to the image and visited vectors, the new color, and the initial color of the starting pixel. It first marks the current pixel as visited and changes its color to the new color.
+
+Next, it iterates over all four directions using a pre-defined vector of pairs `dirs`. For each direction, it calculates the row and column indices of the next pixel. It then checks if this pixel is within bounds, has not been visited yet, and has the same color as the initial color. If all these conditions are met, it calls itself recursively to continue the DFS from this pixel.
+
+After completing the DFS, it returns control back to the main function `floodFill`, which returns the modified image.
+
+     */
     vector<pair<int, int>> dirs{{1, 0}, {0, -1}, {-1, 0}, {0, 1}};
     bool inBound(int row, int col, unsigned m, unsigned n)
     {
@@ -273,6 +288,163 @@ public:
         vector<vector<bool>> vis(m, vector<bool>(n));
         dfs(sr, sc, m, n, image, vis, color, image[sr][sc]);
         return image;
+    }
+};
+
+//^ 5 rotten oranges
+class RottenOrange
+{
+public:
+    /*
+        Intuition:
+            The problem is to determine how long it takes for all fresh oranges to become rotten, considering that rotten oranges can affect adjacent fresh oranges in each minute.
+            This problem can be solved using a Breadth-First Search (BFS) approach, where you simulate the process of oranges rotting and keep track of the time taken.
+
+        Code Explanation:
+            The code starts by creating a queue to hold the coordinates of rotten oranges and initializes a counter countFreshOrange to keep track of the number of fresh oranges.
+            It iterates through the grid and adds the coordinates of rotten oranges to the queue, as well as counts the number of fresh oranges.
+            The BFS process begins with a loop that runs until the queue is empty. In each iteration, it processes all the oranges that were rotten in the previous minute.
+            For each rotten orange, it checks its adjacent cells (up, down, left, and right) and if there's a fresh orange, it marks it as rotten and decrements the countFreshOrange. The newly rotten oranges are then added to the queue.
+            The outer loop runs for each minute, and the inner loop processes all oranges rotten in the previous minute. After processing, the minute counter is incremented.
+            Finally, if all fresh oranges are rotten (countFreshOrange becomes 0), it returns the number of minutes taken. Otherwise, it returns -1.
+
+        Time Complexity:
+            In the worst case, each cell can be visited at most once, and each visit involves constant time operations (adding to queue, marking as rotten, etc.). Therefore, the time complexity is O(m * n), where m is the number of rows and n is the number of columns in the grid.
+
+        Space Complexity:
+            The space complexity is O(m * n) because of the visited grid and the queue used to store the coordinates of rotten oranges.
+
+        Hints:
+            BFS is a common approach for problems involving the spread of effects through adjacent cells or nodes.
+            Think about how to represent rotten and fresh oranges efficiently.
+            Consider how to mark an orange as rotten and how to update adjacent cells in each minute of the simulation.
+     */
+    int orangesRotting(vector<vector<int>> &grid)
+    {
+        int m = grid.size();
+        int n = grid[0].size();
+        vector<vector<int>> visited = grid;
+        // making queue in which we will fill rotten oranges
+        queue<pair<int, int>> q;
+        int countFreshOrange = 0;
+        for (int i = 0; i < m; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                if (visited[i][j] == 2)
+                {
+                    q.push({i, j});
+                }
+                if (visited[i][j] == 1)
+                {
+                    countFreshOrange++;
+                }
+            }
+        }
+        // q.empty() means there is no rotten orange in the grid and countFreshOrange = 0 means we will rotten the freshoranges in 0 mins
+        if (countFreshOrange == 0)
+            return 0;
+        if (q.empty())
+            return -1;
+
+        int minutes = -1;
+        // we will cover four directions i.e. up, down, left, right
+        vector<pair<int, int>> dirs = {{1, 0}, {-1, 0}, {0, -1}, {0, 1}};
+        while (!q.empty())
+        {
+            int size = q.size();
+            while (size--)
+            {
+                auto [x, y] = q.front();
+                q.pop();
+                for (auto [dx, dy] : dirs)
+                {
+                    int i = x + dx;
+                    int j = y + dy;
+                    if (i >= 0 && i < m && j >= 0 && j < n && visited[i][j] == 1)
+                    {
+                        visited[i][j] = 2;
+                        countFreshOrange--;
+                        q.push({i, j});
+                    }
+                }
+            }
+            minutes++;
+        }
+
+        if (countFreshOrange == 0)
+            return minutes;
+        return -1;
+    }
+};
+
+//^ 6 detect a cycle in an undirected graph
+class DetectCycle
+{
+public:
+    bool bfs(int V, vector<int> adj[], int src, vector<bool> &vis)
+    {
+        queue<pair<int, int>> q;
+        q.push({src, -1});
+
+        vis[src] = true;
+
+        while (!q.empty())
+        {
+            auto it = q.front();
+            q.pop();
+            int node = it.first;
+            int parentNode = it.second;
+            for (auto &i : adj[node])
+            {
+                if (!vis[i])
+                {
+                    q.push({i, node});
+                    vis[i] = true;
+                }
+                else if (vis[i] && i != parentNode)
+                {
+                    return true; // Cycle detected
+                }
+            }
+        }
+        return false;
+    }
+    bool isCycle(int V, vector<int> adj[])
+    {
+        vector<bool> vis(V, false);
+
+        for (int i = 0; i < V; i++)
+        {
+            if (!vis[i])
+            {
+                if (bfs(V, adj, i, vis))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // Function to detect cycle in an undirected graph.
+    bool dfs(int parent, int src, vector<int> adj[], vector<bool> &vis)
+    {
+        vis[src] = true;
+        for (auto node : adj[src])
+        {
+            if (!vis[node])
+            {
+                if (dfs(src, node, adj, vis))
+                    return true;
+            }
+            else if (parent != node)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 };
 int main()

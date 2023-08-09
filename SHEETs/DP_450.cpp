@@ -1152,7 +1152,7 @@ public:
             dp[triangle.size() - 1][i] = triangle.back()[i];
         for (int i = triangle.size() - 2; i >= 0; i--)
         {
-            for (int j = i; j >= 0; i--)
+            for (int j = i; j >= 0; j--)
             {
                 int down = triangle[i][j] + dp[i + 1][j];
                 int downright = triangle[i][j] + dp[i + 1][j + 1];
@@ -1167,12 +1167,12 @@ public:
      */
     int minimumTriangleSum_optimized(int r, int c, vector<vector<int>> &triangle)
     {
-        vector<int> front(triangle.back().size()), curr(triangle.front().size());
+        vector<int> front(triangle.back().size()), curr(triangle.back().size());
         for (int i = 0; i < triangle.size(); i++)
             front[i] = triangle.back()[i];
         for (int i = triangle.size() - 2; i >= 0; i--)
         {
-            for (int j = i; j >= 0; i--)
+            for (int j = i; j >= 0; j--)
             {
                 int down = triangle[i][j] + front[j];
                 int downright = triangle[i][j] + front[j + 1];
@@ -1414,16 +1414,16 @@ public:
             }
         }
         int maxi = INT_MIN;
-        for (int dirR = -1; dirR <= 1; dirR++)
+        for (int di = -1; di <= 1; di++)
         {
-            for (int dirC = -1; dirC <= 1; dirC++)
+            for (int dj = -1; dj <= 1; dj++)
             {
+                int ans;
                 if (j1 == j2)
-                    int ans = mat[i][j1] + maximumCherries(i, j1 + dirR, j2 + dirC, mat);
+                    ans = mat[i][j1] + maximumCherries(i + 1, j1 + di, j2 + dj, mat);
                 else
-                {
-                    maxi = max(maxi, mat[i][j2] + maximumCherries(i, j1 + dirR, j2 + dirC, mat));
-                }
+                    ans = mat[i][j1] + mat[i][j2] + maximumCherries(i + 1, j1 + di, j2 + dj, mat);
+                maxi = max(maxi, ans);
             }
         }
         return maxi;
@@ -1434,36 +1434,34 @@ public:
 
     * O(N*M*M) T.C | O(NMM) + O(N) S.C
      */
-    int maximumCherries_memo(int i, int j1, int j2, vector<vector<int>> &mat, vector<vector<vector<int>>> &dp)
+
+    int maxChocoUtil(int i, int j1, int j2, int n, int m, vector<vector<int>> &grid, vector<vector<vector<int>>> &dp)
     {
-        if (j1 < 0 || j1 >= mat.front().size() || j2 < 0 || j2 >= mat.front().size())
+        if (j1 < 0 || j1 >= m || j2 < 0 || j2 >= m)
+            return -1e9;
+
+        if (i == n - 1)
         {
-            return -10e7;
-        }
-        if (i == mat.size() - 1)
-        {
-            if (j1 != j2)
-            {
-                return mat[i][j1] + mat[i][j2];
-            }
+            if (j1 == j2)
+                return grid[i][j1];
             else
-            {
-                return mat[i][j1];
-            }
+                return grid[i][j1] + grid[i][j2];
         }
+
         if (dp[i][j1][j2] != -1)
             return dp[i][j1][j2];
+
         int maxi = INT_MIN;
-        for (int dirR = -1; dirR <= 1; dirR++)
+        for (int di = -1; di <= 1; di++)
         {
-            for (int dirC = -1; dirC <= 1; dirC++)
+            for (int dj = -1; dj <= 1; dj++)
             {
+                int ans;
                 if (j1 == j2)
-                    int ans = mat[i][j1] + maximumCherries_memo(i, j1 + dirR, j2 + dirC, mat, dp);
+                    ans = grid[i][j1] + maxChocoUtil(i + 1, j1 + di, j2 + dj, n, m, grid, dp);
                 else
-                {
-                    maxi = max(maxi, mat[i][j2] + maximumCherries_memo(i, j1 + dirR, j2 + dirC, mat, dp));
-                }
+                    ans = grid[i][j1] + grid[i][j2] + maxChocoUtil(i + 1, j1 + di, j2 + dj, n, m, grid, dp);
+                maxi = max(maxi, ans);
             }
         }
         return dp[i][j1][j2] = maxi;

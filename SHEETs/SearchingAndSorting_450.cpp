@@ -1977,6 +1977,58 @@ Hints:
         return high;
     }
 };
+
+//^ 39 Number of pairs
+/*
+    Intuition:
+        The inequality x^y > y^x can be rewritten as y * log(x) > x * log(y), where log denotes the natural logarithm.
+        To compare the two sides of the inequality, we can calculate y / log(y) and x / log(x) for all elements of arrays X[] and Y[], respectively.
+        Then, we sort these values to simplify the counting process.
+
+    Code Explanation:
+        The code first calculates lnx[i] for each element X[i] in the X[] array, and similarly, calculates lny[i] for each element Y[i] in the Y[] array.
+        Then, it sorts the arrays lnx and lny.
+        The code uses two pointers technique to count the pairs (x, y) that satisfy the condition. For each logy in lny, it finds the count of lnx elements that are smaller than logy and adds this count to the total number of pairs.
+        The final count of such pairs is returned.
+
+    Time Complexity:
+        The code involves sorting two arrays, lnx and lny, which takes O(m * log m + n * log n) time.
+        The loop that calculates the count of valid pairs takes O(m + n) time, as it processes each element of lny and performs a binary search on lnx.
+        Thus, the overall time complexity is O(m * log m + n * log n + m + n), which is effectively O(max(m * log m, n * log n)).
+
+    Space Complexity:
+        The code uses two arrays, lnx and lny, to store the transformed values, which require O(m + n) space.
+
+    Hints:
+        The comparison x^y > y^x can be simplified using logarithms to y * log(x) > x * log(y).
+        Transform the values in both arrays X[] and Y[] using x / log(x) and y / log(y) respectively.
+        Sort the transformed arrays to simplify the comparison process.
+        Utilize a two pointers approach to count the number of valid pairs.
+ */
+long long countPairs(int X[], int Y[], int m, int n)
+{
+    // code here
+    vector<double> lnx(m), lny(n);
+    for (int i = 0; i < m; i++)
+    {
+        lnx[i] = (double)X[i] / (log(X[i]));
+    }
+    for (int i = 0; i < n; i++)
+    {
+        lny[i] = (double)Y[i] / (log(Y[i]));
+    }
+    sort(lnx.begin(), lnx.end());
+    sort(lny.begin(), lny.end());
+    long long pairs = 0;
+    for (auto &logy : lny)
+    {
+
+        long long logxSmallerThanlogy = lower_bound(lnx.begin(), lnx.end(), logy) - lnx.begin();
+        // cout<<t<<" ";
+        pairs += (logxSmallerThanlogy);
+    }
+    return pairs;
+}
 int main(int argc, char const *argv[])
 {
 

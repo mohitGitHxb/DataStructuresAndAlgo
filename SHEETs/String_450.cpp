@@ -1223,6 +1223,46 @@ public:
         return countOfChars;
     }
 };
+
+//^ 29 Minimum times A has to be repeated such that B is a substring of it
+/*
+
+1. This seems to be a very easy question, as we only need to see in how many moves string B can be present in A.
+
+2. So for that, its common snese that length of A should be alteast >= B length
+
+3. So do it, while(A.length<B.length) go on adding A to rep string; and increase the counter
+
+4.  Now check if A containss B, return cnt
+
+5. For safer side, add A one more time and see again if we satisfy the condition
+
+6. return cnt
+
+7. else return -1; */
+class AcontainsB
+{
+public:
+    int minRepeats(string A, string B)
+    {
+        // code here
+        string rep = A;
+        int count = 1;
+        while (A.size() < B.size())
+        {
+            A += rep;
+            count++;
+        }
+        if (A.find(B) != -1)
+            return count;
+        //? just to make sure we aren't missing something
+        A += rep;
+        count++;
+        if (A.find(B) != -1)
+            return count;
+        return -1;
+    }
+};
 int main()
 {
     string str = "RiCantSnipe";

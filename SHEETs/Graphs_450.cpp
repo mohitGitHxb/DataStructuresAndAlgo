@@ -383,6 +383,36 @@ public:
 //^ 6 detect a cycle in an undirected graph
 class DetectCycle
 {
+private:
+/* 
+    Intuition:
+        A cycle in an undirected graph occurs when there is a path from a vertex back to itself through a sequence of adjacent vertices, and the path is not just a single edge.
+        We can use Breadth-First Search (BFS) traversal to detect cycles in an undirected graph.
+        During BFS traversal, if we encounter a visited vertex that is not the parent of the current vertex, then a cycle is detected.
+
+    Code Explanation:
+        The code uses BFS to traverse the graph.
+        For each vertex, it performs BFS starting from that vertex.
+        In each BFS traversal, it maintains the parent of each vertex. If a visited vertex is encountered that is not the parent of the current vertex, a cycle is detected.
+        The vis array is used to keep track of visited vertices.
+        The function bfs returns true if a cycle is detected in the BFS traversal starting from the given source vertex.
+        The isCycle function checks for cycles in the entire graph by calling the bfs function for each unvisited vertex.
+        If a cycle is detected in any BFS traversal, the function returns true. Otherwise, it returns false.
+
+    Time Complexity:
+        The BFS traversal takes O(V + E) time, where V is the number of vertices and E is the number of edges.
+        Since the code calls BFS for each vertex, the overall time complexity is O(V * (V + E)).
+
+    Space Complexity:
+        The code uses a queue for BFS, which requires O(V) space for storing vertices in the queue.
+        Additionally, the vis array requires O(V) space.
+        The overall space complexity is O(V).
+
+    Hints:
+        Use BFS to traverse the graph.
+        During BFS traversal, maintain the parent of each vertex.
+        If a visited vertex is encountered that is not the parent of the current vertex, a cycle is detected.
+ */
 public:
     bool bfs(int V, vector<int> adj[], int src, vector<bool> &vis)
     {
@@ -454,6 +484,36 @@ public:
 class Matrix01
 {
 public:
+/*
+    Intuition:
+        The problem is about finding the distance of each cell in a matrix from the nearest cell with a value of 1.
+        We can solve this using Breadth-First Search (BFS). The idea is to start BFS from each cell with value 1 and propagate the distances to neighboring cells with value 0.
+
+    Code Explanation:
+        The code initializes two 2D vectors, vis and dis, both with the same dimensions as the input grid.
+        It starts by finding all cells with value 1 and initializing a BFS queue with these cells and a distance of 0.
+        Then, it performs BFS to spread the distances from these cells to their neighboring cells with value 0.
+        During BFS, it keeps track of visited cells using the vis array to avoid visiting the same cell multiple times.
+        The delrow and delcol arrays represent the possible movements (up, down, left, right) to neighboring cells.
+        The distances are updated in the dis array for each cell.
+        Finally, the dis array is returned, representing the distances of each cell from the nearest 1 cell.
+
+    Time Complexity:
+        The code visits each cell in the grid at most once during BFS.
+        Since BFS has a time complexity of O(V + E), where V is the number of vertices (cells) and E is the number of edges (connections between neighboring cells), the overall time complexity is O(n * m), where n is the number of rows and m is the number of columns.
+
+    Space Complexity:
+        The code uses two 2D arrays (vis and dis) of size n x m, where n is the number of rows and m is the number of columns.
+        Additionally, the BFS queue can have at most n x m elements.
+        The overall space complexity is O(n * m).
+
+    Hints:
+        Use BFS to traverse the matrix starting from cells with value 1.
+        Keep track of visited cells to avoid revisiting the same cell during BFS.
+        Update the distances of neighboring cells with value 0 during BFS.
+
+The code 
+ */
     vector<vector<int>> nearest(vector<vector<int>> grid)
     {
         int n = grid.size();
@@ -505,6 +565,34 @@ public:
 //^ 8 Replace O's with X's
 class Replacement
 {
+private:
+/* 
+    Intuition:
+        The problem is about finding and marking connected regions of 'O's that are not surrounded by 'X's.
+        We can solve this using Depth-First Search (DFS) or Breadth-First Search (BFS).
+        The idea is to start from the boundary of the matrix and perform DFS/BFS to mark all connected 'O's as visited. The remaining unvisited 'O's are the ones that are not surrounded by 'X's.
+
+    Code Explanation:
+        The code uses a dirs vector to represent the four possible directions to move (up, down, left, right).
+        The inBound function checks whether a given row and column are within the bounds of the matrix.
+        The dfs function performs DFS to mark all connected 'O's starting from a given cell.
+        The fill function iterates through the boundary cells and performs DFS for each 'O' cell encountered. This marks all connected 'O's that are not surrounded by 'X's.
+        Finally, the code iterates through the entire matrix and replaces unvisited 'O's with 'X's.
+
+    Time Complexity:
+        The code visits each cell in the matrix once during the DFS/BFS.
+        Since DFS/BFS has a time complexity of O(V + E), where V is the number of vertices (cells) and E is the number of edges (connections between neighboring cells), the overall time complexity is O(n * m), where n is the number of rows and m is the number of columns.
+
+    Space Complexity:
+        The code uses a 2D array vis of size n x m to keep track of visited cells.
+        Additionally, the DFS/BFS queue can have at most n x m elements.
+        The overall space complexity is O(n * m).
+
+    Hints:
+        Use DFS or BFS to traverse the matrix starting from the boundary cells.
+        Mark all connected 'O' cells as visited during traversal.
+        Replace unvisited 'O' cells with 'X' at the end.
+ */
 public:
     vector<pair<int, int>> dirs{{1, 0}, {0, -1}, {-1, 0}, {0, 1}};
     bool inBound(int row, int col, unsigned m, unsigned n)
@@ -563,6 +651,149 @@ public:
             }
         }
         return mat;
+    }
+};
+
+//^ 9 Number of Enclaves
+class NumberEnclaves
+{
+    private:
+    /* 
+        Intuition:
+        The problem is about finding the number of '1's in the grid that are not connected to the boundary of the grid.
+        We can solve this using Breadth-First Search (BFS).
+        The idea is to start from the boundary cells that have '1's and perform BFS to mark all connected '1's as visited.
+        At the end, we count the remaining unvisited '1's, which represent the enclaves.
+
+    Code Explanation:
+        The code uses a dirs vector to represent the four possible directions to move (up, down, left, right).
+        The inBound function checks whether a given row and column are within the bounds of the matrix.
+        The numberOfEnclaves function iterates through the boundary cells and performs BFS for each '1' cell encountered. This marks all connected '1's that are not connected to the boundary.
+        After BFS traversal, the code counts the remaining unvisited '1's, which represent the enclaves.
+
+    Time Complexity:
+        The code visits each cell in the matrix once during the BFS.
+        Since BFS has a time complexity of O(V + E), where V is the number of vertices (cells) and E is the number of edges (connections between neighboring cells), the overall time complexity is O(n * m), where n is the number of rows and m is the number of columns.
+
+    Space Complexity:
+        The code uses a 2D array vis of size n x m to keep track of visited cells.
+        Additionally, the BFS queue can have at most n x m elements.
+        The overall space complexity is O(n * m).
+
+    Hints:
+        Use BFS to traverse the matrix starting from the boundary cells that have '1's.
+        Mark all connected '1' cells as visited during traversal.
+        Count the remaining unvisited '1's at the end to find the number of enclaves.
+     */
+public:
+    vector<pair<int, int>> dirs{{1, 0}, {0, -1}, {-1, 0}, {0, 1}};
+    bool inBound(int row, int col, unsigned m, unsigned n)
+    {
+        return row >= 0 && row < m && col >= 0 && col < n;
+    }
+    int numberOfEnclaves(vector<vector<int>> &grid)
+    {
+        unsigned n = grid.size(), m = grid.front().size();
+        vector<vector<bool>> vis(n, vector<bool>(m));
+        queue<pair<int, int>> q;
+        for (int i = 0; i < n; i++)
+        {
+            if (grid[i][0] == 1 && !vis[i][0])
+            {
+                q.emplace(i, 0);
+                vis[i][0] = true;
+            }
+            if (grid[i][m - 1] == 1 && !vis[i][m - 1])
+            {
+                q.emplace(i, m - 1);
+                vis[i][m - 1] = true;
+            }
+        }
+
+        for (int j = 0; j < m; j++)
+        {
+            if (grid[0][j] == 1 && !vis[0][j])
+            {
+                q.emplace(0, j);
+                vis[0][j] = true;
+            }
+            if (grid[n - 1][j] == 1 && !vis[n - 1][j])
+            {
+                q.emplace(n - 1, j);
+                vis[n - 1][j] = true;
+            }
+        }
+
+        // bfs
+        while (!q.empty())
+        {
+            int row = q.front().first;
+            int col = q.front().second;
+            q.pop();
+            for (auto &it : dirs)
+            {
+                int nrow = row + it.first;
+                int ncol = col + it.second;
+                if (inBound(nrow, ncol, n, m) && !vis[nrow][ncol] && grid[nrow][ncol] == 1)
+                {
+                    vis.at(nrow).at(ncol) = true;
+                    q.emplace(nrow, ncol);
+                }
+            }
+        }
+
+        int ans = 0;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                if (vis[i][j] == false && grid[i][j] == 1)
+                {
+                    ans++;
+                }
+            }
+        }
+        return ans;
+    }
+};
+
+//^ 10 Number of distinct islands
+class DistinctIslands {
+  public:
+    set<vector<pair<int,int>>> distinct;
+    vector<pair<int, int>> dirs{{1, 0}, {0, -1}, {-1, 0}, {0, 1}};
+    bool inBound(int row, int col, unsigned m, unsigned n)
+    {
+        return row >= 0 && row < m && col >= 0 && col < n;
+    }
+    
+    void dfs(int row,int col,int src,vector<vector<bool>> &vis,vector<vector<int>> &grid,vector<pair<int,int>> &coords,int baseR,int baseC){
+        vis.at(row).at(col) = true;
+        coords.emplace_back(make_pair(row-baseR,col-baseC));
+        for(auto &dir : dirs){
+            int nrow = row + dir.first;
+            int ncol = col + dir.second;
+            if(inBound(nrow,ncol,grid.size(),grid.front().size()) && !vis.at(nrow).at(ncol) && grid.at(nrow).at(ncol) == 1){
+                dfs(nrow,ncol,grid.at(nrow).at(ncol),vis,grid,coords,baseR,baseC);
+            }
+        }
+    }
+    
+    int countDistinctIslands(vector<vector<int>>& grid) {
+        // code here
+        unsigned n = grid.size() , m = grid.back().size();
+        vector<vector<bool>> vis(n,vector<bool> (m));
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                if(!vis[i][j] && grid[i][j] == 1){
+                    //? perform dfs
+                    vector<pair<int,int>> coords;
+                    dfs(i,j,grid[i][j],vis,grid,coords,i,j);
+                    distinct.insert(coords);
+                }
+            }
+        }
+        return distinct.size();
     }
 };
 int main()

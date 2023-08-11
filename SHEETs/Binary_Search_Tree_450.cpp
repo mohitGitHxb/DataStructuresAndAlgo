@@ -40,6 +40,31 @@ TreeNode *searchBST(TreeNode *root, int val)
 }
 
 //^ 2 Ceil of a binary search tree
+/* 
+    Intuition:
+        Since the BST is ordered in such a way that all nodes in the right subtree of a node are greater than the node, and all nodes in the left subtree are smaller than the node, we can use this property to efficiently find the smallest number greater than or equal to the input.
+
+    Code Explanation:
+        The findCeil function takes a pointer to the root of the BST and an input integer input that we want to find the ceiling of.
+        The function uses a while loop to traverse the BST:
+            If the current node's value matches the input value, we have found the exact match, so we return the input value itself.
+            If the current node's value is less than the input value, we move to the right subtree (root = root->right), as we are looking for a greater value.
+            If the current node's value is greater than or equal to the input value, we update ans to the current node's value and move to the left subtree (root = root->left).
+        The ans variable will hold the smallest value greater than or equal to the input value when the loop finishes.
+        If no node in the BST is greater than or equal to the input value, the ans will contain the last largest value found in the left subtree.
+
+    Time Complexity:
+        In the worst case, we visit all nodes on the path from the root to the leaf, or until we find a match.
+        Since the tree is balanced in a well-formed BST, the time complexity is O(log n), where n is the number of nodes in the BST. In the worst case, it's O(n) for a skewed tree.
+
+    Space Complexity:
+        The algorithm uses a constant amount of extra space for variables, so the space complexity is O(1).
+
+    Hints:
+        Utilize the ordered property of the binary search tree to navigate the tree efficiently.
+        If the current node's value is less than the input, move to the right subtree.
+        If the current node's value is greater than or equal to the input, update the answer and move to the left subtree.
+ */
 int findCeil(Node *root, int input)
 {
     if (!root)
@@ -65,6 +90,36 @@ int findCeil(Node *root, int input)
 }
 
 //^ 3 Insert a node in the bst
+/* 
+    Intuition:
+        The code aims to insert a new node with the given value into the existing BST while maintaining the properties of a BST (nodes in the left subtree are smaller, and nodes in the right subtree are larger).
+        To do this, the code traverses the BST from the root, moving left or right based on the comparison of the input value with the current node's value.
+
+    Code Explanation:
+        The insertIntoBST function takes a pointer to the root of the BST and the value val to be inserted.
+        If the BST is empty (root is null), the function creates a new node with the given value and returns it.
+        Otherwise, it initializes two pointers: curr and prev. They both initially point to the root node.
+        The while loop continues until curr becomes null. Inside the loop:
+            prev keeps track of the previous node visited.
+            If the val is greater than the current node's value, curr moves to the right subtree (curr = curr->right).
+            If the val is less than or equal to the current node's value, curr moves to the left subtree (curr = curr->left).
+        After the loop, prev will be the parent node where the new node should be inserted.
+        A new node with the given value val is created and inserted as the appropriate child of prev, based on the comparison with prev's value.
+        Finally, the function returns the root of the modified BST.
+
+    Time Complexity:
+        The code traverses the tree from the root to the insertion point.
+        The time complexity is O(h), where h is the height of the BST.
+        In the best case (balanced BST), the height is log(n), and in the worst case (skewed BST), it's n.
+
+    Space Complexity:
+        The algorithm uses a constant amount of extra space for variables, so the space complexity is O(1).
+
+    Hints:
+        Utilize the properties of a binary search tree to navigate and insert the new node at the correct position.
+        Keep track of both the current and previous nodes during traversal.
+        Based on the comparison of values, move either left or right in the BST to find the correct insertion point.
+ */
 TreeNode *insertIntoBST(TreeNode *root, int val)
 {
     if (!root)
@@ -97,6 +152,37 @@ TreeNode *insertIntoBST(TreeNode *root, int val)
 //^ 4 Delete node in a bst
 class DeleteNodesBST
 {
+private:
+
+/* 
+    Intuition:
+        The code aims to delete a node with the given value from the BST while maintaining the properties of a BST.
+        There are three scenarios to consider:
+            If the node to be deleted has no left child, replace it with its right child.
+            If the node to be deleted has no right child, replace it with its left child.
+            If the node to be deleted has both left and right children, find the in-order predecessor (the rightmost node in the left subtree), replace the node with the in-order predecessor, and update the left subtree to exclude the in-order predecessor.
+
+    Code Explanation:
+        The helper function takes a node as input and handles the three deletion scenarios. It returns the updated subtree root after deletion.
+        The findLastRight function takes a node as input and returns the rightmost node in the subtree.
+        The deleteNode function takes the root of the BST and the key (value) to be deleted.
+        It starts by finding the node to be deleted. During this traversal, it keeps track of the current node using the curr pointer.
+        After finding the node, it checks whether the node has a left or right child using the helper function.
+        If the node to be deleted is the root, the curr pointer will be updated to the new root returned by the helper function.
+        The function returns the updated root.
+
+    Time Complexity:
+        The time complexity is O(h), where h is the height of the BST.
+        In the best case (balanced BST), the height is log(n), and in the worst case (skewed BST), it's n.
+
+    Space Complexity:
+        The algorithm uses a constant amount of extra space for variables, so the space complexity is O(1).
+
+    Hints:
+        Consider the three scenarios for deletion: node with no left child, node with no right child, and node with both left and right children.
+        Utilize the helper function to handle the different deletion scenarios.
+        Keep track of the current node during traversal to update the root if needed.
+ */
 public:
     TreeNode *helper(TreeNode *root)
     {
@@ -302,7 +388,6 @@ public:
                 }
             }
         }
-        // for(auto &it : inorder) cout << it << " ";
         for (int i = 0; i < inorder.size() - 1; i++)
         {
             if (inorder[i + 1] <= inorder[i])
@@ -314,6 +399,29 @@ public:
     /*
     @ Simple recursion
     &- All the nodes will get some valid range according to their parent.
+        Intuition:
+        A binary search tree (BST) is a binary tree where each node has a value greater than or equal to the values in its left subtree and less than or equal to the values in its right subtree.
+        The code checks whether the given binary tree satisfies the properties of a BST.
+
+    Code Explanation:
+        The isBST function takes a node as input along with optional lower and upper range limits.
+        It starts by checking if the current node is null, which is considered a valid BST.
+        Then it checks if the value of the current node falls within the specified lower and upper range limits. If not, it returns false.
+        The function then makes a recursive call to isBST for the left and right subtrees:
+            For the left subtree, the upper range limit is updated to the value of the current node, ensuring that all nodes in the left subtree are less than the current node.
+            For the right subtree, the lower range limit is updated to the value of the current node, ensuring that all nodes in the right subtree are greater than the current node.
+        The function returns true only if both the left and right subtrees are valid BSTs and the current node's value satisfies the range conditions.
+
+    Time Complexity:
+        The algorithm visits each node exactly once, so the time complexity is O(n), where n is the number of nodes in the binary tree.
+
+    Space Complexity:
+        The algorithm uses a constant amount of extra space for variables and the call stack during recursion, so the space complexity is O(h), where h is the height of the tree. In the worst case (skewed tree), the height can be n.
+
+    Hints:
+        Utilize the concept of range limits to validate the values of nodes in the tree.
+        Use recursion to check the left and right subtrees while updating the range limits accordingly.
+        Remember that a valid BST has its left subtree values less than the current node and its right subtree values greater than the current node.
      */
     bool isBST(Node *root, int lowerRange = -1e9, int upperRange = 1e9)
     {
@@ -434,6 +542,112 @@ void findPreSuc(Node *root, Node *&pre, Node *&suc, int val)
         }
     }
 }
+
+//^ 11 Correct BST with two nodes swapped
+class FixBST
+{
+public:
+    /*
+    @ Brute force / naive
+    ? Take the inorder traversal of the bst and store it in an array
+    &- Now sort this array and again do the same inorder traversal and this time keep a pointer in the array too
+    &- Whenever there is a mismatch between the the array and the node->val change node->val = array[pointer]
+    ! O(N) + O(NlogN) T.C | O(N) S.C
+     */
+
+    /* 
+    @ Better approach
+        Intuition:
+        A valid BST has its nodes ordered in such a way that the values of nodes in the left subtree are less than the value of the root node, and the values of nodes in the right subtree are greater than the value of the root node.
+        When two nodes are swapped, this order is disturbed. The code aims to identify these two nodes and swap their values back to correct the BST.
+
+    Code Explanation:
+        The recoverTree function takes the root of the tree as input.
+        The algorithm employs Morris Traversal, which is a way to traverse a binary tree without using recursion or extra space.
+        The algorithm iterates through the tree using Morris Traversal:
+            If the current node has no left child, it checks whether the current node's value violates the BST property (i.e., it's smaller than the previous node's value). If a violation is found, it identifies the first and last violation nodes.
+            If the current node has a left child, it finds the in-order predecessor (the rightmost node in the left subtree) using the prev pointer.
+            If the predecessor's right child is not connected, it connects it to the current node (this step creates a temporary threaded link).
+            If the predecessor's right child is already connected to the current node (which means we've traversed the left subtree), it disconnects the link and checks for violations as before.
+        Once the algorithm has identified the two nodes that are swapped, it swaps their values to correct the BST.
+
+    Time Complexity:
+        The algorithm uses Morris Traversal to traverse the tree in constant space, visiting each node exactly twice. So, the time complexity is O(n), where n is the number of nodes in the tree.
+
+    Space Complexity:
+        The algorithm uses a constant amount of extra space (excluding the input and output), so the space complexity is O(1).
+
+    Hints:
+        Morris Traversal is a clever technique to traverse a binary tree with O(1) space.
+        Maintain a prev pointer to track the in-order predecessor while traversing.
+        Pay close attention to the cases where the predecessor's right child is connected or not.
+     */
+    TreeNode *firstViolation, *lastViolation, *previousNode, *adjacentToFirst;
+    void recoverTree(TreeNode *root)
+    {
+        TreeNode *curr = root;
+        previousNode = new TreeNode(INT_MIN);
+        while (curr)
+        {
+            if (!curr->left)
+            {
+                if (previousNode && (curr->val < previousNode->val))
+                {
+                    if (!firstViolation)
+                    {
+                        firstViolation = previousNode;
+                        adjacentToFirst = curr;
+                    }
+                    else
+                    {
+                        lastViolation = curr;
+                    }
+                }
+                previousNode = curr;
+                curr = curr->right;
+            }
+            else
+            {
+                TreeNode *prev = curr->left;
+                while (prev->right && prev->right != curr)
+                {
+                    prev = prev->right;
+                }
+                if (!prev->right)
+                {
+                    prev->right = curr;
+                    curr = curr->left;
+                }
+                if (prev->right == curr)
+                {
+                    prev->right = nullptr;
+                    if (previousNode && (curr->val < previousNode->val))
+                    {
+                        if (!firstViolation)
+                        {
+                            firstViolation = previousNode;
+                            adjacentToFirst = curr;
+                        }
+                        else
+                        {
+                            lastViolation = curr;
+                        }
+                    }
+                    previousNode = curr;
+                    curr = curr->right;
+                }
+            }
+        }
+        if (firstViolation && lastViolation)
+        {
+            swap(firstViolation->val, lastViolation->val);
+        }
+        else
+        {
+            swap(firstViolation->val, adjacentToFirst->val);
+        }
+    }
+};
 int main(int argc, char const *argv[])
 {
     /* code */

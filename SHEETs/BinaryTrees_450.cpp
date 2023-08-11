@@ -1626,10 +1626,96 @@ public:
     }
 };
 
-
 //^ ----------------------------------------------------------------------------
 
 //? Additional questions from Love babbar sheet!
+
+//^ 30 Flatten binary tree into doubly linked list [inorder]
+class FlattenToDLL
+{
+private:
+    /*
+    Intuition:
+
+~- This problem involves converting a Binary Tree to a Doubly Linked List in-place while maintaining the order of nodes based on the inorder traversal of the Binary Tree. The main idea is to perform an inorder traversal of the Binary Tree, but during the traversal, modify the pointers to create the DLL. We'll maintain a prev pointer to keep track of the previous node processed during the traversal.
+
+Algorithm / Code Explanation:
+
+&-    Initialize a prev pointer as NULL.
+&-    Define a recursive function bToDLL(Node* root) that takes a node root as input and returns the head of the Doubly Linked List.
+&-    If the root node is NULL, return NULL (base case).
+&-    Recursively convert the left subtree by calling bToDLL(root->left) and store the result in head.
+&-    If prev is NULL, update head to the current root node. This ensures that we capture the leftmost node in the inorder traversal.
+&-    If prev is not NULL, update the right pointer of prev to point to the current root, and the left pointer of the current root to point to prev. This step is the actual conversion of the Binary Tree node to a Doubly Linked List node.
+&-    Update prev to the current root node.
+&-    Recursively convert the right subtree by calling bToDLL(root->right).
+&-    Finally, return head, which is the head of the Doubly Linked List.
+
+Time Complexity:
+
+*- The time complexity of this algorithm is O(n), where n is the number of nodes in the Binary Tree. Each node is visited once during the inorder traversal.
+
+Space Complexity:
+
+*- The space complexity is O(h), where h is the height of the Binary Tree due to the recursive call stack. In the worst case, the height of the Binary Tree is O(n), resulting in O(n) space complexity.
+
+This code essentially implements a modified inorder traversal that creates the Doubly Linked List as a side effect. At the end of the traversal, the head of the Doubly Linked List is returned.
+     */
+public:
+    Node *prev = NULL;
+    Node *bToDLL(Node *root)
+    {
+        if (!root)
+            return root;
+        Node *head = bToDLL(root->left);
+        if (!prev)
+            head = root;
+        else
+        {
+            prev->right = root;
+            root->left = prev;
+        }
+        prev = root;
+        bToDLL(root->right);
+        return head;
+    }
+};
+//^ 31 Conversion into Circular doubly linked list
+class FlattenIntoCDLL
+{
+public:
+/* 
+@ Same as DLL
+&- Maintain lastNode a.k.a tail pointer also while converting into doubly linked list
+ */
+    Node *prev = NULL, *lastNode = NULL;
+    Node *bToDLL(Node *root)
+    {
+        if (!root)
+            return root;
+        Node *head = bToDLL(root->left);
+        if (!prev)
+            head = root;
+        else
+        {
+            prev->right = root;
+            root->left = prev;
+        }
+        prev = root;
+        lastNode = root; //? this line will keep the rightmost (tail) node
+        bToDLL(root->right);
+        return head;
+    }
+    Node *bTreeToCList(Node *root)
+    {
+        // add code here.
+        Node *head = bToDLL(root);
+        lastNode->right = head;
+        head->left = lastNode;
+        return head;
+    }
+};
+
 int main()
 {
     return 0;

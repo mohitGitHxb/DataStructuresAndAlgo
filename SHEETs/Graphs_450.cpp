@@ -501,6 +501,70 @@ public:
         return dis;
     }
 };
+
+//^ 8 Replace O's with X's
+class Replacement
+{
+public:
+    vector<pair<int, int>> dirs{{1, 0}, {0, -1}, {-1, 0}, {0, 1}};
+    bool inBound(int row, int col, unsigned m, unsigned n)
+    {
+        return row >= 0 && row < m && col >= 0 && col < n;
+    }
+
+    void dfs(int row, int col, vector<vector<int>> &vis, vector<vector<char>> &mat, int n, int m)
+    {
+        vis[row][col] = true;
+        for (auto &dir : dirs)
+        {
+            int nrow = row + dir.first;
+            int ncol = col + dir.second;
+            if (inBound(nrow, ncol, n, m) && !vis[nrow][ncol] && mat[nrow][ncol] == 'O')
+            {
+                dfs(nrow, ncol, vis, mat, n, m);
+            }
+        }
+    }
+    vector<vector<char>> fill(int n, int m, vector<vector<char>> &mat)
+    {
+        vector<vector<int>> vis(n, vector<int>(m));
+        for (int i = 0; i < n; i++)
+        {
+            if (vis[i][0] == 0 && mat[i][0] == 'O')
+            {
+                dfs(i, 0, vis, mat, n, m);
+            }
+            if (vis[i][m - 1] == 0 && mat[i][m - 1] == 'O')
+            {
+                dfs(i, m - 1, vis, mat, n, m);
+            }
+        }
+
+        for (int j = 0; j < m; j++)
+        {
+            if (vis[0][j] == 0 && mat[0][j] == 'O')
+            {
+                dfs(0, j, vis, mat, n, m);
+            }
+            if (vis[n - 1][j] == 0 && mat[n - 1][j] == 'O')
+            {
+                dfs(n - 1, j, vis, mat, n, m);
+            }
+        }
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                if (vis[i][j] == 0 && mat[i][j] == 'O')
+                {
+                    mat[i][j] = 'X';
+                }
+            }
+        }
+        return mat;
+    }
+};
 int main()
 {
     return 0;

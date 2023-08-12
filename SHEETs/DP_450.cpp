@@ -3896,13 +3896,13 @@ Finally, it calculates and stores the result as the maximum of take and notTake 
 
 &   3. Iterate over each element in the array `a[]` starting from index 0:
 
-   a. For each element at index `i`, iterate over all the previous elements at indices `j` such that `j` is less than `i`.
+?   a. For each element at index `i`, iterate over all the previous elements at indices `j` such that `j` is less than `i`.
 
-   b. Compare the current element `a[j]` with the element `a[i]`. If `a[j]` is less than `a[i]`, it means that we can extend the increasing subsequence ending at index `j` by including `a[i]` as well.
+?   b. Compare the current element `a[j]` with the element `a[i]`. If `a[j]` is less than `a[i]`, it means that we can extend the increasing subsequence ending at index `j` by including `a[i]` as well.
 
-   c. Update the length of the increasing subsequence ending at index `i` in the `dp` array. The length is calculated as the maximum of two values: `1 + dp[j]` (length of the subsequence ending at index `j` plus the current element `a[i]`) and the current value of `dp[i]`. This ensures that we choose the maximum length among all possible subsequences ending at index `i`.
+?   c. Update the length of the increasing subsequence ending at index `i` in the `dp` array. The length is calculated as the maximum of two values: `1 + dp[j]` (length of the subsequence ending at index `j` plus the current element `a[i]`) and the current value of `dp[i]`. This ensures that we choose the maximum length among all possible subsequences ending at index `i`.
 
-   d. Update `maxi` with the maximum value between `maxi` and the updated `dp[i]` to keep track of the maximum length found so far.
+?   d. Update `maxi` with the maximum value between `maxi` and the updated `dp[i]` to keep track of the maximum length found so far.
 
 &   4. After processing all elements, `maxi` will contain the length of the longest increasing subsequence in the array.
 

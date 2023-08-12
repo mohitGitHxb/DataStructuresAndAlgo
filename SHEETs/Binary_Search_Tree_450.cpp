@@ -40,7 +40,7 @@ TreeNode *searchBST(TreeNode *root, int val)
 }
 
 //^ 2 Ceil of a binary search tree
-/* 
+/*
     Intuition:
         Since the BST is ordered in such a way that all nodes in the right subtree of a node are greater than the node, and all nodes in the left subtree are smaller than the node, we can use this property to efficiently find the smallest number greater than or equal to the input.
 
@@ -90,7 +90,7 @@ int findCeil(Node *root, int input)
 }
 
 //^ 3 Insert a node in the bst
-/* 
+/*
     Intuition:
         The code aims to insert a new node with the given value into the existing BST while maintaining the properties of a BST (nodes in the left subtree are smaller, and nodes in the right subtree are larger).
         To do this, the code traverses the BST from the root, moving left or right based on the comparison of the input value with the current node's value.
@@ -153,36 +153,35 @@ TreeNode *insertIntoBST(TreeNode *root, int val)
 class DeleteNodesBST
 {
 private:
+    /*
+        Intuition:
+            The code aims to delete a node with the given value from the BST while maintaining the properties of a BST.
+            There are three scenarios to consider:
+                If the node to be deleted has no left child, replace it with its right child.
+                If the node to be deleted has no right child, replace it with its left child.
+                If the node to be deleted has both left and right children, find the in-order predecessor (the rightmost node in the left subtree), replace the node with the in-order predecessor, and update the left subtree to exclude the in-order predecessor.
 
-/* 
-    Intuition:
-        The code aims to delete a node with the given value from the BST while maintaining the properties of a BST.
-        There are three scenarios to consider:
-            If the node to be deleted has no left child, replace it with its right child.
-            If the node to be deleted has no right child, replace it with its left child.
-            If the node to be deleted has both left and right children, find the in-order predecessor (the rightmost node in the left subtree), replace the node with the in-order predecessor, and update the left subtree to exclude the in-order predecessor.
+        Code Explanation:
+            The helper function takes a node as input and handles the three deletion scenarios. It returns the updated subtree root after deletion.
+            The findLastRight function takes a node as input and returns the rightmost node in the subtree.
+            The deleteNode function takes the root of the BST and the key (value) to be deleted.
+            It starts by finding the node to be deleted. During this traversal, it keeps track of the current node using the curr pointer.
+            After finding the node, it checks whether the node has a left or right child using the helper function.
+            If the node to be deleted is the root, the curr pointer will be updated to the new root returned by the helper function.
+            The function returns the updated root.
 
-    Code Explanation:
-        The helper function takes a node as input and handles the three deletion scenarios. It returns the updated subtree root after deletion.
-        The findLastRight function takes a node as input and returns the rightmost node in the subtree.
-        The deleteNode function takes the root of the BST and the key (value) to be deleted.
-        It starts by finding the node to be deleted. During this traversal, it keeps track of the current node using the curr pointer.
-        After finding the node, it checks whether the node has a left or right child using the helper function.
-        If the node to be deleted is the root, the curr pointer will be updated to the new root returned by the helper function.
-        The function returns the updated root.
+        Time Complexity:
+            The time complexity is O(h), where h is the height of the BST.
+            In the best case (balanced BST), the height is log(n), and in the worst case (skewed BST), it's n.
 
-    Time Complexity:
-        The time complexity is O(h), where h is the height of the BST.
-        In the best case (balanced BST), the height is log(n), and in the worst case (skewed BST), it's n.
+        Space Complexity:
+            The algorithm uses a constant amount of extra space for variables, so the space complexity is O(1).
 
-    Space Complexity:
-        The algorithm uses a constant amount of extra space for variables, so the space complexity is O(1).
-
-    Hints:
-        Consider the three scenarios for deletion: node with no left child, node with no right child, and node with both left and right children.
-        Utilize the helper function to handle the different deletion scenarios.
-        Keep track of the current node during traversal to update the root if needed.
- */
+        Hints:
+            Consider the three scenarios for deletion: node with no left child, node with no right child, and node with both left and right children.
+            Utilize the helper function to handle the different deletion scenarios.
+            Keep track of the current node during traversal to update the root if needed.
+     */
 public:
     TreeNode *helper(TreeNode *root)
     {
@@ -555,7 +554,7 @@ public:
     ! O(N) + O(NlogN) T.C | O(N) S.C
      */
 
-    /* 
+    /*
     @ Better approach
         Intuition:
         A valid BST has its nodes ordered in such a way that the values of nodes in the left subtree are less than the value of the root node, and the values of nodes in the right subtree are greater than the value of the root node.
@@ -646,6 +645,118 @@ public:
         {
             swap(firstViolation->val, adjacentToFirst->val);
         }
+    }
+};
+
+//^ 12 Largest BST in a binary tree
+class LargestBST
+{
+public:
+    /*
+    @ Brute force
+    &- For each node in the binary tree check if it is a valid BST by using validateBST function
+    &- After getting a valid BST count the number of nodes in the bst
+    &- take the maximum of all the BSTs in the binary tree and return the maximum
+
+    !O(N^2) Time and O(log N) S.C
+     */
+
+    /*
+    @ Efficient approach
+    &- Create a structure which will hold the minimum and maximum node values for the left and right subtrees and the maximum size of the BST
+    &- perform a post order traversal because we will need to go to leftmost then rightmost then root
+    &- For each node compare if largest number of left side < root->data < smallest value right side
+    &- If the above case is true then return the structure holding minimum and maximum node value as min(left.min and root->data) and max(root->data,right.max) and size will be 1 + left.size + right.size
+
+    &- Else return the structure holding minimum and maximum node value as INT_MIN and INT_MAX respectively with size = max(left.size,right.size)
+    *O(N) Time and O(1) S.C
+     */
+    class Solution
+    {
+    private:
+        struct NodeValue
+        {
+            int minNode, maxNode, maxSize;
+            NodeValue(int mini, int maxi, int maxs)
+            {
+                minNode = mini;
+                maxNode = maxi;
+                maxSize = maxs;
+            }
+        };
+
+    public:
+        /*You are required to complete this method */
+        // Return the size of the largest sub-tree which is also a BST
+        NodeValue helper(Node *root)
+        {
+            if (!root)
+                return NodeValue(INT_MAX, INT_MIN, 0);
+
+            NodeValue left = helper(root->left);
+            NodeValue right = helper(root->right);
+            if (left.maxNode < root->data && root->data < right.minNode)
+            {
+                //? Valid BST
+                return NodeValue(min(left.minNode, root->data), max(right.maxNode, root->data), 1 + left.maxSize + right.maxSize);
+            }
+            else
+            {
+                return NodeValue(INT_MIN, INT_MAX, max(left.maxSize, right.maxSize));
+            }
+        }
+        int largestBst(Node *root)
+        {
+            return helper(root).maxSize;
+        }
+    };
+};
+
+//^ Maximum sum in a binary tree which is also a BST
+class MaxSumBST
+{
+private:
+    struct NodeValue
+    {
+        int minNode, maxNode, maxSum;
+        bool isBST;
+        NodeValue(int mini, int maxi, int maxs, bool isBST = false)
+        {
+            minNode = mini;
+            maxNode = maxi;
+            maxSum = maxs;
+            this->isBST = isBST;
+        }
+    };
+
+public:
+    NodeValue helper(TreeNode *root, int &ans)
+    {
+        if (!root)
+            return NodeValue(INT_MAX, INT_MIN, 0, true);
+        NodeValue left = helper(root->left, ans);
+        NodeValue right = helper(root->right, ans);
+        NodeValue curr(min(root->val, left.minNode), max(root->val, right.maxNode), left.maxSum + right.maxSum + root->val);
+        if (left.isBST && right.isBST && (root->val > left.maxNode && root->val < right.minNode))
+        {
+            curr.isBST = true;
+        }
+        else
+        {
+            curr.isBST = false;
+        }
+        if (curr.isBST)
+        {
+            ans = max(ans, curr.maxSum);
+        }
+
+        return curr;
+    }
+    int maxSumBST(TreeNode *root)
+    {
+        int maxSum = 0;
+        NodeValue temp = helper(root, maxSum);
+        return maxSum;
     }
 };
 int main(int argc, char const *argv[])

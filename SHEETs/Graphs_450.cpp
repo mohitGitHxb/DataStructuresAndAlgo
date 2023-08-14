@@ -760,6 +760,36 @@ public:
 //^ 10 Number of distinct islands
 class DistinctIslands
 {
+private:
+/* 
+    Intuition:
+&        The goal is to count the number of distinct islands in a given grid.
+&        An island is defined as a connected group of cells with value 1.
+&        Two islands are considered distinct if they differ in their shapes or relative positions.
+
+    Code Explanation:
+&-       The countDistinctIslands function takes a 2D grid of integers as input and returns the count of distinct islands.
+&-       It initializes an empty set named distinct to store distinct island shapes.
+&-       For each cell in the grid, if it's part of an unvisited island (value 1), the code initiates a Depth-First Search (DFS) to find all the connected cells of the island.
+&-       During DFS, it tracks the coordinates of each connected cell relative to the starting cell's position.
+&-       Once a complete island is explored, the coordinates of its cells are stored in the coords vector.
+&-       The distinct set is used to store these relative coordinates vectors, ensuring uniqueness.
+&-       Finally, the size of the distinct set represents the count of distinct islands.
+
+    Time Complexity:
+*-     The code involves traversing through each cell in the grid and performing DFS in a worst-case scenario.
+*-     The time complexity of the DFS for each island is proportional to the number of cells in that island.
+*-     Overall, the time complexity is O(n * m), where n and m are the dimensions of the grid.
+
+    Space Complexity:
+*-     The code uses several vectors and sets to store information, resulting in a space complexity of O(n * m).
+
+    Hints:
+*        Use Depth-First Search (DFS) to explore each connected island.
+*        Store the relative coordinates of each cell within an island.
+*        Use a set to keep track of distinct island shapes.
+*        Count the size of the set to get the number of distinct islands.
+ */
 public:
     set<vector<pair<int, int>>> distinct;
     vector<pair<int, int>> dirs{{1, 0}, {0, -1}, {-1, 0}, {0, 1}};
@@ -809,6 +839,39 @@ public:
 class Bipartite
 {
 public:
+/* 
+
+1. **Intuition**:
+   - A bipartite graph is a graph in which the vertices can be divided into two disjoint sets such that no two vertices within the same set are adjacent.
+   - The problem is to determine if the given graph is bipartite or not.
+
+2. **Code Explanation**:
+   - The `isBipartiteUtil` function is a BFS-based approach to check if a single connected component of the graph is bipartite.
+   - It uses a queue to perform BFS traversal of the graph, starting from a source node.
+   - The `colored` vector is used to assign colors to the nodes. The colors are represented by values 0 and 1.
+   - The BFS starts by coloring the source node with color 0 (or 1), and then colors its neighbors with the opposite color (1 or 0).
+   - If any neighbor is already colored with the same color as the current node, then the graph cannot be bipartite.
+   - The `isBipartite` function iterates over all nodes and calls `isBipartiteUtil` for each unvisited node.
+   - If a connected component is found to be non-bipartite, the function immediately returns `false`.
+   - If all connected components are bipartite, the function returns `true`.
+
+3. **Time Complexity**:
+   - The code involves BFS traversal of the graph.
+   - Each node is visited once, and each edge is explored once.
+   - The time complexity is O(V + E), where V is the number of vertices and E is the number of edges.
+
+4. **Space Complexity**:
+   - The code uses several vectors to store information, resulting in a space complexity of O(V) for the `colored` vector.
+
+5. **Hints**:
+   - Use BFS to traverse the graph component by component.
+   - Assign colors (0 or 1) to nodes while traversing.
+   - If a node's neighbor is already colored with the same color, the graph is not bipartite.
+   - Return `false` as soon as you find a non-bipartite component.
+   - Return `true` if all connected components are bipartite.
+
+
+ */
     bool isBipartiteUtil(int V, int src, vector<int> adj[], vector<int> &colored)
     {
 
@@ -855,7 +918,36 @@ public:
         return true;
     }
 
-    // DFS approach
+    //? DFS approach
+    /* 
+        Intuition:
+        Similar to the previous approach, this code also aims to determine if a given graph is bipartite.
+        Bipartite graphs are those that can be divided into two disjoint sets such that no two vertices within the same set are adjacent.
+
+    Code Explanation:
+        The code uses a DFS-based approach to traverse the graph and assign colors to nodes.
+        The dfs function takes a node, its adjacent list, and an array color where each node is colored with either 0 or 1.
+        The color assignment is done in such a way that adjacent nodes have different colors.
+        The DFS visits each node and colors it. If any adjacent node is already colored with the same color, the graph cannot be bipartite, and the function returns false.
+        If no inconsistencies are found during DFS traversal, the function returns true.
+        The isBipartite function initializes the color array with -1 (indicating uncolored nodes) and iterates through all nodes. For each uncolored node, it assigns a color and starts DFS from that node.
+        If DFS returns false, indicating an inconsistency in coloring, the function immediately returns false. Otherwise, it returns true.
+
+    Time Complexity:
+        The code involves a DFS traversal of the graph.
+        Each node is visited once, and each edge is explored once.
+        The time complexity is O(V + E), where V is the number of vertices and E is the number of edges.
+
+    Space Complexity:
+        The code uses additional memory for the color array.
+        The space complexity is O(V) for the color array.
+
+    Hints:
+        Use DFS to traverse the graph and assign colors while visiting nodes.
+        If any adjacent node is already colored with the same color, the graph is not bipartite.
+        Return false as soon as you find an inconsistency in coloring.
+        Return true if all nodes are colored consistently.
+     */
     bool dfs(int node, vector<int> adj[], int color[])
     {
         for (auto it : adj[node])
@@ -898,6 +990,38 @@ public:
 //^ 12 Detect a cycle in a directed graph
 class Solution
 {
+private:
+/* 
+    Intuition:
+        This code aims to detect cycles in a directed graph.
+        It uses a Depth-First Search (DFS) approach to traverse the graph while maintaining two boolean arrays: vis and pathVis.
+        The vis array keeps track of whether a node has been visited during the entire traversal, while the pathVis array keeps track of whether a node is currently visited within the current path.
+
+    Code Explanation:
+        The dfs function takes a source node, the adjacency list, and performs a DFS traversal.
+        During traversal, it marks the node as visited in both vis and pathVis arrays.
+        It then recursively explores all adjacent nodes that have not been visited.
+        If it encounters a node that is already visited and is also currently part of the current path (according to pathVis), then a cycle is detected and the function returns true.
+        After backtracking from the recursion, the pathVis of the current node is set to false, indicating that this node is not part of the current path anymore.
+        If no cycle is detected during traversal, the function returns false.
+        The isCyclic function initializes the vis and pathVis arrays and iterates through all nodes, performing DFS from each unvisited node.
+        If a cycle is detected during any DFS, the function immediately returns true. Otherwise, it returns false.
+
+    Time Complexity:
+        The code involves a DFS traversal of the graph.
+        Each node is visited once, and each edge is explored once.
+        The time complexity is O(V + E), where V is the number of vertices and E is the number of edges.
+
+    Space Complexity:
+        The code uses additional memory for the vis and pathVis arrays.
+        The space complexity is O(V) for these arrays.
+
+    Hints:
+        Use DFS to traverse the graph while keeping track of visited nodes and nodes currently visited in the current path.
+        If a visited node is encountered again in the current path, a cycle is detected.
+        Return true as soon as a cycle is detected during DFS traversal.
+        Return false if no cycles are found after DFS from all unvisited nodes.
+ */
 public:
     vector<bool> vis, pathVis;
     bool dfs(int src, vector<int> adj[])
@@ -935,6 +1059,93 @@ public:
             }
         }
         return false;
+    }
+};
+
+//^ 13 Eventually Safe Nodes [DFS]
+class SafeNodes1
+{
+private:
+/* 
+    Intuition:
+        This code aims to find all the safe nodes in a directed graph.
+        A safe node is a node from which every possible path leads to a terminal node (a node with no outgoing edges) or another safe node.
+        The code utilizes a Depth-First Search (DFS) approach to traverse the graph and mark safe nodes.
+
+    Code Explanation:
+        The dfs function takes a source node, the adjacency list, and two boolean arrays: vis (to track visited nodes) and recst (to track nodes in the current recursion stack).
+        It marks the current node as visited (vis[src] = true) and adds it to the current recursion stack (recst[src] = true).
+        Then, for each neighbor x of the current node, it checks whether x is visited and whether a cycle is present in the current recursion stack. If so, it returns true.
+        If x is not visited, it recursively calls dfs on x.
+        If a cycle is detected or if all neighbors have been visited without detecting a cycle, the current node is removed from the current recursion stack (recst[src] = false) and false is returned.
+        In the eventualSafeNodes function, it initializes the adjacency list adj based on the given graph representation.
+        It initializes the vis and recst arrays.
+        For each unvisited node, it calls the dfs function to determine whether the node is a safe node.
+        It then iterates through the recst array to find nodes that are not in the current recursion stack, indicating that they are safe nodes.
+        It returns a vector containing the indices of safe nodes.
+
+    Time Complexity:
+        The code involves a DFS traversal of the graph.
+        Each node is visited once, and each edge is explored once.
+        The time complexity is O(V + E), where V is the number of vertices and E is the number of edges.
+
+    Space Complexity:
+        The code uses additional memory for the vis and recst arrays.
+        The space complexity is O(V) for these arrays.
+
+    Hints:
+        Use DFS to traverse the graph while keeping track of visited nodes and nodes in the current recursion stack.
+        During DFS, check for cycles by detecting nodes that are already in the current recursion stack.
+        Return true if a cycle is detected during DFS.
+        If no cycle is detected, return false and mark the node as safe.
+        Iterate through all nodes and identify nodes that are not in the current recursion stack as safe nodes.
+ */
+public:
+    bool dfs(vector<vector<int>> &adj, int src, vector<bool> &vis, vector<bool> &recst)
+    {
+        vis[src] = true;
+        recst[src] = true;
+        for (auto x : adj[src])
+        {
+            if (vis[x] == false && dfs(adj, x, vis, recst))
+            {
+                return true;
+            }
+            else if (recst[x] == true)
+            {
+                return true;
+            }
+        }
+        recst[src] = false;
+        return false;
+    }
+    vector<int> eventualSafeNodes(vector<vector<int>> &graph)
+    {
+        int n = graph.size();
+        vector<vector<int>> adj(n);
+        for (int i = 0; i < graph.size(); i++)
+        {
+            for (int j = 0; j < graph[i].size(); j++)
+            {
+                adj[i].push_back(graph[i][j]);
+            }
+        }
+        vector<bool> vis(n, false);
+        vector<bool> recst(n, false);
+        for (int i = 0; i < n; i++)
+        {
+            if (vis[i] == false)
+            {
+                dfs(adj, i, vis, recst);
+            }
+        }
+        vector<int> ans;
+        for (int i = 0; i < recst.size(); i++)
+        {
+            if (!recst[i])
+                ans.push_back(i);
+        }
+        return ans;
     }
 };
 int main()

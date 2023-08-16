@@ -1104,7 +1104,7 @@ public:
     bool dfs(vector<vector<int>> &adj, int src, vector<bool> &vis, vector<bool> &recst)
     {
         vis[src] = true;
-        recst[src] = true;
+        recst[src] = true; //? path visited already
         for (auto x : adj[src])
         {
             if (vis[x] == false && dfs(adj, x, vis, recst))

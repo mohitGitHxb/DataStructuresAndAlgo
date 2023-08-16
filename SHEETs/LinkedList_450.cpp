@@ -1886,6 +1886,133 @@ public:
         return (head->val < head->next->val) ? head->next : head;
     }
 };
+
+//^ 28 LRU cache
+class LRUCache
+{
+private:
+    struct Node
+    {
+        int key, val;
+        Node *prev, *next;
+        Node(int key, int val)
+        {
+            this->key = key;
+            this->val = val;
+            prev = NULL;
+            next = NULL;
+        }
+    };
+
+public:
+    // Constructor for initializing the cache capacity with the given value.
+    Node *head, *tail;
+    int cap;
+    unordered_map<int, Node *> mp;
+    LRUCache(int cap)
+    {
+        // code here
+        this->cap = cap;
+        head = new Node(-1, -1);
+        tail = new Node(-1, -1);
+        head->next = tail;
+        tail->prev = head;
+    }
+    void delNode(Node *curr)
+    {
+        Node *cprev = curr->prev;
+        Node *cnext = curr->next;
+        cprev->next = cnext;
+        cnext->prev = cprev;
+    }
+
+    void addNode(Node *curr)
+    {
+        Node *temp = head->next;
+        curr->next = temp;
+        curr->prev = head;
+        head->next = curr;
+        temp->prev = curr;
+    }
+    // Function to return value corresponding to the key.
+    int GET(int key)
+    {
+        if (mp.find(key) == mp.end())
+            return -1;
+        Node *curr = mp[key];
+        int val = curr->val;
+        delNode(curr);
+        addNode(curr);
+        mp[key] = head->next;
+        return val;
+    }
+
+    // Function for storing key-value pair.
+    void SET(int key, int value)
+    {
+        if (mp.find(key) != mp.end())
+        {
+            Node *curr = mp[key];
+            delNode(curr);
+        }
+        else if (mp.size() == cap)
+        {
+            mp.erase(tail->prev->key);
+            delNode(tail->prev);
+        }
+        Node *newNode = new Node(key, value);
+        addNode(newNode);
+        mp[key] = head->next;
+    }
+};
+
+//^ 29 Swap kth node from the beginning and the end of the list
+SingleNode *swapkthnode(SingleNode *head, int num, int K)
+{
+    if (K > num)
+        return head;
+
+    if (K == (num - K + 1))
+        return head;
+
+    SingleNode *beg = head;
+    SingleNode *beg_prev = NULL;
+    SingleNode *end = head;
+    SingleNode *end_prev = NULL;
+
+    for (int i = 1; i < K; i++)
+    {
+        beg_prev = beg;
+        beg = beg->next;
+    }
+
+    for (int i = 1; i < num - K + 1; i++)
+    {
+        end_prev = end;
+        end = end->next;
+    }
+    if (beg_prev != NULL)
+    {
+        beg_prev->next = end;
+    }
+
+    if (end_prev != NULL)
+    {
+        end_prev->next = beg;
+    }
+
+    SingleNode *temp = beg->next;
+    beg->next = end->next;
+    end->next = temp;
+
+    if (K == 1)
+        return head = end;
+
+    if (K == num)
+        return head = beg;
+
+    return head;
+}
 int main(int argc, char const *argv[])
 {
     /* code */

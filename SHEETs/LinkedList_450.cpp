@@ -2013,6 +2013,63 @@ SingleNode *swapkthnode(SingleNode *head, int num, int K)
 
     return head;
 }
+
+//^ 30 Absolute sorting of linked list
+/* Here are my observations on this problem:
+         1. If a negative number x occurs after a negative number y it means x<=y.
+         2. For the same reason if a positive number x occurs after a positive number y it means y <= x.
+
+We will use this rule to modify the list and do the following:
+         1. Whenever we encounter a negative number we will add that number to the front of the list.
+         2. Whenever we encounter a positive number we will add that number to the end of the list.
+
+The process of my solution:
+         1. Create two node pointers, prev and curr. prev is pointing to the head and curr is pointing to the 2nd node.
+         2. Run a loop until curr becomes null.
+                    a. If curr’s data is less than prev’s data follow this steps:
+                                  i. connect prev->next with curr->next
+                                 ii. connect curr->next with head
+                                iii. update curr=prev
+                    b. Else
+                                  i. update prev=curr
+                    c. move curr = curr->next
+
+Here is my solution:   */
+
+SingleNode *sortList(SingleNode *head)
+{
+    // Initialize previous and current nodes
+    SingleNode *prev = head;
+    SingleNode *curr = head->next;
+
+    // Traverse list
+    while (curr != NULL)
+    {
+        // If curr is smaller than prev, then
+        // it must be moved to head
+        if (curr->val < prev->val)
+        {
+            // Detach curr from linked list
+            prev->next = curr->next;
+
+            // Move current node to beginning
+            curr->next = head;
+            head = curr;
+
+            // Update current
+            curr = prev;
+        }
+
+        // Nothing to do if current element
+        // is at right place
+        else
+            prev = curr;
+
+        // Move current
+        curr = curr->next;
+    }
+    return head;
+}
 int main(int argc, char const *argv[])
 {
     /* code */

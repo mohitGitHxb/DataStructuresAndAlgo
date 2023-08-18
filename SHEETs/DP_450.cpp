@@ -4522,6 +4522,8 @@ public:
             {
                 return false;
             }
+            low++;
+            high--;
         }
         return true;
     }

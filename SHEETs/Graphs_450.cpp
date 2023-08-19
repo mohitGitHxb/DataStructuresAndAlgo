@@ -1241,6 +1241,7 @@ public:
 
         return res;
     }
+};
 
     //^ Detect a cycle in a directed graph using topological sorting
     bool isCyclic(int V, vector<int> adj[])
@@ -1372,6 +1373,7 @@ public:
         return topoSort(n, adj);
     }
 };
+
 
 int main()
 {

@@ -1198,7 +1198,7 @@ Algorithm
     Finally, return resultant Array.
 
 Source Code */
-
+//^ 15 Kahns ALgorithm
 class KahnAlgo
 {
 public:
@@ -1240,6 +1240,137 @@ public:
         }
 
         return res;
+    }
+};
+
+    //^ Detect a cycle in a directed graph using topological sorting
+    bool isCyclic(int V, vector<int> adj[])
+    {
+        // code here
+        vector<int> indegree(V);
+        for (int i = 0; i < V; i++)
+        {
+            for (int &j : adj[i])
+            {
+                indegree.at(j)++;
+            }
+        }
+        queue<int> q;
+        for (int i = 0; i < V; i++)
+        {
+            if (indegree[i] == 0)
+                q.push(i);
+        }
+        int topoSize = 0;
+        while (!q.empty())
+        {
+            int node = q.front();
+            q.pop();
+            topoSize++;
+            for (int it : adj[node])
+            {
+                indegree.at(it)--;
+                if (indegree.at(it) == 0)
+                {
+                    q.push(it);
+                }
+            }
+        }
+        return !(topoSize == V);
+    }
+};
+
+//^ 16 Course Scheduling
+class CourseScheduling
+{
+public:
+    bool isCyclic(int V, vector<int> adj[])
+    {
+        vector<int> indegree(V);
+        for (int i = 0; i < V; i++)
+        {
+            for (int &j : adj[i])
+            {
+                indegree.at(j)++;
+            }
+        }
+        queue<int> q;
+        for (int i = 0; i < V; i++)
+        {
+            if (indegree[i] == 0)
+                q.push(i);
+        }
+        int topoSize = 0;
+        while (!q.empty())
+        {
+            int node = q.front();
+            q.pop();
+            topoSize++;
+            for (int it : adj[node])
+            {
+                indegree.at(it)--;
+                if (indegree.at(it) == 0)
+                {
+                    q.push(it);
+                }
+            }
+        }
+        return (topoSize == V);
+    }
+    bool isPossible(int N, int P, vector<pair<int, int>> &prerequisites)
+    {
+        vector<int> adj[N];
+        for (auto it : prerequisites)
+            adj[it.first].push_back(it.second);
+        return isCyclic(N, adj);
+    }
+    //^ Printing the order
+    vector<int> topoSort(int V, vector<int> adj[])
+    {
+        vector<int> res;
+        vector<int> indegree(V);
+
+        for (int i = 0; i < V; i++)
+        {
+            for (int nbr : adj[i])
+            {
+                indegree[nbr]++;
+            }
+        }
+
+        queue<int> q;
+        for (int i = 0; i < V; i++)
+        {
+            if (indegree[i] == 0)
+            {
+                q.push(i);
+            }
+        }
+
+        while (!q.empty())
+        {
+            int curr = q.front();
+            q.pop();
+            res.push_back(curr);
+
+            for (int nbr : adj[curr])
+            {
+                indegree[nbr]--;
+                if (indegree[nbr] == 0)
+                    q.push(nbr);
+            }
+        }
+
+        return (res.size() == V) ? res : vector<int>();
+    }
+    vector<int> findOrder(int n, int m, vector<vector<int>> prerequisites)
+    {
+        vector<int> adj[n];
+        for (auto &it : prerequisites)
+        {
+            adj[it.back()].push_back(it.front());
+        }
+        return topoSort(n, adj);
     }
 };
 

@@ -1180,12 +1180,12 @@ public:
         return ans;
     }
 };
- 
+
 /* BFS Approach || Kahn's Algo
 
     Idea
 
-    The idea is that all nodes which will be at starting will have indegree 0. 
+    The idea is that all nodes which will be at starting will have indegree 0.
 
 Algorithm
 
@@ -1201,40 +1201,191 @@ Source Code */
 
 class KahnAlgo
 {
-	public:
-	//Function to return list containing vertices in Topological order. 
-	vector<int> topoSort(int V, vector<int> adj[]) {
-	    vector<int> res;
-	    vector<int> indegree(V, 0);
-	    
-	    for(int i = 0; i < V; i++) {
-	        for(int nbr : adj[i]) {
-	            indegree[nbr]++;
-	        }
-	    }
-	    
-	    queue<int> q;
-	    for(int i = 0; i < V; i++) {
-	        if(indegree[i] == 0) {
-	            q.push(i);
-	        }
-	    }
-	    
-	    while(!q.empty()) {
-	        int curr = q.front(); q.pop();
-	        res.push_back(curr);
-	        
-	        for(int nbr : adj[curr]) {
-	            indegree[nbr]--;
-	            if(indegree[nbr] == 0) q.push(nbr);
-	        }
-	    }
-	    
-	    return res;
-	}
+public:
+    // Function to return list containing vertices in Topological order.
+    vector<int> topoSort(int V, vector<int> adj[])
+    {
+        vector<int> res;
+        vector<int> indegree(V, 0);
+
+        for (int i = 0; i < V; i++)
+        {
+            for (int nbr : adj[i])
+            {
+                indegree[nbr]++;
+            }
+        }
+
+        queue<int> q;
+        for (int i = 0; i < V; i++)
+        {
+            if (indegree[i] == 0)
+            {
+                q.push(i);
+            }
+        }
+
+        while (!q.empty())
+        {
+            int curr = q.front();
+            q.pop();
+            res.push_back(curr);
+
+            for (int nbr : adj[curr])
+            {
+                indegree[nbr]--;
+                if (indegree[nbr] == 0)
+                    q.push(nbr);
+            }
+        }
+
+        return res;
+    }
 };
 
- 
+//^ Alien dictionary
+class AlienDictionary
+{
+public:
+    vector<int> getTopoSort(int V, vector<int> adj[])
+    {
+        vector<int> res;
+        vector<int> indegree(V, 0);
+
+        for (int i = 0; i < V; i++)
+        {
+            for (int nbr : adj[i])
+            {
+                indegree[nbr]++;
+            }
+        }
+
+        queue<int> q;
+        for (int i = 0; i < V; i++)
+        {
+            if (indegree[i] == 0)
+            {
+                q.push(i);
+            }
+        }
+
+        while (!q.empty())
+        {
+            int curr = q.front();
+            q.pop();
+            res.push_back(curr);
+
+            for (int nbr : adj[curr])
+            {
+                indegree[nbr]--;
+                if (indegree[nbr] == 0)
+                    q.push(nbr);
+            }
+        }
+
+        return res;
+    }
+    string findOrder(string dict[], int N, int K)
+    {
+        //? Pick first two pairs of strings then find out the order of occurrence of characters
+        //? keep doing this for all consecutive pairs;
+        vector<int> adj[K];
+        for (int i = 0; i < N - 1; i++)
+        {
+            string s1 = dict[i], s2 = dict[i + 1];
+            int minlength = min(s1.length(), s2.length());
+            for (int ptr = 0; ptr < minlength; ptr++)
+            {
+                if (s1.at(ptr) != s2.at(ptr))
+                {
+                    adj[s1.at(ptr) - 'a'].push_back(s2.at(ptr) - 'a');
+                    break;
+                }
+            }
+        }
+
+        vector<int> topo = getTopoSort(K, adj);
+        string ans = "";
+        for (int it : topo)
+        {
+            ans.push_back((char)(it + (int)'a'));
+        }
+        return ans;
+    }
+};
+
+//^ Shortest distance in a DAG
+class ShortestDistanceInDAG
+{
+public:
+        vector<int> getTopoSort(int V, vector<pair<int,int>> adj[])
+    {
+        vector<int> res;
+        vector<int> indegree(V);
+
+        for (int i = 0; i < V; i++)
+        {
+            for (auto &nbr : adj[i])
+            {
+                indegree[nbr.first]++;
+            }
+        }
+
+        queue<int> q;
+        for (int i = 0; i < V; i++)
+        {
+            if (indegree[i] == 0)
+            {
+                q.push(i);
+            }
+        }
+
+        while (!q.empty())
+        {
+            int curr = q.front();
+            q.pop();
+            res.push_back(curr);
+
+            for (auto nbr : adj[curr])
+            {
+                indegree[nbr.first]--;
+                if (indegree[nbr.first] == 0)
+                    q.push(nbr.first);
+            }
+        }
+        
+        return res;
+    }
+    vector<int> shortestPath(int N,int M, vector<vector<int>>& edges){
+        // find topological sort first using any algorithm(Kahn's or dfs);
+        vector<pair<int,int>> graph[N];
+        for(int i = 0; i < M; i++){
+            int u = edges[i][0];
+            int v = edges[i][1];
+            int wt = edges[i][2];
+            graph[u].push_back({v,wt});
+        }
+        vector<int> topo = getTopoSort(N,graph);
+        reverse(topo.begin(),topo.end()); // using vector as a stack
+        // for(auto &i : topo) cout << i << "\n";
+        vector<int> distance(N,1e9);
+        distance[0] = 0;
+        while(!topo.empty()){
+            int node = topo.back();
+            topo.pop_back();
+            for(auto &it : graph[node]){
+                int v = it.first;
+                int wt = it.second;
+                distance[v] = min(distance[v],distance[node] + wt);
+            }
+        }
+        for(int &i : distance){
+            if(i >= 1e9) i = -1;
+        }
+        return distance;
+    }
+};
+
 int main()
 {
     return 0;

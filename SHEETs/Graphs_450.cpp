@@ -1522,6 +1522,78 @@ public:
     }
 };
 
+//^ 20 Shortest path in a Undirected graph
+vector<int> shortestPath(vector<vector<int>> &edges, int N, int M, int src)
+{
+    // code here
+    vector<int> graph[N];
+    for (auto &it : edges)
+    {
+        int u = it.front();
+        int v = it.back();
+        graph[u].push_back(v);
+        graph[v].push_back(u);
+    }
+
+    //? Simple BFS
+    vector<int> dist(N, INT_MAX);
+    queue<pair<int, int>> q; //? <Node,distance>
+
+    dist[src] = 0;
+    q.emplace(src, 0);
+    while (!q.empty())
+    {
+        int node = q.front().first;
+        int d = q.front().second;
+        q.pop();
+        for (auto &nbr : graph[node])
+        {
+            if (dist[nbr] > d + 1)
+            {
+                dist[nbr] = d + 1;
+                q.emplace(nbr, d + 1);
+            }
+        }
+    }
+    for (int &i : dist)
+    {
+        i = (i == INT_MAX) ? -1 : i;
+    }
+    return dist;
+}
+
+//^ 21 Word ladder 1
+int wordLadderLength(string beginWord, string endWord, vector<string> &wordList)
+{
+    queue<pair<string, int>> q;
+    unordered_set<string> hs(wordList.begin(), wordList.end());
+    q.emplace(beginWord, 1);
+
+    while (!q.empty())
+    {
+        string curr = q.front().first;
+        int transformation = q.front().second;
+        q.pop();
+        for (int i = 0; i < curr.length(); i++)
+        {
+            string temp = curr;
+            for (char c = 'a'; c <= 'z'; c++)
+            {
+                temp[i] = c;
+                if (temp == endWord && hs.count(temp))
+                {
+                    return transformation + 1;
+                }
+                if (hs.count(temp))
+                {
+                    q.emplace(temp, transformation + 1);
+                    hs.erase(hs.find(temp));
+                }
+            }
+        }
+    }
+    return 0;
+}
 int main()
 {
     return 0;

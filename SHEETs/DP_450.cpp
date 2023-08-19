@@ -4767,6 +4767,72 @@ public:
         return dp[N] % mod;
     }
 };
+
+//^ Number of subsets having product < k
+class NumberOfSubsets
+{
+public:
+    vector<vector<int>> dp;
+
+    int fun(int index, int k, int arr[], int n)
+    {
+        if (index < 0)
+        {
+            if (k > 0)
+                return 1;
+            else
+                return 0;
+        }
+        if (dp[index][k] != -1)
+            return dp[index][k];
+        int not_take = fun(index - 1, k, arr, n);
+        int take = 0;
+        if (arr[index] <= k)
+            take = fun(index - 1, k / arr[index], arr, n);
+        return dp[index][k] = (take + not_take);
+    }
+
+    int numOfSubsets(int arr[], int N, int K)
+    {
+        dp.resize(N, vector<int>(K + 1, -1));
+        return fun(N - 1, K, arr, N) - 1; // substracting 1 because we have to return the non empty subset
+    }
+};
+
+//^ DIGIT DP algorithm
+/* 
+? Given a boolean or binary function f(x) which will be applied on a number x
+? x lies in the range [start,end] where start <= x <= end 
+% Then there is a high chance that we'll be using digit dp concept
+ */
+//^ Find numbers whose digit sum is equal to x in the range 0 to R
+class DigitSum{
+    private:
+    public:
+    int solve(string &num,int idx,int x,bool tightConstraint){
+        if(x < 0) return 0;
+        if(idx == 1){
+            if(x>=0 && x<=9) return 1;
+            return 0;
+        }
+        int ans = 0;
+        //? Defining upper bound of a digit place
+        int ub;
+        if(tightConstraint){
+            ub = num.at(num.length() - idx - 'a');
+        }
+        else{
+            ub = 9;
+        }
+        for(int dig = 1; dig <= 9; dig++){
+            ans += solve(num,idx-1,x-dig,(tightConstraint & (ub == dig)));
+        }
+        return ans;
+    }
+
+    //todo Memoize the above solution using dp[str.length + 1][x+1][2];
+};
+
 int main(int argc, char const *argv[])
 {
 

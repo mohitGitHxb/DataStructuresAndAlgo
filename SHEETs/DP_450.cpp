@@ -4800,37 +4800,124 @@ public:
 };
 
 //^ DIGIT DP algorithm
-/* 
+/*
 ? Given a boolean or binary function f(x) which will be applied on a number x
-? x lies in the range [start,end] where start <= x <= end 
+? x lies in the range [start,end] where start <= x <= end
 % Then there is a high chance that we'll be using digit dp concept
  */
 //^ Find numbers whose digit sum is equal to x in the range 0 to R
-class DigitSum{
-    private:
-    public:
-    int solve(string &num,int idx,int x,bool tightConstraint){
-        if(x < 0) return 0;
-        if(idx == 1){
-            if(x>=0 && x<=9) return 1;
+class DigitSum
+{
+private:
+public:
+    int solve(string &num, int idx, int x, bool tightConstraint)
+    {
+        if (x < 0)
+            return 0;
+        if (idx == 1)
+        {
+            if (x >= 0 && x <= 9)
+                return 1;
             return 0;
         }
         int ans = 0;
         //? Defining upper bound of a digit place
         int ub;
-        if(tightConstraint){
+        if (tightConstraint)
+        {
             ub = num.at(num.length() - idx - 'a');
         }
-        else{
+        else
+        {
             ub = 9;
         }
-        for(int dig = 1; dig <= 9; dig++){
-            ans += solve(num,idx-1,x-dig,(tightConstraint & (ub == dig)));
+        for (int dig = 1; dig <= 9; dig++)
+        {
+            ans += solve(num, idx - 1, x - dig, (tightConstraint & (ub == dig)));
         }
         return ans;
     }
 
-    //todo Memoize the above solution using dp[str.length + 1][x+1][2];
+    // todo Memoize the above solution using dp[str.length + 1][x+1][2];
+};
+
+//^ Count of integers
+class CountNumbersInRange
+{
+private:
+    /*
+    Approach
+
+    if total = numbers between num1 & num2 with sum of digits <= max_sum and
+    unnecessary = numbers between num1 & num2 with sum of digits <= min_sum-1
+    total - unnecessary is the answer.
+    **e.g **
+    1.1 count of nums which are in range [40,100] which are divisible by 10 is =>
+    1.2 total = [10,20,30,40,50,60,70,80,90,100] (considering between 0 to 100)
+    unnecessary = [10,20,30]
+    1.3 total - unnecessary = [10,20,30,40,50,60,70,80,90,100] - [10,20,30]
+
+Explanation
+
+state = (i,tight1,tight2,sum,num1,num2)
+this state defines count of all the numbers with sum of digits equals to sum and which lies between num1 and num2.
+**tight1 => to check number is always gretaer than equals to min_num;
+tight2 => to check number is always greater than equals to max_num;
+**
+when tight1 is false it means lower bound can take any values because the number is surely greater than min_num but when tight1 is true it means lower bound must take values greater than or equals to the value at current index..
+when tight2 is false it means higher bound can take any values because the number is surely lesser than max_num but when tight2 is true it means higher bound must take values lesser than or equals to the value at current index..
+(this part must be difficicult to understand so lets see an example)
+lets num is 5678
+and for num to be greater than 5678 the first digit must be gretaer than equals to 5 (here tight true)
+similary if lets says 2nd digit is also 5 than 3 and 4th can take any digit values because surely the resulting number will be higher than the num (tight false).
+(vice verse)
+
+lo_bnd = lower bound it means the digit must be greater than equals to this val
+hi_bnd = higher bound it means the digit must be smaller than equals to this val
+e.g.
+lets say the nums must lie between 5000 and 8000
+than lo_bnd will take values 5,7,8,9
+and hi_bnd will take values 0,1,2,3,4,5,6,7,8
+
+so the digit will take values (5,6,7,8)
+     */
+public:
+    const int MOD = 1e9+7;
+    int dp[23][2][2][401];
+    // tight1 => to check number is always gretaer than equals to min_num;
+    // tight2 => to check number is always greater than equals to max_num;
+
+    int digitDp(int i, bool tight1, bool tight2, int sum, string &num1, string &num2)
+    {
+        if (sum < 0)
+            return 0; // no positive number can be formed which has a negative sum og digits
+        if (i == num1.size())
+            return 1; // we got a number which is greater than euals to min_num ans less than equals to max_num;
+        if (dp[i][tight1][tight2][sum] != -1)
+            return dp[i][tight1][tight2][sum];
+
+        int lo_bnd = tight1 ? num1[i] - '0' : 0;
+        int hi_bnd = tight2 ? num2[i] - '0' : 9;
+
+        int cnt = 0;
+        for (int val = lo_bnd; val <= hi_bnd; val++)
+        {
+            cnt = (cnt + digitDp(i + 1, tight1 & (val == lo_bnd), tight2 & (val == hi_bnd), sum - val, num1, num2)) % MOD;
+        }
+        return dp[i][tight1][tight2][sum] = cnt;
+    }
+    int count(string num1, string num2, int min_sum, int max_sum)
+    {
+        // cout<<num2<<" "<<num1<<endl;
+        int diff = num2.size() - num1.size(); // diff => difference in their size.
+        num1 = string(diff, '0') + num1;      // appending zeroes  in front of num1 which is the smaller number
+        memset(dp, -1, sizeof(dp));
+        int total = digitDp(0, 1, 1, max_sum, num1, num2);           // (digit from lhs,tight1,tight2,max_sum,num1,num2)
+        int unnecessary = digitDp(0, 1, 1, min_sum - 1, num1, num2); // (digit from lhs,tight1,tight2,min_sum-1,num1,num2)
+        int answer = (total - unnecessary) % MOD;
+
+        return answer < 0 ? answer + MOD : answer;
+    }
 };
 
 int main(int argc, char const *argv[])

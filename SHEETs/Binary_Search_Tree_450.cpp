@@ -759,6 +759,51 @@ public:
         return maxSum;
     }
 };
+
+//^ Love Babbar sheet part / additionals
+//^ Find a pair in a BST that sums equal to target
+int isPairPresent(struct Node *root, int target)
+{
+    // add code here.
+    unordered_set<int> seen;
+    Node *curr = root;
+    while (curr)
+    {
+        if (!curr->left)
+        {
+            if (seen.count(target - curr->data))
+            {
+                return 1;
+            }
+            seen.insert(curr->data);
+            curr = curr->right;
+        }
+        else
+        {
+            Node *prev = curr->left;
+            while (prev->right && prev->right != curr)
+            {
+                prev = prev->right;
+            }
+            if (!prev->right)
+            {
+                prev->right = curr;
+                curr = curr->left;
+            }
+            else
+            {
+                prev->right = NULL;
+                if (seen.count(target - curr->data))
+                {
+                    return 1;
+                }
+                seen.insert(curr->data);
+                curr = curr->right;
+            }
+        }
+    }
+    return 0;
+}
 int main(int argc, char const *argv[])
 {
     /* code */

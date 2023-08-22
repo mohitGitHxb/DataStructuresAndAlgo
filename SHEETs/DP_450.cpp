@@ -4882,7 +4882,7 @@ and hi_bnd will take values 0,1,2,3,4,5,6,7,8
 so the digit will take values (5,6,7,8)
      */
 public:
-    const int MOD = 1e9+7;
+    const int MOD = 1e9 + 7;
     int dp[23][2][2][401];
     // tight1 => to check number is always gretaer than equals to min_num;
     // tight2 => to check number is always greater than equals to max_num;
@@ -4919,7 +4919,93 @@ public:
         return answer < 0 ? answer + MOD : answer;
     }
 };
+//^ Find beautiful numbers in a range
+class BeautifulNumbers
+{
+private:
+    /*
+    Sure, let's break down the provided code that calculates the number of beautiful integers in the given range [low, high] for a given value of k:
 
+    Intuition:
+        The goal of this code is to count the number of beautiful integers within a specified range [low, high] that meet certain conditions involving even and odd digits and divisibility by k.
+        Dynamic programming is used to efficiently calculate the count of such beautiful integers.
+
+    Code Explanation:
+        The code uses a recursive approach with memoization using a multi-dimensional dp array.
+        The function f takes multiple parameters that capture the current state of the recursion:
+            idx: Current index of the digit being considered.
+            tight: Indicates if the number being formed is still within the range [low, high].
+            leadingZeros: Indicates if leading zeros are present in the number.
+            oddDig: Count of odd digits encountered so far.
+            evenDig: Count of even digits encountered so far.
+            remainder: Current remainder when the number formed so far is divided by k.
+            num: The string representation of the number being formed.
+        The base case for recursion is when the idx reaches the length of num, at which point the conditions for being beautiful are checked and a value is returned accordingly.
+        Memoization is used to store already computed values of the function to avoid redundant calculations.
+        The function iterates through each digit from 0 to the upper bound (ub) based on the tight parameter. It then recursively calls itself for the next index with updated parameters and accumulates the result.
+        The main function numberOfBeautifulIntegers takes the range [low, high] and k as inputs.
+        The range is converted to string representations s_low and s_high to be used in the recursive function.
+        The dp array is initialized with -1.
+        The recursive function f is called twice, once for s_low and once for s_high, to calculate the count of beautiful integers up to low - 1 and up to high.
+        The final count of beautiful integers within the specified range is obtained by subtracting the count up to low - 1 from the count up to high.
+
+    Time Complexity:
+        The function f performs recursive calls based on the number of digits in the input range. The number of recursive calls for each digit is at most 10.
+        The total number of recursive calls is limited by the length of the input numbers, so it's proportional to the number of digits in low and high.
+        The memoization technique ensures that the same function call is not recomputed multiple times, leading to an efficient computation.
+        The overall time complexity is O(log(high - low)).
+
+    Space Complexity:
+        The main space consumption comes from the dp array, which is a 6-dimensional array storing memoized values.
+        The space complexity of the dp array is proportional to the product of its dimensions, which is 12 * 2 * 2 * 12 * 12 * 20 = 34,560.
+        Other variables and function call overhead contribute to a relatively small constant space.
+        The space complexity is O(1), considering the dimensions are constants.
+
+    Hints:
+        Use a recursive approach with memoization to calculate the count of beautiful integers in the given range.
+        Keep track of even and odd digits, remainders, tightness, and leading zeros using function parameters.
+        Recurse through each digit and accumulate the count of beautiful integers.
+        Convert the input range to strings for easy manipulation.
+        Subtract the count up to low - 1 from the count up to high to get the final result.
+
+     */
+    int dp[12][2][2][12][12][20];
+    int k;
+    int f(int idx, bool tight, bool leadingZeros, int oddDig, int evenDig, int remainder, string &num)
+    {
+        if (idx == num.size())
+            return (remainder == 0 && oddDig == evenDig && !leadingZeros);
+        if (dp[idx][tight][leadingZeros][oddDig][evenDig][remainder] != -1)
+            return dp[idx][tight][leadingZeros][oddDig][evenDig][remainder];
+
+        int ub = (tight) ? num[idx] - '0' : 9;                                                   //? upper range for each digit
+        int ans = (leadingZeros ? f(idx + 1, false, true, oddDig, evenDig, remainder, num) : 0); //? considering case with leading zeros
+        for (int dig = 0; dig <= ub; dig++)
+        {
+            bool newTight = tight & (dig == (ub));
+            int newOdd = oddDig + (dig % 2);
+            int newEven = evenDig + (dig % 2 == 0 && (!leadingZeros || dig > 0)); //?can't consider 0 as even in leading zeros
+            int newRemainder = (remainder * 10 + dig) % k;
+            if ((leadingZeros && dig != 0) || !leadingZeros)
+            {
+                ans += f(idx + 1, newTight, false, newOdd, newEven, newRemainder, num);
+            }
+        }
+        return dp[idx][tight][leadingZeros][oddDig][evenDig][remainder] = ans;
+    }
+    int numberOfBeautifulIntegers(int low, int high, int k)
+    {
+        string s_low = to_string(low - 1);
+        string s_high = to_string(high);
+        this->k = k;
+        memset(dp, -1, sizeof(dp));
+        int tillLow = f(0, true, true, 0, 0, 0, s_low);
+        memset(dp, -1, sizeof(dp));
+        int tillHigh = f(0, true, true, 0, 0, 0, s_high);
+
+        return tillHigh - tillLow;
+    }
+};
 int main(int argc, char const *argv[])
 {
 

@@ -5006,6 +5006,41 @@ private:
         return tillHigh - tillLow;
     }
 };
+
+//^ Count palindromic subsequence in a given string
+class CountPalindromicSubsequence{
+public:
+    int dp[1001][1001]; // 2D array to store the computed values to avoid recomputation
+    const int mod = 1e9 + 7; // modulo value
+
+    long long countPalindromicSubsequences(int start, int end, string &str) {
+        // Base cases
+        if (start > end) return 0; // Empty string, no palindromic subsequences
+        if (start == end) return 1; // Single character, one palindromic subsequence
+
+        // Check if the value is already computed
+        if (dp[start][end] != -1) return dp[start][end];
+
+        long long res = countPalindromicSubsequences(start + 1, end, str) % mod + countPalindromicSubsequences(start, end - 1, str) % mod;
+
+        // If the characters at start and end are same, then add 1 to the result
+        if (str[start] == str[end])
+            return dp[start][end] = 1 + res;
+
+        res -= countPalindromicSubsequences(start + 1, end - 1, str);
+
+        // If the result is negative, add mod to make it positive
+        return dp[start][end] = (res < 0) ? res + mod : res % mod;
+    }
+
+    long long int countPalindromicSubsequences(string str) {
+        // Initialize the dp array with -1
+        memset(dp, -1, sizeof(dp));
+
+        // Call the recursive function to count the palindromic subsequences
+        return countPalindromicSubsequences(0, str.length() - 1, str);
+    }
+};
 int main(int argc, char const *argv[])
 {
 

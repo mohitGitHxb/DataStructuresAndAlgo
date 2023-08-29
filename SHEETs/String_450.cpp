@@ -1263,6 +1263,44 @@ public:
         return -1;
     }
 };
+
+//^ Transform A into B
+int transform(string A, string B)
+{
+    // code here.
+    //? If lengths are not same or frequency of characters are not same then return -1
+    if (A.length() != B.length())
+        return -1;
+    unordered_map<char, int> mp;
+    for (char c : A)
+    {
+        mp[c]++;
+    }
+    for (char c : B)
+    {
+        mp[c]--;
+        if (mp[c] == 0)
+        {
+            mp.erase(c);
+        }
+    }
+    if (mp.size() != 0)
+        return -1;
+    int operations = 0;
+    int i = A.length() - 1, j = B.length() - 1;
+    //? Traverse from right side and for each mismatch increment operations
+    while (i >= 0 && j >= 0)
+    {
+        while (i >= 0 && A[i] != B[j])
+        {
+            operations++;
+            i--;
+        }
+        i--;
+        j--;
+    }
+    return operations;
+}
 int main()
 {
     string str = "RiCantSnipe";

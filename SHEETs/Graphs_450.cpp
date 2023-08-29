@@ -1198,7 +1198,7 @@ Algorithm
     Finally, return resultant Array.
 
 Source Code */
-
+//^ 15 Kahns ALgorithm
 class KahnAlgo
 {
 public:
@@ -1243,7 +1243,137 @@ public:
     }
 };
 
-//^ Alien dictionary
+//^ 16 Detect a cycle in a directed graph using topological sorting
+bool isCyclic(int V, vector<int> adj[])
+{
+    // code here
+    vector<int> indegree(V);
+    for (int i = 0; i < V; i++)
+    {
+        for (int &j : adj[i])
+        {
+            indegree.at(j)++;
+        }
+    }
+    queue<int> q;
+    for (int i = 0; i < V; i++)
+    {
+        if (indegree[i] == 0)
+            q.push(i);
+    }
+    int topoSize = 0;
+    while (!q.empty())
+    {
+        int node = q.front();
+        q.pop();
+        topoSize++;
+        for (int it : adj[node])
+        {
+            indegree.at(it)--;
+            if (indegree.at(it) == 0)
+            {
+                q.push(it);
+            }
+        }
+    }
+    return !(topoSize == V);
+}
+
+//^ 17 Course Scheduling
+class CourseScheduling
+{
+public:
+    bool isCyclic(int V, vector<int> adj[])
+    {
+        vector<int> indegree(V);
+        for (int i = 0; i < V; i++)
+        {
+            for (int &j : adj[i])
+            {
+                indegree.at(j)++;
+            }
+        }
+        queue<int> q;
+        for (int i = 0; i < V; i++)
+        {
+            if (indegree[i] == 0)
+                q.push(i);
+        }
+        int topoSize = 0;
+        while (!q.empty())
+        {
+            int node = q.front();
+            q.pop();
+            topoSize++;
+            for (int it : adj[node])
+            {
+                indegree.at(it)--;
+                if (indegree.at(it) == 0)
+                {
+                    q.push(it);
+                }
+            }
+        }
+        return (topoSize == V);
+    }
+    bool isPossible(int N, int P, vector<pair<int, int>> &prerequisites)
+    {
+        vector<int> adj[N];
+        for (auto it : prerequisites)
+            adj[it.first].push_back(it.second);
+        return isCyclic(N, adj);
+    }
+    //^ Printing the order
+    vector<int> topoSort(int V, vector<int> adj[])
+    {
+        vector<int> res;
+        vector<int> indegree(V);
+
+        for (int i = 0; i < V; i++)
+        {
+            for (int nbr : adj[i])
+            {
+                indegree[nbr]++;
+            }
+        }
+
+        queue<int> q;
+        for (int i = 0; i < V; i++)
+        {
+            if (indegree[i] == 0)
+            {
+                q.push(i);
+            }
+        }
+
+        while (!q.empty())
+        {
+            int curr = q.front();
+            q.pop();
+            res.push_back(curr);
+
+            for (int nbr : adj[curr])
+            {
+                indegree[nbr]--;
+                if (indegree[nbr] == 0)
+                    q.push(nbr);
+            }
+        }
+
+        return (res.size() == V) ? res : vector<int>();
+    }
+    vector<int> findOrder(int n, int m, vector<vector<int>> prerequisites)
+    {
+        vector<int> adj[n];
+        for (auto &it : prerequisites)
+        {
+            adj[it.back()].push_back(it.front());
+        }
+        return topoSort(n, adj);
+    }
+};
+
+//^ 18 Alien dictionary
 class AlienDictionary
 {
 public:
@@ -1314,11 +1444,11 @@ public:
     }
 };
 
-//^ Shortest distance in a DAG
+//^ 19 Shortest distance in a DAG
 class ShortestDistanceInDAG
 {
 public:
-        vector<int> getTopoSort(int V, vector<pair<int,int>> adj[])
+    vector<int> getTopoSort(int V, vector<pair<int, int>> adj[])
     {
         vector<int> res;
         vector<int> indegree(V);
@@ -1353,39 +1483,211 @@ public:
                     q.push(nbr.first);
             }
         }
-        
+
         return res;
     }
-    vector<int> shortestPath(int N,int M, vector<vector<int>>& edges){
+    vector<int> shortestPath(int N, int M, vector<vector<int>> &edges)
+    {
         // find topological sort first using any algorithm(Kahn's or dfs);
-        vector<pair<int,int>> graph[N];
-        for(int i = 0; i < M; i++){
+        vector<pair<int, int>> graph[N];
+        for (int i = 0; i < M; i++)
+        {
             int u = edges[i][0];
             int v = edges[i][1];
             int wt = edges[i][2];
-            graph[u].push_back({v,wt});
+            graph[u].push_back({v, wt});
         }
-        vector<int> topo = getTopoSort(N,graph);
-        reverse(topo.begin(),topo.end()); // using vector as a stack
+        vector<int> topo = getTopoSort(N, graph);
+        reverse(topo.begin(), topo.end()); // using vector as a stack
         // for(auto &i : topo) cout << i << "\n";
-        vector<int> distance(N,1e9);
+        vector<int> distance(N, 1e9);
         distance[0] = 0;
-        while(!topo.empty()){
+        while (!topo.empty())
+        {
             int node = topo.back();
             topo.pop_back();
-            for(auto &it : graph[node]){
+            for (auto &it : graph[node])
+            {
                 int v = it.first;
                 int wt = it.second;
-                distance[v] = min(distance[v],distance[node] + wt);
+                distance[v] = min(distance[v], distance[node] + wt);
             }
         }
-        for(int &i : distance){
-            if(i >= 1e9) i = -1;
+        for (int &i : distance)
+        {
+            if (i >= 1e9)
+                i = -1;
         }
         return distance;
     }
 };
 
+//^ 20 Shortest path in a Undirected graph
+vector<int> shortestPath(vector<vector<int>> &edges, int N, int M, int src)
+{
+    // code here
+    vector<int> graph[N];
+    for (auto &it : edges)
+    {
+        int u = it.front();
+        int v = it.back();
+        graph[u].push_back(v);
+        graph[v].push_back(u);
+    }
+
+    //? Simple BFS
+    vector<int> dist(N, INT_MAX);
+    queue<pair<int, int>> q; //? <Node,distance>
+
+    dist[src] = 0;
+    q.emplace(src, 0);
+    while (!q.empty())
+    {
+        int node = q.front().first;
+        int d = q.front().second;
+        q.pop();
+        for (auto &nbr : graph[node])
+        {
+            if (dist[nbr] > d + 1)
+            {
+                dist[nbr] = d + 1;
+                q.emplace(nbr, d + 1);
+            }
+        }
+    }
+    for (int &i : dist)
+    {
+        i = (i == INT_MAX) ? -1 : i;
+    }
+    return dist;
+}
+
+//^ 21 Word ladder 1
+int wordLadderLength(string beginWord, string endWord, vector<string> &wordList)
+{
+    queue<pair<string, int>> q;
+    unordered_set<string> hs(wordList.begin(), wordList.end());
+    q.emplace(beginWord, 1);
+
+    while (!q.empty())
+    {
+        string curr = q.front().first;
+        int transformation = q.front().second;
+        q.pop();
+        for (int i = 0; i < curr.length(); i++)
+        {
+            string temp = curr;
+            for (char c = 'a'; c <= 'z'; c++)
+            {
+                temp[i] = c;
+                if (temp == endWord && hs.count(temp))
+                {
+                    return transformation + 1;
+                }
+                if (hs.count(temp))
+                {
+                    q.emplace(temp, transformation + 1);
+                    hs.erase(hs.find(temp));
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+//^ 22 Word ladder 2
+
+/* 
+Initial configuration:
+
+    Queue: Define a queue data structure to store the level-wise formed sequences. The queue will be storing a List of strings, which will be representing the path till now. The last word in the list will be the last converted word. 
+    Hash set: Create a hash set to store the elements present in the word list to carry out the search and delete operations in O(1) time. 
+    Vector: Define a 1D vector ‘usedOnLevel’ to store the words which are currently being used for transformation on a particular level and a 2D vector ‘ans’ for storing all the shortest sequences of transformation.
+
+The Algorithm for this problem involves the following steps:
+
+    Firstly, we start by creating a hash set to store all the elements present in the wordList which would make the search and delete operations faster for us to implement.
+    Next, we create a Queue data structure for storing the successive sequences/ path in the form of a vector which on transformation would lead us to the target word.
+    Now, we add the startWord to the queue as a List and also push it into the usedOnLevel vector to denote that this word is currently being used for transformation in this particular level.
+    Pop the first element out of the queue and carry out the BFS traversal, where for each word that popped out from the back of the sequence present at the top of the queue, we check for all of its characters by replacing them with ‘a’ – ‘z’ if they are present in the wordList or not. In case a word is present in the wordList, we simply first push it onto the usedOnLevel vector and do not delete it from the wordList immediately.
+    Now, push that word into the vector containing the previous sequence and add it to the queue. So we will get a new path, but we need to explore other paths as well, so pop the word out of the list to explore other paths.
+    After completion of traversal on a particular level, we can now delete all the words that were currently being used on that level from the usedOnLevel vector which ensures that these words won’t be used again in the future, as using them in the later stages will mean that it won’t be the shortest path anymore.
+    If at any point in time we find out that the last word in the sequence present at the top of the queue is equal to the target word, we simply push the sequence into the resultant vector if the resultant vector ‘ans’ is empty.
+    If the vector is not empty, we check if the current sequence length is equal to the first element added in the ans vector or not. This has to be checked because we need the shortest possible transformation sequences.
+    In case, there is no transformation sequence possible, we return an empty 2D vector.
+
+ */
+vector<vector<string>> findSequences(string beginWord, string endWord,
+                                     vector<string> &wordList)
+{
+    // Push all values of wordList into a set
+    // to make deletion from it easier and in less time complexity.
+    unordered_set<string> st(wordList.begin(), wordList.end());
+    // Creating a queue ds which stores the words in a sequence which is
+    // required to reach the targetWord after successive transformations.
+    queue<vector<string>> q;
+    // BFS traversal with pushing the new formed sequence in queue
+    // when after a transformation, a word is found in wordList.
+    q.push({beginWord});
+    // A vector defined to store the words being currently used
+    // on a level during BFS.
+    vector<string> usedOnLevel;
+    usedOnLevel.push_back(beginWord);
+    int level = 0;
+    // A vector to store the resultant transformation sequence.
+    vector<vector<string>> ans;
+    while (!q.empty())
+    {
+        vector<string> vec = q.front();
+        q.pop();
+        // Now, erase all words that have been
+        // used in the previous levels to transform
+        if (vec.size() > level)
+        {
+            level++;
+            for (auto it : usedOnLevel)
+            {
+                st.erase(it);
+            }
+        }
+        string word = vec.back();
+        // store the answers if the end word matches with targetWord.
+        if (word == endWord)
+        {
+            // the first sequence where we reached end
+            if (ans.size() == 0)
+            {
+                ans.push_back(vec);
+            }
+            else if (ans[0].size() == vec.size())
+            {
+                ans.push_back(vec);
+            }
+        }
+        for (int i = 0; i < word.size(); i++)
+        {
+            // Now, replace each character of ‘word’ with char
+            // from a-z then check if ‘word’ exists in wordList.
+            char original = word[i];
+            for (char c = 'a'; c <= 'z'; c++)
+            {
+                word[i] = c;
+                if (st.count(word) > 0)
+                {
+                    // Check if the word is present in the wordList and
+                    // push the word along with the new sequence in the queue.
+                    vec.push_back(word);
+                    q.push(vec);
+                    // mark as visited on the level
+                    usedOnLevel.push_back(word);
+                    vec.pop_back();
+                }
+            }
+            word[i] = original;
+        }
+    }
+    return ans;
+}
 int main()
 {
     return 0;

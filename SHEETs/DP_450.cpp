@@ -4767,6 +4767,280 @@ public:
         return dp[N] % mod;
     }
 };
+
+//^ Number of subsets having product < k
+class NumberOfSubsets
+{
+public:
+    vector<vector<int>> dp;
+
+    int fun(int index, int k, int arr[], int n)
+    {
+        if (index < 0)
+        {
+            if (k > 0)
+                return 1;
+            else
+                return 0;
+        }
+        if (dp[index][k] != -1)
+            return dp[index][k];
+        int not_take = fun(index - 1, k, arr, n);
+        int take = 0;
+        if (arr[index] <= k)
+            take = fun(index - 1, k / arr[index], arr, n);
+        return dp[index][k] = (take + not_take);
+    }
+
+    int numOfSubsets(int arr[], int N, int K)
+    {
+        dp.resize(N, vector<int>(K + 1, -1));
+        return fun(N - 1, K, arr, N) - 1; // substracting 1 because we have to return the non empty subset
+    }
+};
+
+//^ DIGIT DP algorithm
+/*
+? Given a boolean or binary function f(x) which will be applied on a number x
+? x lies in the range [start,end] where start <= x <= end
+% Then there is a high chance that we'll be using digit dp concept
+ */
+//^ Find numbers whose digit sum is equal to x in the range 0 to R
+class DigitSum
+{
+private:
+public:
+    int solve(string &num, int idx, int x, bool tightConstraint)
+    {
+        if (x < 0)
+            return 0;
+        if (idx == 1)
+        {
+            if (x >= 0 && x <= 9)
+                return 1;
+            return 0;
+        }
+        int ans = 0;
+        //? Defining upper bound of a digit place
+        int ub;
+        if (tightConstraint)
+        {
+            ub = num.at(num.length() - idx - 'a');
+        }
+        else
+        {
+            ub = 9;
+        }
+        for (int dig = 1; dig <= 9; dig++)
+        {
+            ans += solve(num, idx - 1, x - dig, (tightConstraint & (ub == dig)));
+        }
+        return ans;
+    }
+
+    // todo Memoize the above solution using dp[str.length + 1][x+1][2];
+};
+
+//^ Count of integers
+class CountNumbersInRange
+{
+private:
+    /*
+    Approach
+
+    if total = numbers between num1 & num2 with sum of digits <= max_sum and
+    unnecessary = numbers between num1 & num2 with sum of digits <= min_sum-1
+    total - unnecessary is the answer.
+    **e.g **
+    1.1 count of nums which are in range [40,100] which are divisible by 10 is =>
+    1.2 total = [10,20,30,40,50,60,70,80,90,100] (considering between 0 to 100)
+    unnecessary = [10,20,30]
+    1.3 total - unnecessary = [10,20,30,40,50,60,70,80,90,100] - [10,20,30]
+
+Explanation
+
+state = (i,tight1,tight2,sum,num1,num2)
+this state defines count of all the numbers with sum of digits equals to sum and which lies between num1 and num2.
+**tight1 => to check number is always gretaer than equals to min_num;
+tight2 => to check number is always greater than equals to max_num;
+**
+when tight1 is false it means lower bound can take any values because the number is surely greater than min_num but when tight1 is true it means lower bound must take values greater than or equals to the value at current index..
+when tight2 is false it means higher bound can take any values because the number is surely lesser than max_num but when tight2 is true it means higher bound must take values lesser than or equals to the value at current index..
+(this part must be difficicult to understand so lets see an example)
+lets num is 5678
+and for num to be greater than 5678 the first digit must be gretaer than equals to 5 (here tight true)
+similary if lets says 2nd digit is also 5 than 3 and 4th can take any digit values because surely the resulting number will be higher than the num (tight false).
+(vice verse)
+
+lo_bnd = lower bound it means the digit must be greater than equals to this val
+hi_bnd = higher bound it means the digit must be smaller than equals to this val
+e.g.
+lets say the nums must lie between 5000 and 8000
+than lo_bnd will take values 5,7,8,9
+and hi_bnd will take values 0,1,2,3,4,5,6,7,8
+
+so the digit will take values (5,6,7,8)
+     */
+public:
+    const int MOD = 1e9 + 7;
+    int dp[23][2][2][401];
+    // tight1 => to check number is always gretaer than equals to min_num;
+    // tight2 => to check number is always greater than equals to max_num;
+
+    int digitDp(int i, bool tight1, bool tight2, int sum, string &num1, string &num2)
+    {
+        if (sum < 0)
+            return 0; // no positive number can be formed which has a negative sum og digits
+        if (i == num1.size())
+            return 1; // we got a number which is greater than euals to min_num ans less than equals to max_num;
+        if (dp[i][tight1][tight2][sum] != -1)
+            return dp[i][tight1][tight2][sum];
+
+        int lo_bnd = tight1 ? num1[i] - '0' : 0;
+        int hi_bnd = tight2 ? num2[i] - '0' : 9;
+
+        int cnt = 0;
+        for (int val = lo_bnd; val <= hi_bnd; val++)
+        {
+            cnt = (cnt + digitDp(i + 1, tight1 & (val == lo_bnd), tight2 & (val == hi_bnd), sum - val, num1, num2)) % MOD;
+        }
+        return dp[i][tight1][tight2][sum] = cnt;
+    }
+    int count(string num1, string num2, int min_sum, int max_sum)
+    {
+        // cout<<num2<<" "<<num1<<endl;
+        int diff = num2.size() - num1.size(); // diff => difference in their size.
+        num1 = string(diff, '0') + num1;      // appending zeroes  in front of num1 which is the smaller number
+        memset(dp, -1, sizeof(dp));
+        int total = digitDp(0, 1, 1, max_sum, num1, num2);           // (digit from lhs,tight1,tight2,max_sum,num1,num2)
+        int unnecessary = digitDp(0, 1, 1, min_sum - 1, num1, num2); // (digit from lhs,tight1,tight2,min_sum-1,num1,num2)
+        int answer = (total - unnecessary) % MOD;
+
+        return answer < 0 ? answer + MOD : answer;
+    }
+};
+//^ Find beautiful numbers in a range
+class BeautifulNumbers
+{
+private:
+    /*
+    Sure, let's break down the provided code that calculates the number of beautiful integers in the given range [low, high] for a given value of k:
+
+    Intuition:
+        The goal of this code is to count the number of beautiful integers within a specified range [low, high] that meet certain conditions involving even and odd digits and divisibility by k.
+        Dynamic programming is used to efficiently calculate the count of such beautiful integers.
+
+    Code Explanation:
+        The code uses a recursive approach with memoization using a multi-dimensional dp array.
+        The function f takes multiple parameters that capture the current state of the recursion:
+            idx: Current index of the digit being considered.
+            tight: Indicates if the number being formed is still within the range [low, high].
+            leadingZeros: Indicates if leading zeros are present in the number.
+            oddDig: Count of odd digits encountered so far.
+            evenDig: Count of even digits encountered so far.
+            remainder: Current remainder when the number formed so far is divided by k.
+            num: The string representation of the number being formed.
+        The base case for recursion is when the idx reaches the length of num, at which point the conditions for being beautiful are checked and a value is returned accordingly.
+        Memoization is used to store already computed values of the function to avoid redundant calculations.
+        The function iterates through each digit from 0 to the upper bound (ub) based on the tight parameter. It then recursively calls itself for the next index with updated parameters and accumulates the result.
+        The main function numberOfBeautifulIntegers takes the range [low, high] and k as inputs.
+        The range is converted to string representations s_low and s_high to be used in the recursive function.
+        The dp array is initialized with -1.
+        The recursive function f is called twice, once for s_low and once for s_high, to calculate the count of beautiful integers up to low - 1 and up to high.
+        The final count of beautiful integers within the specified range is obtained by subtracting the count up to low - 1 from the count up to high.
+
+    Time Complexity:
+        The function f performs recursive calls based on the number of digits in the input range. The number of recursive calls for each digit is at most 10.
+        The total number of recursive calls is limited by the length of the input numbers, so it's proportional to the number of digits in low and high.
+        The memoization technique ensures that the same function call is not recomputed multiple times, leading to an efficient computation.
+        The overall time complexity is O(log(high - low)).
+
+    Space Complexity:
+        The main space consumption comes from the dp array, which is a 6-dimensional array storing memoized values.
+        The space complexity of the dp array is proportional to the product of its dimensions, which is 12 * 2 * 2 * 12 * 12 * 20 = 34,560.
+        Other variables and function call overhead contribute to a relatively small constant space.
+        The space complexity is O(1), considering the dimensions are constants.
+
+    Hints:
+        Use a recursive approach with memoization to calculate the count of beautiful integers in the given range.
+        Keep track of even and odd digits, remainders, tightness, and leading zeros using function parameters.
+        Recurse through each digit and accumulate the count of beautiful integers.
+        Convert the input range to strings for easy manipulation.
+        Subtract the count up to low - 1 from the count up to high to get the final result.
+
+     */
+    int dp[12][2][2][12][12][20];
+    int k;
+    int f(int idx, bool tight, bool leadingZeros, int oddDig, int evenDig, int remainder, string &num)
+    {
+        if (idx == num.size())
+            return (remainder == 0 && oddDig == evenDig && !leadingZeros);
+        if (dp[idx][tight][leadingZeros][oddDig][evenDig][remainder] != -1)
+            return dp[idx][tight][leadingZeros][oddDig][evenDig][remainder];
+
+        int ub = (tight) ? num[idx] - '0' : 9;                                                   //? upper range for each digit
+        int ans = (leadingZeros ? f(idx + 1, false, true, oddDig, evenDig, remainder, num) : 0); //? considering case with leading zeros
+        for (int dig = 0; dig <= ub; dig++)
+        {
+            bool newTight = tight & (dig == (ub));
+            int newOdd = oddDig + (dig % 2);
+            int newEven = evenDig + (dig % 2 == 0 && (!leadingZeros || dig > 0)); //?can't consider 0 as even in leading zeros
+            int newRemainder = (remainder * 10 + dig) % k;
+            if ((leadingZeros && dig != 0) || !leadingZeros)
+            {
+                ans += f(idx + 1, newTight, false, newOdd, newEven, newRemainder, num);
+            }
+        }
+        return dp[idx][tight][leadingZeros][oddDig][evenDig][remainder] = ans;
+    }
+    int numberOfBeautifulIntegers(int low, int high, int k)
+    {
+        string s_low = to_string(low - 1);
+        string s_high = to_string(high);
+        this->k = k;
+        memset(dp, -1, sizeof(dp));
+        int tillLow = f(0, true, true, 0, 0, 0, s_low);
+        memset(dp, -1, sizeof(dp));
+        int tillHigh = f(0, true, true, 0, 0, 0, s_high);
+
+        return tillHigh - tillLow;
+    }
+};
+
+//^ Count palindromic subsequence in a given string
+class CountPalindromicSubsequence{
+public:
+    int dp[1001][1001]; // 2D array to store the computed values to avoid recomputation
+    const int mod = 1e9 + 7; // modulo value
+
+    long long countPalindromicSubsequences(int start, int end, string &str) {
+        // Base cases
+        if (start > end) return 0; // Empty string, no palindromic subsequences
+        if (start == end) return 1; // Single character, one palindromic subsequence
+
+        // Check if the value is already computed
+        if (dp[start][end] != -1) return dp[start][end];
+
+        long long res = countPalindromicSubsequences(start + 1, end, str) % mod + countPalindromicSubsequences(start, end - 1, str) % mod;
+
+        // If the characters at start and end are same, then add 1 to the result
+        if (str[start] == str[end])
+            return dp[start][end] = 1 + res;
+
+        res -= countPalindromicSubsequences(start + 1, end - 1, str);
+
+        // If the result is negative, add mod to make it positive
+        return dp[start][end] = (res < 0) ? res + mod : res % mod;
+    }
+
+    long long int countPalindromicSubsequences(string str) {
+        // Initialize the dp array with -1
+        memset(dp, -1, sizeof(dp));
+
+        // Call the recursive function to count the palindromic subsequences
+        return countPalindromicSubsequences(0, str.length() - 1, str);
+    }
+};
 int main(int argc, char const *argv[])
 {
 

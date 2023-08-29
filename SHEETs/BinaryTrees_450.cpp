@@ -1684,10 +1684,10 @@ public:
 class FlattenIntoCDLL
 {
 public:
-/* 
-@ Same as DLL
-&- Maintain lastNode a.k.a tail pointer also while converting into doubly linked list
- */
+    /*
+    @ Same as DLL
+    &- Maintain lastNode a.k.a tail pointer also while converting into doubly linked list
+     */
     Node *prev = NULL, *lastNode = NULL;
     Node *bToDLL(Node *root)
     {
@@ -1715,6 +1715,109 @@ public:
         return head;
     }
 };
+
+//^ 32 Check if Subtree
+class CheckSubtree
+{
+private:
+    /*
+        Intuition:
+        To check if tree S is a subtree of tree T, the code checks whether the entire structure of S is present anywhere within the structure of T.
+        For this purpose, the code utilizes two functions:
+            isSameTree(T, S): This function checks if two trees T and S are identical in structure. It compares their nodes' data and recursively checks their left and right subtrees.
+            isSubTree(T, S): This function recursively searches through the nodes of tree T and checks whether any subtree starting from a node in T is identical to tree S.
+
+    Code Explanation:
+        isSameTree(T, S):
+            Base case: If either of the trees is empty (T or S), it returns whether both are empty. If one is empty and the other isn't, it returns false.
+            If the data of the current nodes T and S are not equal, the function returns false.
+            Recursively calls isSameTree for the left and right subtrees of both trees.
+        isSubTree(T, S):
+            Base case: If either of the trees is empty (T or S), it returns whether both are empty. If one is empty and the other isn't, it returns false.
+            If the data of the current nodes T and S are equal and the subtrees rooted at the current nodes are identical (checked using isSameTree), the function returns true.
+            If not, it recursively searches for the subtree S in the left and right subtrees of T.
+            If the subtree S is found in either the left or right subtrees of T, the function returns true.
+            If the function reaches the end of tree T without finding a match, it returns false.
+
+    Time Complexity:
+        In the worst case, the code compares all nodes of tree T with tree S using isSameTree, resulting in a time complexity proportional to the number of nodes in tree T, which is O(N), where N is the maximum number of nodes between the two trees.
+
+    Space Complexity:
+        The space complexity is determined by the recursion stack used in the recursive functions, isSameTree and isSubTree. In the worst case, the depth of the recursion stack could be proportional to the height of the trees, which is O(N), where N is the maximum number of nodes between the two trees.
+
+    Hint:
+        Use a helper function to compare if two trees are identical in structure (isSameTree).
+        In the main isSubTree function, check if the current node's data in tree T matches the root node's data in tree S and if the subtrees starting from these nodes are identical using the isSameTree function.
+        If the current nodes' data and subtrees match, return true. Otherwise, recursively search for S in the left and right subtrees of T.
+     */
+
+public:
+    bool isSameTree(Node *T, Node *S)
+    {
+        if (!T || !S)
+            return T == S;
+        if (T->data != S->data)
+        {
+            return false;
+        }
+        return isSameTree(T->left, S->left) and isSameTree(T->right, S->right);
+    }
+    bool isSubTree(Node *T, Node *S)
+    {
+        // Your code here
+        if (!T || !S)
+            return (T == S);
+        if (T->data == S->data && isSameTree(T, S))
+            return true;
+        return isSubTree(T->left, S) || isSubTree(T->right, S);
+    }
+};
+
+//^ 33 Check if Complete binary tree
+/* 
+-> Perform level order traversal and maintain a flag indicating whether a null node is encountered or not
+-> whenever we encounter a null node we mark flag as false
+-> check if flag is false every time pushing node into queue
+ */
+bool isCompleteBT(Node *root)
+{
+    // code here
+    if (!root)
+        return true;
+    queue<Node *> q;
+    q.push(root);
+    bool flag = true;
+    while (!q.empty())
+    {
+        int size = q.size();
+        for (int i = 0; i < size; i++)
+        {
+            Node *temp = q.front();
+            q.pop();
+            if (temp->left)
+            {
+                if (flag == false)
+                    return false;
+                q.push(temp->left);
+            }
+            else
+            {
+                flag = false;
+            }
+            if (temp->right)
+            {
+                if (flag == false)
+                    return false;
+                q.push(temp->right);
+            }
+            else
+            {
+                flag = false;
+            }
+        }
+    }
+    return true;
+}
 
 int main()
 {

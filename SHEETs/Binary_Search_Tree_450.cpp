@@ -712,7 +712,7 @@ public:
     };
 };
 
-//^ Maximum sum in a binary tree which is also a BST
+//^ 13 Maximum sum in a binary tree which is also a BST
 class MaxSumBST
 {
 private:
@@ -761,7 +761,7 @@ public:
 };
 
 //^ Love Babbar sheet part / additionals
-//^ Find a pair in a BST that sums equal to target
+//^ 14 Find a pair in a BST that sums equal to target
 int isPairPresent(struct Node *root, int target)
 {
     // add code here.
@@ -804,6 +804,38 @@ int isPairPresent(struct Node *root, int target)
     }
     return 0;
 }
+
+//^ 15 Binary tree to BST
+class BTtoBST
+{
+public:
+    void getInorder(Node *root, vector<int> &in)
+    {
+        if (root)
+        {
+            getInorder(root->left, in);
+            in.emplace_back(root->data);
+            getInorder(root->right, in);
+        }
+    }
+    Node *constructBSTfromInorder(vector<int> &in, int low, int high)
+    {
+        if (low > high)
+            return NULL;
+        int mid = (low + high) >> 1;
+        Node *root = new Node(in.at(mid));
+        root->left = constructBSTfromInorder(in, low, mid - 1);
+        root->right = constructBSTfromInorder(in, mid + 1, high);
+        return root;
+    }
+    Node *binaryTreeToBST(Node *root)
+    {
+        vector<int> inorder;
+        getInorder(root, inorder);
+        sort(inorder.begin(), inorder.end());
+        return constructBSTfromInorder(inorder, 0, inorder.size() - 1);
+    }
+};
 int main(int argc, char const *argv[])
 {
     /* code */

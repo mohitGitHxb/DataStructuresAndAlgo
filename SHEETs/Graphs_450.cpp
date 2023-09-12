@@ -1597,11 +1597,11 @@ int wordLadderLength(string beginWord, string endWord, vector<string> &wordList)
 
 //^ 22 Word ladder 2
 
-/* 
+/*
 Initial configuration:
 
-    Queue: Define a queue data structure to store the level-wise formed sequences. The queue will be storing a List of strings, which will be representing the path till now. The last word in the list will be the last converted word. 
-    Hash set: Create a hash set to store the elements present in the word list to carry out the search and delete operations in O(1) time. 
+    Queue: Define a queue data structure to store the level-wise formed sequences. The queue will be storing a List of strings, which will be representing the path till now. The last word in the list will be the last converted word.
+    Hash set: Create a hash set to store the elements present in the word list to carry out the search and delete operations in O(1) time.
     Vector: Define a 1D vector ‘usedOnLevel’ to store the words which are currently being used for transformation on a particular level and a 2D vector ‘ans’ for storing all the shortest sequences of transformation.
 
 The Algorithm for this problem involves the following steps:
@@ -1688,6 +1688,196 @@ vector<vector<string>> findSequences(string beginWord, string endWord,
     }
     return ans;
 }
+
+//^ 23 Dijekstra algorithm
+class Dijekstra
+{
+private:
+public:
+    vector<int> dijkstra(int V, vector<vector<int>> adj[], int S)
+    {
+        // Code here
+        // Using Set
+        set<pair<int, int>> st;
+        st.insert({0, S});
+
+        vector<int> dist(V, 1e9);
+        dist[S] = 0;
+
+        while (!st.empty())
+        {
+            auto it = *(st.begin()); // value at starting of set
+
+            int distance = it.first;
+            int node = it.second;
+            st.erase(it);
+
+            for (auto i : adj[node])
+            {
+                int adjNode = i[0];
+                int edgeWeight = i[1];
+
+                if (distance + edgeWeight < dist[adjNode])
+                {
+                    // erase if it is existed
+                    if (dist[adjNode] != 1e9)
+                    {
+                        st.erase({dist[adjNode], adjNode});
+                    }
+
+                    dist[adjNode] = distance + edgeWeight;
+                    st.insert({dist[adjNode], adjNode});
+                }
+            }
+        }
+
+        return dist;
+    }
+
+    vector<int> dijkstra(int V, vector<vector<int>> adj[], int S)
+    {
+        vector<int> dist(V, 1e9);
+        dist[S] = 0;
+
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+        pq.push({0, S});
+
+        while (!pq.empty())
+        {
+            int dis = pq.top().first;
+            int node = pq.top().second;
+            pq.pop();
+
+            for (auto x : adj[node])
+            {
+                int adj_node = x[0];
+                int wt = x[1];
+
+                if (dist[adj_node] > dis + wt)
+                {
+                    dist[adj_node] = dis + wt;
+                    pq.push({dist[adj_node], adj_node});
+                }
+            }
+        }
+        return dist;
+    }
+};
+
+//^24 Print the shortest path
+class PrintShortestPath
+{
+public:
+    void dijekstra(vector<vector<int>> adj[], vector<int> &dist, vector<int> &parent)
+    {
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+        pq.push({0, 1});
+        while (!pq.empty())
+        {
+            int node = pq.top().second;
+            int d = pq.top().first;
+            pq.pop();
+            for (auto &it : adj[node])
+            {
+                int edgeWt = it.back();
+                int adjNode = it.front();
+
+                if (d + edgeWt < dist[adjNode])
+                {
+                    dist[adjNode] = d + edgeWt;
+                    parent[adjNode] = node;
+                    pq.push({dist[adjNode], adjNode});
+                }
+            }
+        }
+    }
+
+    vector<int> shortestPath(int n, int m, vector<vector<int>> &edges)
+    {
+        vector<vector<int>> adj[n + 1];
+        for (auto &it : edges)
+        {
+            adj[it[0]].push_back({it[1], it[2]});
+            adj[it[1]].push_back({it[0], it[2]});
+        }
+        vector<int> dist(n + 1, 1e9);
+        dist.at(1) = 0;
+        vector<int> parent(n + 1);
+        for (int i = 0; i <= n; i++)
+            parent.at(i) = i;
+        dijekstra(adj, dist, parent);
+        if (dist[n] == 1e9)
+            return {-1};
+        vector<int> path;
+        int node = n;
+        while (parent[node] != node)
+        {
+            path.emplace_back(node);
+            node = parent[node];
+        }
+        path.emplace_back(1);
+        reverse(path.begin(), path.end());
+        return path;
+    }
+};
+
+//^25 Shortest path in a binary maze
+
+//^26 Path to minimum efforts
+class MinimumEfforts
+{
+private:
+    typedef pair<int, int> pi;
+    typedef pair<int, pi> pii;
+
+    vector<pi> dirs = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    bool isValid(int row, int col, int n, int m)
+    {
+        return row >= 0 && col >= 0 && row < n && col < m;
+    }
+
+public:
+    int MinimumEffort(vector<vector<int>> &heights)
+    {
+        // Code here
+        priority_queue<pii, vector<pii>, greater<pii>> pq;
+        int n = heights.size(), m = heights.front().size();
+        vector<vector<int>> dist(n, vector<int>(m, 1e9));
+        dist.at(0).at(0) = 0;
+        pq.push({0, {0, 0}});
+
+        while (!pq.empty())
+        {
+            int diff = pq.top().first;
+            int row = pq.top().second.first;
+            int col = pq.top().second.second;
+            pq.pop();
+
+            if (row == n - 1 && col == m - 1)
+            {
+                return dist.at(row).at(col);
+            }
+
+            for (auto &it : dirs)
+            {
+                int nrow = row + it.first;
+                int ncol = col + it.second;
+
+                if (isValid(nrow, ncol, n, m))
+                {
+                    int newEfforts = max(abs(heights[row][col] - heights[nrow][ncol]), diff);
+
+                    if (newEfforts < dist[nrow][ncol])
+                    {
+                        dist.at(nrow).at(ncol) = newEfforts;
+                        pq.push({newEfforts, {nrow, ncol}});
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+};
 int main()
 {
     return 0;

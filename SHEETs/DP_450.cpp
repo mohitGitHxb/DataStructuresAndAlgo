@@ -5008,18 +5008,23 @@ private:
 };
 
 //^ Count palindromic subsequence in a given string
-class CountPalindromicSubsequence{
+class CountPalindromicSubsequence
+{
 public:
-    int dp[1001][1001]; // 2D array to store the computed values to avoid recomputation
+    int dp[1001][1001];      // 2D array to store the computed values to avoid recomputation
     const int mod = 1e9 + 7; // modulo value
 
-    long long countPalindromicSubsequences(int start, int end, string &str) {
+    long long countPalindromicSubsequences(int start, int end, string &str)
+    {
         // Base cases
-        if (start > end) return 0; // Empty string, no palindromic subsequences
-        if (start == end) return 1; // Single character, one palindromic subsequence
+        if (start > end)
+            return 0; // Empty string, no palindromic subsequences
+        if (start == end)
+            return 1; // Single character, one palindromic subsequence
 
         // Check if the value is already computed
-        if (dp[start][end] != -1) return dp[start][end];
+        if (dp[start][end] != -1)
+            return dp[start][end];
 
         long long res = countPalindromicSubsequences(start + 1, end, str) % mod + countPalindromicSubsequences(start, end - 1, str) % mod;
 
@@ -5033,12 +5038,83 @@ public:
         return dp[start][end] = (res < 0) ? res + mod : res % mod;
     }
 
-    long long int countPalindromicSubsequences(string str) {
+    long long int countPalindromicSubsequences(string str)
+    {
         // Initialize the dp array with -1
         memset(dp, -1, sizeof(dp));
 
         // Call the recursive function to count the palindromic subsequences
         return countPalindromicSubsequences(0, str.length() - 1, str);
+    }
+};
+
+//^ Partition the array into two subsets with a given difference
+/*
+Sure, let's break down the provided code step by step and explain it:
+
+**Initialization**:
+- `int f(int idx, int target, vector<int> &arr)`: This function is a recursive function that computes the count of partitions that meet the given conditions. It takes three parameters:
+  - `idx`: The current index in the `arr` array that you are considering.
+  - `target`: The target difference `d` that you want to achieve between the sums of the two partitions.
+  - `arr`: The input array of integers.
+- `if (idx < 0) return target == 0;`: This is the base case of the recursion. If you have considered all elements in the array (`idx` reaches -1), then you return `true` if the `target` is also 0, indicating that you have found a valid partition; otherwise, you return `false`.
+- `if (dp[idx][target] != -1) return dp[idx][target];`: This line checks whether you have already computed the result for the current `idx` and `target` combination using memoization. If yes, it returns the cached result.
+- `int notpick = f(idx - 1, target, arr) % mod;`: This recursively calculates the count of partitions without picking the element at the current `idx`. You move to the previous index (`idx - 1`) and keep the same `target`.
+- `int pick = 0;`: This initializes a variable `pick` to store the count of partitions when you pick the element at the current `idx`.
+- `if (target - arr[idx] >= 0) { pick = f(idx - 1, target - arr[idx], arr) % mod; }`: Here, you check if it's possible to pick the element at `idx` without exceeding the `target`. If so, you recursively calculate the count of partitions with this element picked.
+- Finally, you return `dp[idx][target] = (pick + notpick) % mod;`, which means that you store the result in `dp` for the current `idx` and `target` combination and return the sum of `pick` and `notpick` modulo `mod`.
+
+**Main Function**:
+- `int countPartitions(int n, int d, vector<int> &arr)`: This is the main function that solves the problem. It takes three parameters:
+  - `n`: The number of elements in the input array `arr`.
+  - `d`: The target difference.
+  - `arr`: The input array of integers.
+- `int totalSum = accumulate(arr.begin(), arr.end(), 0);`: This line calculates the total sum of all elements in the `arr`.
+- `if ((totalSum + d) % 2 != 0) return 0;`: If the sum of all elements in `arr` plus `d` is not even, it means there's no way to partition the array to achieve the desired difference, so it returns 0 immediately.
+- `sort(arr.rbegin(), arr.rend());`: The code sorts the array in reverse order. This step is not necessary for the algorithm's functionality but may help optimize the memoization.
+- `int target = (totalSum + d) / 2;`: The `target` is calculated as half of the sum of the elements plus `d`. This is because you want to find two subsets whose difference is `d`, so their sum must be `(totalSum + d) / 2`.
+- `dp.resize(n, vector<int>(target + 1, -1));`: This initializes the memoization table `dp` with dimensions `n` by `target+1` and fills it with -1 as an initial marker for uncalculated results.
+- Finally, the function returns the result of the recursive function `f(n - 1, target, arr)`, which computes the count of valid partitions that meet the conditions.
+
+**Time Complexity**:
+- The recursive function `f` is called multiple times with different combinations of `idx` and `target`. In the worst case, it computes and memoizes results for all combinations, resulting in a time complexity of O(n * target).
+- Sorting the array takes O(n * log(n)) time.
+- Overall, the time complexity is dominated by the recursive calls and is O(n * target + n * log(n)), where `n` is the number of elements in `arr`, and `target` is the target difference.
+- The space complexity is O(n * target) due to the memoization table.
+
+**Hint**:
+- This code efficiently calculates the count of partitions by memoizing intermediate results to avoid redundant calculations. It uses a recursive approach to explore all possible partitions and determine if they meet the specified conditions.
+ */
+class PartitionSubsetWithDifference
+{
+private:
+    const int mod = 1e9 + 7;
+    vector<vector<int>> dp;
+
+public:
+    int f(int idx, int target, vector<int> &arr)
+    {
+        if (idx < 0)
+            return target == 0;
+        if (dp[idx][target] != -1)
+            return dp[idx][target];
+        int notpick = f(idx - 1, target, arr) % mod;
+        int pick = 0;
+        if (target - arr[idx] >= 0)
+        {
+            pick = f(idx - 1, target - arr[idx], arr) % mod;
+        }
+        return dp[idx][target] = (pick + notpick) % mod;
+    }
+    int countPartitions(int n, int d, vector<int> &arr)
+    {
+        int totalSum = accumulate(arr.begin(), arr.end(), 0);
+        if ((totalSum + d) % 2 != 0)
+            return 0;
+        sort(arr.rbegin(), arr.rend());
+        int target = (totalSum + d) / 2;
+        dp.resize(n, vector<int>(target + 1, -1));
+        return f(n - 1, target, arr);
     }
 };
 int main(int argc, char const *argv[])

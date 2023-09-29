@@ -2029,6 +2029,38 @@ long long countPairs(int X[], int Y[], int m, int n)
     }
     return pairs;
 }
+
+//^ 40 Base equivalence
+/*
+    It iterates through a loop with i ranging from 2 to 31 (base 2 to base 32).
+    For each i, it calculates the number of digits required to represent n in base i using the formula (log(n) / log(i)) + 1.
+    If the number of digits calculated is equal to m, it returns "Yes" to indicate that n can be represented with m digits in base i.
+    If none of the iterations result in a match, it returns "No," indicating that there is no base in which n can be represented with m digits.
+
+Here's a breakdown of the code's logic:
+
+    It checks different bases from 2 to 31.
+    For each base, it calculates the number of digits needed to represent n.
+    If it finds a base where the number of digits matches m, it returns "Yes."
+    If no such base is found, it returns "No."
+
+This code snippet can be used to determine if there exists a base in which n can be represented with exactly m digits. If such a base exists, it returns "Yes"; otherwise, it returns "No."
+
+For example, if n is 15 and m is 4, the code will return "Yes" because 15 can be represented as "1111" in binary, which has 4 digits.
+
+Keep in mind that this code assumes that n and m are positive integers. */
+string baseEquiv(int n, int m)
+{
+    // code here
+    for (int i = 2; i < 32; i++)
+    {
+        int number = ((log(n) / log(i))) + 1;
+        if (number == m)
+            return "Yes";
+    }
+    return "No";
+}
+
 int main(int argc, char const *argv[])
 {
 

@@ -1878,6 +1878,500 @@ public:
         return 0;
     }
 };
+
+//^ 27 Cheapest flights in K stops
+
+class Solution {
+    private:
+/* 
+Certainly, let's break down the intuition, code explanation, and complexities for the "Cheapest Flights Within K Stops" problem:
+
+Intuition:
+
+    The problem involves finding the cheapest price to reach a destination city (dst) from a source city (src) with at most K stops.
+    We can use a modified Dijkstra's algorithm to explore flight paths efficiently.
+    The algorithm starts from the source city and explores all possible flights while keeping track of the minimum cost to reach each city with the constraint of a maximum number of stops.
+
+Code Explanation:
+
+    Create Graph: We create a graph where each city is a node, and each flight is an edge. The edge weight represents the cost of the flight. This graph is stored in the adj vector.
+
+    Initialize Distances: We initialize an array dist to store the minimum cost to reach each city. We set the distance to the source city (src) as 0 and all other distances to a high value.
+
+    BFS with Modified Dijkstra:
+        We use a BFS approach with a queue to explore possible flight paths.
+        Each element in the queue contains three values: stops (number of stops made so far), node (current city), and distance (distance traveled so far).
+        The BFS loop continues as long as the queue is not empty.
+
+    BFS Loop:
+        We dequeue a flight path from the queue.
+        If the number of stops exceeds K, we skip this path and continue to the next iteration.
+        Otherwise, for each adjacent city reachable from the current city:
+            We calculate the total cost to reach that city (distance + edgeWt).
+            If this cost is less than the previously recorded minimum distance to that city (dist[adjNode]), we update dist[adjNode] with the new cost.
+            We enqueue the flight path to the adjacent city with an incremented number of stops (stops + 1).
+
+    Result: After the BFS loop, if dist[dst] is still equal to its initial value (1e9), it means there is no valid path to reach the destination with at most K stops, so we return -1. Otherwise, we return dist[dst], which represents the minimum cost to reach the destination city (dst).
+
+Time Complexity:
+
+    The BFS loop runs in O(E) time, where E is the number of flights.
+    In the worst case, each flight is explored once.
+    Overall, the time complexity is O(E), where E is the number of flights.
+
+Space Complexity:
+
+    We use additional space to store the dist array of size n (number of cities) and the queue q.
+    Therefore, the space complexity is O(n) for the dist array and O(maximum queue size) for q, which can be O(V) in the worst case.
+    Overall, the space complexity is O(n + V), where V is the maximum queue size.
+
+Hints:
+
+    Think of this problem as finding the shortest path in a graph but with the added constraint of the maximum number of stops (K).
+    Use a modified Dijkstra's algorithm or BFS to efficiently explore possible flight paths while keeping track of the minimum costs.
+    Initialize distances to a high value and use a BFS queue to explore flights within the stop limit.
+    Pay attention to the special case where there is no valid path within the stop limit.
+ */
+    typedef vector<int> vi;
+    typedef vector<pair<int,int>> vpii;
+  public:
+    int CheapestFLight(int n, vector<vector<int>>& flights, int src, int dst, int K)  {
+        // creating graph
+        vpii adj[n];
+        for(auto &it : flights){
+            adj[it[0]].emplace_back(it[1],it[2]);
+        }
+        
+        vi dist(n,1e9);
+        dist.at(src) = 0;
+        queue<vi> q;
+        // {stops,node,dist}
+        q.push({0,src,0});
+        
+        // dijekstra modified
+        while(!q.empty()){
+            int stops = q.front().at(0);
+            int node = q.front().at(1);
+            int distance = q.front().at(2);
+            
+            q.pop();
+            if(stops > K) continue;
+            for(auto &it : adj[node]){
+                int adjNode = it.first;
+                int edgeWt = it.second;
+                
+                if(distance + edgeWt < dist[adjNode]){
+                    dist[adjNode] = distance + edgeWt;
+                    q.push({stops+1,adjNode,dist[adjNode]});
+                }
+            }
+        }
+        return dist[dst] == 1e9 ? -1 : dist[dst];
+    }
+};
+
+//^ 28 Minimum multiplications to reach end using the array
+class MinimumMultiplicationsToReachEnd{
+    private:
+    /* 
+    &- Simple BFS + dijekstra algorithm
+    &- Since the value of MOD is 10^5 at max there can be 0 to 9999 nodes in a graph
+    &- Go level wise (steps) and the first time we get the "end" we can simply return steps + 1;
+
+    *T.C O(10^5 * N) [Hypothetical]
+     */
+    public:
+        int minimumMultiplications(vector<int>& arr, int start, int end) {
+        // code here
+        if(start == end) return 0;
+        vector<int> dist(1e5,1e9);
+        dist[start] = 0;
+        queue<pair<int,int>> q;
+        q.emplace(0,start);
+        
+        while(!q.empty()){
+            int steps = q.front().first;
+            int node = q.front().second;
+            q.pop();
+            for(int &it : arr){
+                int newNumber = (it * node) % 100000;
+                if(steps + 1 < dist[newNumber]){
+                if(newNumber == end) return steps + 1;
+                    dist[newNumber] = 1 + steps;
+                    q.emplace(steps+1,newNumber);
+                }
+            }
+        }
+        return -1;
+        
+    }
+};
+
+//^ 29 Number of ways to arrive at destination
+class NumberOfWaysToArrive {
+    private:
+    typedef vector<int> vi;
+    typedef pair<int,int> pii;
+    typedef vector<pii> vpii;
+    
+    const int MOD = 1e9+7;
+  public:
+    int countPaths(int n, vector<vector<int>>& roads) {
+        // code here
+        vpii adj[n];
+        for(auto &it : roads){
+            adj[it[0]].emplace_back(it[1],it[2]);
+            adj[it[1]].emplace_back(it[0],it[2]);
+        }
+        
+        vi ways(n);
+        vector<long> dist(n,INT_MAX);
+        dist.at(0) = 0;
+        ways.at(0) = 1;
+        // min heap for dijekstra
+        priority_queue<pii,vpii,greater<pii>> pq;
+        pq.push({0,0});
+        
+        while(!pq.empty()){
+            long distance = pq.top().first;
+            int node = pq.top().second;
+            pq.pop();
+            for(auto &it : adj[node]){
+                int adjNode = it.first;
+                long edgeWt = it.second;
+                if(distance + edgeWt == dist[adjNode]){
+                    ways[adjNode] = ways[node]%MOD + ways[adjNode]%MOD;
+                }
+                else if(distance+edgeWt < dist[adjNode]){
+                    dist[adjNode] = distance + edgeWt;
+                    ways[adjNode] = ways[node]%MOD;
+                    pq.push({dist[adjNode],adjNode});
+                }
+            }
+        }
+        return ways.back()%MOD;
+    }
+};
+
+//^ 30 bellman ford algorithm
+/* 
+    Initialize Distances: We start by initializing an array dist of size V (number of vertices) with a large value (1e8) to represent infinity. We also set the distance of the source vertex S to 0 because the distance from S to itself is always 0.
+
+    Relax Edges: The algorithm performs a relaxation step for each edge in the graph. It iterates V times to ensure that it has found the shortest paths to all vertices.
+
+    Nested Loop: Within the iteration over vertices, there is a nested loop that iterates through all edges. For each edge (u, v) with weight wt:
+        It checks if the distance to vertex u (dist[u]) is not infinity (1e8) and if the sum of the distance to u and the weight wt of the edge is less than the current distance to vertex v (dist[v]).
+        If the condition is met, it updates the distance to vertex v with the new shorter distance: dist[v] = dist[u] + wt.
+
+    Negative Cycle Detection: After completing the relaxation steps, the algorithm performs another loop through all edges. If it finds an edge where the relaxation condition still holds (indicating a negative cycle), it returns {-1} to indicate that there is a negative cycle in the graph.
+
+    Return Distances: Finally, the algorithm returns the dist array, which contains the shortest distances from the source vertex S to all other vertices in the graph.
+
+Time Complexity:
+
+    The Bellman-Ford algorithm has a time complexity of O(V * E), where V is the number of vertices and E is the number of edges.
+    In your implementation, the outer loop iterates V times, and the inner loop iterates through all edges E for each vertex, resulting in a total time complexity of O(V * E).
+
+Space Complexity:
+
+    The space complexity of this implementation is O(V), where V is the number of vertices, due to the dist array.
+
+Hint:
+
+    Bellman-Ford is a dynamic programming-based algorithm used for finding the shortest paths from a single source vertex to all other vertices, even in graphs with negative weight edges (but without negative cycles).
+    It's essential to initialize distances properly before running the algorithm.
+ */
+vector<int> bellman_ford(int V, vector<vector<int>>& edges, int S) {
+        // Code here
+        vector<int> dist(V,1e8);
+        dist[S] = 0;
+        for(int i = 0; i < V; i++){
+            for(auto &it : edges){
+                int u = it[0];
+                int v = it[1];
+                int wt = it[2];
+                
+                if(dist.at(u)!=1e8 && dist.at(u) + wt < dist.at(v)){
+                    dist.at(v) = dist.at(u) + wt;
+                }
+            }
+        }
+            for(auto &it : edges){
+                int u = it[0];
+                int v = it[1];
+                int wt = it[2];
+                
+                if(dist.at(u)!=1e8 && dist.at(u) + wt < dist.at(v)){
+                        return {-1};
+                }
+            }
+      return dist;  
+    }
+
+//^ 32 Floyd warshall algorithm [multi source shortest path]
+/* 
+Code Explanation:
+
+    Initialization: The code begins by initializing the variable n to the number of vertices in the graph (the size of the matrix).
+
+    Triple Nested Loop: The code uses three nested loops to perform the Floyd-Warshall algorithm. These loops are responsible for considering all possible paths between pairs of vertices via an intermediate vertex via.
+
+        The outermost loop iterates over the vertex via. This vertex is considered as a potential intermediate stop between all pairs of vertices.
+
+        The middle loop iterates over the source vertex i, representing the starting vertex of a path.
+
+        The innermost loop iterates over the destination vertex j, representing the ending vertex of a path.
+
+    Validity Check: Inside the nested loops, the code checks whether there is an edge from i to via and from via to j. If either of these edges is missing (indicated by -1 in the matrix), it continues to the next iteration since it's not possible to form a path from i to j via via.
+
+    Path Calculation: If both edges are present, the code calculates the sum part of the distances from i to via and from via to j. This represents the potential distance of the path from i to j via via.
+
+    Updating Matrix: The code updates the entry matrix[i][j] in the adjacency matrix with the minimum of its current value (if it exists) and the newly calculated part. This step ensures that the shortest distance between i and j is stored in the matrix.
+
+    Result: Once all iterations are complete, the adjacency matrix matrix contains the shortest distances between all pairs of vertices.
+
+Time Complexity:
+
+    The code uses three nested loops to iterate over all pairs of vertices and their potential intermediate vertices. The time complexity of the Floyd-Warshall algorithm is O(n^3), where n is the number of vertices.
+
+Space Complexity:
+
+    The code performs the calculations in-place, meaning it doesn't use additional data structures that depend on the size of the input graph. Therefore, the space complexity is O(1).
+
+Hint:
+
+    The code efficiently calculates the shortest distances between all pairs of vertices in a weighted directed graph using the Floyd-Warshall algorithm. It updates the adjacency matrix with the shortest distances as it iterates through all possible paths.
+ */
+void shortest_distance(vector<vector<int>>&matrix){
+	    int n = matrix.size();
+	    
+	    for(int via=0; via<n; via++)
+	        for(int i=0; i<n;i++)
+	            for(int j=0; j<n; j++)
+	            {
+	                if(matrix[i][via]==-1 or matrix[via][j]==-1) continue;
+	                
+	                int part = matrix[i][via]+matrix[via][j];
+	                
+	                if(matrix[i][j] == -1) matrix[i][j] = part;
+	                else matrix[i][j] = min(matrix[i][j],part);
+	            }
+	   
+	}
+
+
+//^ 33 Find the city with the smallest number of neighbors in a threshold distance
+/* 
+    Initialize Matrix: A 2D matrix mat of size n x n is created and initialized with a large value (1e9) for all pairs of cities. This matrix will store the shortest distances between cities.
+
+    Edge Weights: For each edge in the edges vector, the corresponding entry in the mat matrix is updated with the edge weight. Since the edges are bidirectional, entries in both directions are updated.
+
+    Diagonal Elements: The diagonal elements of the mat matrix, representing the distance from a city to itself, are set to 0.
+
+    Floyd-Warshall Algorithm: The Floyd-Warshall algorithm is applied to find the shortest distances between all pairs of cities. This algorithm iteratively updates the distances in the mat matrix by considering each city as an intermediate stop between any two cities.
+
+    Count Reachable Cities: For each city i, the code counts the number of cities that can be reached from city i within the given distance threshold. This is done by iterating through all cities j and checking if the distance from city i to city j in the mat matrix is less than or equal to the distanceThreshold.
+
+    Find the City: The code keeps track of the city ans that has the smallest number of reachable cities within the distance threshold. If multiple cities have the same minimum number of reachable cities, the code selects the one with the greatest city number.
+
+    Return Result: Finally, the code returns the city ans, which represents the city with the smallest number of reachable cities within the distance threshold.
+
+Time Complexity:
+
+    The time complexity of the Floyd-Warshall algorithm is O(n^3), where n is the number of cities.
+    The outer loop iterates n times, and for each iteration, there are two nested loops that iterate n times each, resulting in a total of O(n^3) operations.
+
+Space Complexity:
+
+    The space complexity is O(n^2) due to the mat matrix, which stores the shortest distances between all pairs of cities.
+
+Hint:
+
+    The code uses the Floyd-Warshall algorithm to calculate the shortest distances between all pairs of cities efficiently.
+    It then counts the number of reachable cities from each city within the given distance threshold and selects the city with the smallest number of reachable cities.
+ */
+    int findCity(int n, int m, vector<vector<int>>& edges,
+                 int distanceThreshold) {
+        //^ Floyd warshall algo
+       vector<vector<int>> mat(n,vector<int>(n,1e9));
+       for(auto it:edges)
+       {
+           mat[it[0]][it[1]]=it[2];
+           mat[it[1]][it[0]]=it[2];
+       }
+       for(int i=0;i<n;i++)
+       {
+           mat[i][i]=0;
+       }
+       for(int k=0;k<n;k++)
+       {
+           for(int i=0;i<n;i++)
+           {
+               for(int j=0;j<n;j++)
+               {
+                   mat[i][j]=min(mat[i][j],mat[i][k]+mat[k][j]);
+               }
+           }
+       }
+       
+       int ans;
+       int mini=1e9;
+       for(int i=0;i<n;i++)
+       {
+            int reach=0;
+            for(int j=0;j<n;j++)
+            {
+                if(mat[i][j]<=distanceThreshold)
+                {
+                       reach++;
+                }
+            }
+            if(reach<=mini)
+            {
+                mini=reach;
+                ans=i;
+            }
+        }
+           
+        return ans;
+    }   
+
+//^ 34 Prims algorithm for Minimum Spanning Tree
+/* 
+Intuition:
+
+The problem can be solved using Prim's algorithm, which is a greedy algorithm for finding the Minimum Spanning Tree (MST) of a connected, undirected graph.
+
+Explanation:
+
+    Create a priority queue pq to keep track of edges, where each element in the queue is a pair (weight, node).
+
+    Initialize a boolean vector visit of size V to keep track of visited nodes. Initially, all nodes are unvisited.
+
+    Initialize a variable ans to 0. This variable will store the sum of weights of the edges in the MST.
+
+    Start with an arbitrary node as the initial node (e.g., node 0), and push it into the priority queue with a weight of 0: pq.push({0, 0}).
+
+    While the priority queue is not empty, do the following:
+
+        Pop the top element p from the priority queue.
+
+        Extract the node x and weight w from p.
+
+        If x is already visited, continue to the next iteration.
+
+        Mark node x as visited: visit[x] = true.
+
+        Add the weight w to the ans as this weight is part of the MST.
+
+        Iterate through all adjacent nodes of x in the adjacency list adj[x]. For each adjacent node y with weight edgeWeight, if y is not visited, push {edgeWeight, y} into the priority queue. This step considers adding edges to the MST.
+
+    After the loop, ans will contain the sum of weights of the edges in the MST.
+
+    Return ans as the final result.
+
+Time Complexity:
+
+    The time complexity of Prim's algorithm with a priority queue is O(E * log(V)), where E is the number of edges and V is the number of vertices.
+
+Space Complexity:
+
+    The space complexity is O(V) for the visit array and O(E) for the priority queue.
+
+Hint:
+
+    Use a priority queue to select the edge with the smallest weight at each step.
+
+    Maintain a visit array to keep track of visited nodes.
+
+    Add the weights of selected edges to the ans variable to calculate the MST weight.
+ */
+    int spanningTree(int V, vector<vector<int>> adj[])
+    {
+       priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>>pq;
+       pq.push({0,0});
+       vector<bool> visit(V);
+       int ans=0;
+       while(!pq.empty()){
+           auto p=pq.top();
+           pq.pop();
+           int x=p.second; // node
+           int w=p.first; // weight
+           if(visit[x])continue; // already visited means we have reached here using less amount of weight sum
+           visit[x]=true;
+           ans+=w; // add weight to the MST sum
+           for(auto y:adj[x]){
+               if(!visit[y[0]]){
+                   pq.push({y[1],y[0]}); // add all nodes in the priority queue which are not visited yet
+               }
+           }
+       }
+       return ans;
+   }
+
+//^ 35 Disjoint set data structure
+/* 
+Data Structures Used:
+
+    rank: A vector that stores the rank of each element in the disjoint set. Rank is used to perform a union operation more efficiently by attaching the smaller tree to the larger tree to keep the tree balanced.
+    parent: A vector that stores the parent (representative) of each element in the disjoint set. Initially, each element is its own parent, representing a disjoint set with only one element.
+
+Constructor:
+
+The constructor initializes the Disjoint-Set data structure with 'n' elements. It allocates memory for the rank and parent vectors, sets each element's parent to itself, and initializes the rank to 0 for all elements.
+findUPar Function:
+
+This function is used to find the ultimate parent (representative) of a given element 'node' using the path compression technique. It starts from the given 'node' and traverses the parent pointers until it reaches the ultimate parent. Along the way, it updates the parent of each traversed node to the ultimate parent. This optimization flattens the tree structure and speeds up future findUPar operations. The time complexity of this operation is nearly O(1) on average due to path compression.
+unionByRank Function:
+
+This function is used to perform the union of two sets represented by 'u' and 'v'. It first finds the ultimate parent of both 'u' and 'v' using findUPar. Then, it compares their ranks. If the rank of 'u's ultimate parent is less than the rank of 'v's ultimate parent, it attaches 'u' to 'v'. If the rank of 'v's ultimate parent is less than the rank of 'u's ultimate parent, it attaches 'v' to 'u'. If both ranks are the same, one tree is attached to the other, and the rank of the ultimate parent is increased by 1. This union-by-rank and path compression strategy ensures that the tree remains balanced, and the time complexity of this operation is nearly O(1) on average.
+Time Complexity:
+
+    findUPar: Nearly O(1) on average due to path compression.
+    unionByRank: Nearly O(1) on average due to union by rank and path compression.
+
+Space Complexity:
+
+    The space complexity is O(n) for the rank and parent vectors, where 'n' is the number of elements in the disjoint set.
+
+This Disjoint-Set data structure is efficient for managing disjoint sets and performing union and find operations. It is commonly used in various algorithms like Kruskal's Minimum Spanning Tree algorithm and cycle detection in graphs, among others.
+ */
+class DisjointSet{
+    private:
+        vector<int> rank,parent;
+    public:
+        DisjointSet(int n){
+            rank.resize(n+1);
+            parent.resize(n+1);
+            for (int i = 0; i < n + 1; i++)
+            {
+                parent.at(i) = i;
+            }
+            
+        }
+
+        int findUPar(int node){
+            if(node == parent[node]) return node;
+            return parent[node] = findUPar(parent[node]);
+        }
+
+        void unionByRank(int u,int v){
+            int ultimateParentU = findUPar(u);
+            int ultimateParentV = findUPar(v);
+            if(ultimateParentU == ultimateParentV) return;
+            if(rank.at(ultimateParentU) < rank.at(ultimateParentV)){
+                parent.at(ultimateParentU) = ultimateParentV; 
+            }
+            else if(rank.at(ultimateParentV) < rank.at(ultimateParentU)){
+                parent[ultimateParentV] = ultimateParentU;
+            }
+            else{
+                parent.at(ultimateParentV) = parent.at(ultimateParentU);
+                rank.at(ultimateParentU)++;
+            }
+        }
+
+};
 int main()
 {
     return 0;

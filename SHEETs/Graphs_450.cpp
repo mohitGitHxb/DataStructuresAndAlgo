@@ -1881,88 +1881,96 @@ public:
 
 //^ 27 Cheapest flights in K stops
 
-class Solution {
-    private:
-/* 
-Certainly, let's break down the intuition, code explanation, and complexities for the "Cheapest Flights Within K Stops" problem:
+class Solution
+{
+private:
+    /*
+    Certainly, let's break down the intuition, code explanation, and complexities for the "Cheapest Flights Within K Stops" problem:
 
-Intuition:
+    Intuition:
 
-    The problem involves finding the cheapest price to reach a destination city (dst) from a source city (src) with at most K stops.
-    We can use a modified Dijkstra's algorithm to explore flight paths efficiently.
-    The algorithm starts from the source city and explores all possible flights while keeping track of the minimum cost to reach each city with the constraint of a maximum number of stops.
+        The problem involves finding the cheapest price to reach a destination city (dst) from a source city (src) with at most K stops.
+        We can use a modified Dijkstra's algorithm to explore flight paths efficiently.
+        The algorithm starts from the source city and explores all possible flights while keeping track of the minimum cost to reach each city with the constraint of a maximum number of stops.
 
-Code Explanation:
+    Code Explanation:
 
-    Create Graph: We create a graph where each city is a node, and each flight is an edge. The edge weight represents the cost of the flight. This graph is stored in the adj vector.
+        Create Graph: We create a graph where each city is a node, and each flight is an edge. The edge weight represents the cost of the flight. This graph is stored in the adj vector.
 
-    Initialize Distances: We initialize an array dist to store the minimum cost to reach each city. We set the distance to the source city (src) as 0 and all other distances to a high value.
+        Initialize Distances: We initialize an array dist to store the minimum cost to reach each city. We set the distance to the source city (src) as 0 and all other distances to a high value.
 
-    BFS with Modified Dijkstra:
-        We use a BFS approach with a queue to explore possible flight paths.
-        Each element in the queue contains three values: stops (number of stops made so far), node (current city), and distance (distance traveled so far).
-        The BFS loop continues as long as the queue is not empty.
+        BFS with Modified Dijkstra:
+            We use a BFS approach with a queue to explore possible flight paths.
+            Each element in the queue contains three values: stops (number of stops made so far), node (current city), and distance (distance traveled so far).
+            The BFS loop continues as long as the queue is not empty.
 
-    BFS Loop:
-        We dequeue a flight path from the queue.
-        If the number of stops exceeds K, we skip this path and continue to the next iteration.
-        Otherwise, for each adjacent city reachable from the current city:
-            We calculate the total cost to reach that city (distance + edgeWt).
-            If this cost is less than the previously recorded minimum distance to that city (dist[adjNode]), we update dist[adjNode] with the new cost.
-            We enqueue the flight path to the adjacent city with an incremented number of stops (stops + 1).
+        BFS Loop:
+            We dequeue a flight path from the queue.
+            If the number of stops exceeds K, we skip this path and continue to the next iteration.
+            Otherwise, for each adjacent city reachable from the current city:
+                We calculate the total cost to reach that city (distance + edgeWt).
+                If this cost is less than the previously recorded minimum distance to that city (dist[adjNode]), we update dist[adjNode] with the new cost.
+                We enqueue the flight path to the adjacent city with an incremented number of stops (stops + 1).
 
-    Result: After the BFS loop, if dist[dst] is still equal to its initial value (1e9), it means there is no valid path to reach the destination with at most K stops, so we return -1. Otherwise, we return dist[dst], which represents the minimum cost to reach the destination city (dst).
+        Result: After the BFS loop, if dist[dst] is still equal to its initial value (1e9), it means there is no valid path to reach the destination with at most K stops, so we return -1. Otherwise, we return dist[dst], which represents the minimum cost to reach the destination city (dst).
 
-Time Complexity:
+    Time Complexity:
 
-    The BFS loop runs in O(E) time, where E is the number of flights.
-    In the worst case, each flight is explored once.
-    Overall, the time complexity is O(E), where E is the number of flights.
+        The BFS loop runs in O(E) time, where E is the number of flights.
+        In the worst case, each flight is explored once.
+        Overall, the time complexity is O(E), where E is the number of flights.
 
-Space Complexity:
+    Space Complexity:
 
-    We use additional space to store the dist array of size n (number of cities) and the queue q.
-    Therefore, the space complexity is O(n) for the dist array and O(maximum queue size) for q, which can be O(V) in the worst case.
-    Overall, the space complexity is O(n + V), where V is the maximum queue size.
+        We use additional space to store the dist array of size n (number of cities) and the queue q.
+        Therefore, the space complexity is O(n) for the dist array and O(maximum queue size) for q, which can be O(V) in the worst case.
+        Overall, the space complexity is O(n + V), where V is the maximum queue size.
 
-Hints:
+    Hints:
 
-    Think of this problem as finding the shortest path in a graph but with the added constraint of the maximum number of stops (K).
-    Use a modified Dijkstra's algorithm or BFS to efficiently explore possible flight paths while keeping track of the minimum costs.
-    Initialize distances to a high value and use a BFS queue to explore flights within the stop limit.
-    Pay attention to the special case where there is no valid path within the stop limit.
- */
+        Think of this problem as finding the shortest path in a graph but with the added constraint of the maximum number of stops (K).
+        Use a modified Dijkstra's algorithm or BFS to efficiently explore possible flight paths while keeping track of the minimum costs.
+        Initialize distances to a high value and use a BFS queue to explore flights within the stop limit.
+        Pay attention to the special case where there is no valid path within the stop limit.
+     */
     typedef vector<int> vi;
-    typedef vector<pair<int,int>> vpii;
-  public:
-    int CheapestFLight(int n, vector<vector<int>>& flights, int src, int dst, int K)  {
+    typedef vector<pair<int, int>> vpii;
+
+public:
+    int CheapestFLight(int n, vector<vector<int>> &flights, int src, int dst, int K)
+    {
         // creating graph
         vpii adj[n];
-        for(auto &it : flights){
-            adj[it[0]].emplace_back(it[1],it[2]);
+        for (auto &it : flights)
+        {
+            adj[it[0]].emplace_back(it[1], it[2]);
         }
-        
-        vi dist(n,1e9);
+
+        vi dist(n, 1e9);
         dist.at(src) = 0;
         queue<vi> q;
         // {stops,node,dist}
-        q.push({0,src,0});
-        
+        q.push({0, src, 0});
+
         // dijekstra modified
-        while(!q.empty()){
+        while (!q.empty())
+        {
             int stops = q.front().at(0);
             int node = q.front().at(1);
             int distance = q.front().at(2);
-            
+
             q.pop();
-            if(stops > K) continue;
-            for(auto &it : adj[node]){
+            if (stops > K)
+                continue;
+            for (auto &it : adj[node])
+            {
                 int adjNode = it.first;
                 int edgeWt = it.second;
-                
-                if(distance + edgeWt < dist[adjNode]){
+
+                if (distance + edgeWt < dist[adjNode])
+                {
                     dist[adjNode] = distance + edgeWt;
-                    q.push({stops+1,adjNode,dist[adjNode]});
+                    q.push({stops + 1, adjNode, dist[adjNode]});
                 }
             }
         }
@@ -1971,90 +1979,104 @@ Hints:
 };
 
 //^ 28 Minimum multiplications to reach end using the array
-class MinimumMultiplicationsToReachEnd{
-    private:
-    /* 
+class MinimumMultiplicationsToReachEnd
+{
+private:
+    /*
     &- Simple BFS + dijekstra algorithm
     &- Since the value of MOD is 10^5 at max there can be 0 to 9999 nodes in a graph
     &- Go level wise (steps) and the first time we get the "end" we can simply return steps + 1;
 
     *T.C O(10^5 * N) [Hypothetical]
      */
-    public:
-        int minimumMultiplications(vector<int>& arr, int start, int end) {
+public:
+    int minimumMultiplications(vector<int> &arr, int start, int end)
+    {
         // code here
-        if(start == end) return 0;
-        vector<int> dist(1e5,1e9);
+        if (start == end)
+            return 0;
+        vector<int> dist(1e5, 1e9);
         dist[start] = 0;
-        queue<pair<int,int>> q;
-        q.emplace(0,start);
-        
-        while(!q.empty()){
+        queue<pair<int, int>> q;
+        q.emplace(0, start);
+
+        while (!q.empty())
+        {
             int steps = q.front().first;
             int node = q.front().second;
             q.pop();
-            for(int &it : arr){
+            for (int &it : arr)
+            {
                 int newNumber = (it * node) % 100000;
-                if(steps + 1 < dist[newNumber]){
-                if(newNumber == end) return steps + 1;
+                if (steps + 1 < dist[newNumber])
+                {
+                    if (newNumber == end)
+                        return steps + 1;
                     dist[newNumber] = 1 + steps;
-                    q.emplace(steps+1,newNumber);
+                    q.emplace(steps + 1, newNumber);
                 }
             }
         }
         return -1;
-        
     }
 };
 
 //^ 29 Number of ways to arrive at destination
-class NumberOfWaysToArrive {
-    private:
+class NumberOfWaysToArrive
+{
+private:
     typedef vector<int> vi;
-    typedef pair<int,int> pii;
+    typedef pair<int, int> pii;
     typedef vector<pii> vpii;
-    
-    const int MOD = 1e9+7;
-  public:
-    int countPaths(int n, vector<vector<int>>& roads) {
+
+    const int MOD = 1e9 + 7;
+
+public:
+    int countPaths(int n, vector<vector<int>> &roads)
+    {
         // code here
         vpii adj[n];
-        for(auto &it : roads){
-            adj[it[0]].emplace_back(it[1],it[2]);
-            adj[it[1]].emplace_back(it[0],it[2]);
+        for (auto &it : roads)
+        {
+            adj[it[0]].emplace_back(it[1], it[2]);
+            adj[it[1]].emplace_back(it[0], it[2]);
         }
-        
+
         vi ways(n);
-        vector<long> dist(n,INT_MAX);
+        vector<long> dist(n, INT_MAX);
         dist.at(0) = 0;
         ways.at(0) = 1;
         // min heap for dijekstra
-        priority_queue<pii,vpii,greater<pii>> pq;
-        pq.push({0,0});
-        
-        while(!pq.empty()){
+        priority_queue<pii, vpii, greater<pii>> pq;
+        pq.push({0, 0});
+
+        while (!pq.empty())
+        {
             long distance = pq.top().first;
             int node = pq.top().second;
             pq.pop();
-            for(auto &it : adj[node]){
+            for (auto &it : adj[node])
+            {
                 int adjNode = it.first;
                 long edgeWt = it.second;
-                if(distance + edgeWt == dist[adjNode]){
-                    ways[adjNode] = ways[node]%MOD + ways[adjNode]%MOD;
+                if (distance + edgeWt == dist[adjNode])
+                {
+                    ways[adjNode] = ways[node] % MOD + ways[adjNode] % MOD;
                 }
-                else if(distance+edgeWt < dist[adjNode]){
+                else if (distance + edgeWt < dist[adjNode])
+                {
                     dist[adjNode] = distance + edgeWt;
-                    ways[adjNode] = ways[node]%MOD;
-                    pq.push({dist[adjNode],adjNode});
+                    ways[adjNode] = ways[node] % MOD;
+                    pq.push({dist[adjNode], adjNode});
                 }
             }
         }
-        return ways.back()%MOD;
+        return ways.back() % MOD;
     }
 };
 
 //^ 30 bellman ford algorithm
-/* 
+/*
     Initialize Distances: We start by initializing an array dist of size V (number of vertices) with a large value (1e8) to represent infinity. We also set the distance of the source vertex S to 0 because the distance from S to itself is always 0.
 
     Relax Edges: The algorithm performs a relaxation step for each edge in the graph. It iterates V times to ensure that it has found the shortest paths to all vertices.
@@ -2081,35 +2103,41 @@ Hint:
     Bellman-Ford is a dynamic programming-based algorithm used for finding the shortest paths from a single source vertex to all other vertices, even in graphs with negative weight edges (but without negative cycles).
     It's essential to initialize distances properly before running the algorithm.
  */
-vector<int> bellman_ford(int V, vector<vector<int>>& edges, int S) {
-        // Code here
-        vector<int> dist(V,1e8);
-        dist[S] = 0;
-        for(int i = 0; i < V; i++){
-            for(auto &it : edges){
-                int u = it[0];
-                int v = it[1];
-                int wt = it[2];
-                
-                if(dist.at(u)!=1e8 && dist.at(u) + wt < dist.at(v)){
-                    dist.at(v) = dist.at(u) + wt;
-                }
+vector<int> bellman_ford(int V, vector<vector<int>> &edges, int S)
+{
+    // Code here
+    vector<int> dist(V, 1e8);
+    dist[S] = 0;
+    for (int i = 0; i < V; i++)
+    {
+        for (auto &it : edges)
+        {
+            int u = it[0];
+            int v = it[1];
+            int wt = it[2];
+
+            if (dist.at(u) != 1e8 && dist.at(u) + wt < dist.at(v))
+            {
+                dist.at(v) = dist.at(u) + wt;
             }
         }
-            for(auto &it : edges){
-                int u = it[0];
-                int v = it[1];
-                int wt = it[2];
-                
-                if(dist.at(u)!=1e8 && dist.at(u) + wt < dist.at(v)){
-                        return {-1};
-                }
-            }
-      return dist;  
     }
+    for (auto &it : edges)
+    {
+        int u = it[0];
+        int v = it[1];
+        int wt = it[2];
+
+        if (dist.at(u) != 1e8 && dist.at(u) + wt < dist.at(v))
+        {
+            return {-1};
+        }
+    }
+    return dist;
+}
 
 //^ 32 Floyd warshall algorithm [multi source shortest path]
-/* 
+/*
 Code Explanation:
 
     Initialization: The code begins by initializing the variable n to the number of vertices in the graph (the size of the matrix).
@@ -2142,26 +2170,28 @@ Hint:
 
     The code efficiently calculates the shortest distances between all pairs of vertices in a weighted directed graph using the Floyd-Warshall algorithm. It updates the adjacency matrix with the shortest distances as it iterates through all possible paths.
  */
-void shortest_distance(vector<vector<int>>&matrix){
-	    int n = matrix.size();
-	    
-	    for(int via=0; via<n; via++)
-	        for(int i=0; i<n;i++)
-	            for(int j=0; j<n; j++)
-	            {
-	                if(matrix[i][via]==-1 or matrix[via][j]==-1) continue;
-	                
-	                int part = matrix[i][via]+matrix[via][j];
-	                
-	                if(matrix[i][j] == -1) matrix[i][j] = part;
-	                else matrix[i][j] = min(matrix[i][j],part);
-	            }
-	   
-	}
+void shortest_distance(vector<vector<int>> &matrix)
+{
+    int n = matrix.size();
 
+    for (int via = 0; via < n; via++)
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+            {
+                if (matrix[i][via] == -1 or matrix[via][j] == -1)
+                    continue;
+
+                int part = matrix[i][via] + matrix[via][j];
+
+                if (matrix[i][j] == -1)
+                    matrix[i][j] = part;
+                else
+                    matrix[i][j] = min(matrix[i][j], part);
+            }
+}
 
 //^ 33 Find the city with the smallest number of neighbors in a threshold distance
-/* 
+/*
     Initialize Matrix: A 2D matrix mat of size n x n is created and initialized with a large value (1e9) for all pairs of cities. This matrix will store the shortest distances between cities.
 
     Edge Weights: For each edge in the edges vector, the corresponding entry in the mat matrix is updated with the edge weight. Since the edges are bidirectional, entries in both directions are updated.
@@ -2190,54 +2220,55 @@ Hint:
     The code uses the Floyd-Warshall algorithm to calculate the shortest distances between all pairs of cities efficiently.
     It then counts the number of reachable cities from each city within the given distance threshold and selects the city with the smallest number of reachable cities.
  */
-    int findCity(int n, int m, vector<vector<int>>& edges,
-                 int distanceThreshold) {
-        //^ Floyd warshall algo
-       vector<vector<int>> mat(n,vector<int>(n,1e9));
-       for(auto it:edges)
-       {
-           mat[it[0]][it[1]]=it[2];
-           mat[it[1]][it[0]]=it[2];
-       }
-       for(int i=0;i<n;i++)
-       {
-           mat[i][i]=0;
-       }
-       for(int k=0;k<n;k++)
-       {
-           for(int i=0;i<n;i++)
-           {
-               for(int j=0;j<n;j++)
-               {
-                   mat[i][j]=min(mat[i][j],mat[i][k]+mat[k][j]);
-               }
-           }
-       }
-       
-       int ans;
-       int mini=1e9;
-       for(int i=0;i<n;i++)
-       {
-            int reach=0;
-            for(int j=0;j<n;j++)
+int findCity(int n, int m, vector<vector<int>> &edges,
+             int distanceThreshold)
+{
+    //^ Floyd warshall algo
+    vector<vector<int>> mat(n, vector<int>(n, 1e9));
+    for (auto it : edges)
+    {
+        mat[it[0]][it[1]] = it[2];
+        mat[it[1]][it[0]] = it[2];
+    }
+    for (int i = 0; i < n; i++)
+    {
+        mat[i][i] = 0;
+    }
+    for (int k = 0; k < n; k++)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
             {
-                if(mat[i][j]<=distanceThreshold)
-                {
-                       reach++;
-                }
-            }
-            if(reach<=mini)
-            {
-                mini=reach;
-                ans=i;
+                mat[i][j] = min(mat[i][j], mat[i][k] + mat[k][j]);
             }
         }
-           
-        return ans;
-    }   
+    }
+
+    int ans;
+    int mini = 1e9;
+    for (int i = 0; i < n; i++)
+    {
+        int reach = 0;
+        for (int j = 0; j < n; j++)
+        {
+            if (mat[i][j] <= distanceThreshold)
+            {
+                reach++;
+            }
+        }
+        if (reach <= mini)
+        {
+            mini = reach;
+            ans = i;
+        }
+    }
+
+    return ans;
+}
 
 //^ 34 Prims algorithm for Minimum Spanning Tree
-/* 
+/*
 Intuition:
 
 The problem can be solved using Prim's algorithm, which is a greedy algorithm for finding the Minimum Spanning Tree (MST) of a connected, undirected graph.
@@ -2286,35 +2317,39 @@ Hint:
 
     Add the weights of selected edges to the ans variable to calculate the MST weight.
  */
-    int spanningTree(int V, vector<vector<int>> adj[])
+int spanningTree(int V, vector<vector<int>> adj[])
+{
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, 0});
+    vector<bool> visit(V);
+    int ans = 0;
+    while (!pq.empty())
     {
-       priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>>pq;
-       pq.push({0,0});
-       vector<bool> visit(V);
-       int ans=0;
-       while(!pq.empty()){
-           auto p=pq.top();
-           pq.pop();
-           int x=p.second; // node
-           int w=p.first; // weight
-           if(visit[x])continue; // already visited means we have reached here using less amount of weight sum
-           visit[x]=true;
-           ans+=w; // add weight to the MST sum
-           for(auto y:adj[x]){
-               if(!visit[y[0]]){
-                   pq.push({y[1],y[0]}); // add all nodes in the priority queue which are not visited yet
-               }
-           }
-       }
-       return ans;
-   }
+        auto p = pq.top();
+        pq.pop();
+        int x = p.second; // node
+        int w = p.first;  // weight
+        if (visit[x])
+            continue; // already visited means we have reached here using less amount of weight sum
+        visit[x] = true;
+        ans += w; // add weight to the MST sum
+        for (auto y : adj[x])
+        {
+            if (!visit[y[0]])
+            {
+                pq.push({y[1], y[0]}); // add all nodes in the priority queue which are not visited yet
+            }
+        }
+    }
+    return ans;
+}
 
 //^ 35 Disjoint set data structure
-/* 
+/*
 Data Structures Used:
 
-    rank: A vector that stores the rank of each element in the disjoint set. Rank is used to perform a union operation more efficiently by attaching the smaller tree to the larger tree to keep the tree balanced.
-    parent: A vector that stores the parent (representative) of each element in the disjoint set. Initially, each element is its own parent, representing a disjoint set with only one element.
+rank: A vector that stores the rank of each element in the disjoint set. Rank is used to perform a union operation more efficiently by attaching the smaller tree to the larger tree to keep the tree balanced.
+parent: A vector that stores the parent (representative) of each element in the disjoint set. Initially, each element is its own parent, representing a disjoint set with only one element.
 
 Constructor:
 
@@ -2327,50 +2362,655 @@ unionByRank Function:
 This function is used to perform the union of two sets represented by 'u' and 'v'. It first finds the ultimate parent of both 'u' and 'v' using findUPar. Then, it compares their ranks. If the rank of 'u's ultimate parent is less than the rank of 'v's ultimate parent, it attaches 'u' to 'v'. If the rank of 'v's ultimate parent is less than the rank of 'u's ultimate parent, it attaches 'v' to 'u'. If both ranks are the same, one tree is attached to the other, and the rank of the ultimate parent is increased by 1. This union-by-rank and path compression strategy ensures that the tree remains balanced, and the time complexity of this operation is nearly O(1) on average.
 Time Complexity:
 
-    findUPar: Nearly O(1) on average due to path compression.
-    unionByRank: Nearly O(1) on average due to union by rank and path compression.
+findUPar: Nearly O(1) on average due to path compression.
+unionByRank: Nearly O(1) on average due to union by rank and path compression.
 
 Space Complexity:
 
-    The space complexity is O(n) for the rank and parent vectors, where 'n' is the number of elements in the disjoint set.
+The space complexity is O(n) for the rank and parent vectors, where 'n' is the number of elements in the disjoint set.
 
 This Disjoint-Set data structure is efficient for managing disjoint sets and performing union and find operations. It is commonly used in various algorithms like Kruskal's Minimum Spanning Tree algorithm and cycle detection in graphs, among others.
- */
-class DisjointSet{
-    private:
-        vector<int> rank,parent;
-    public:
-        DisjointSet(int n){
-            rank.resize(n+1);
-            parent.resize(n+1);
-            for (int i = 0; i < n + 1; i++)
+*/
+class DisjointSet
+{
+private:
+public:
+    vector<int> rank, parent, size;
+    DisjointSet(int n)
+    {
+        rank.resize(n + 1);
+        parent.resize(n + 1);
+        size.resize(n + 1);
+        for (int i = 0; i < n + 1; i++)
+        {
+            parent.at(i) = i;
+        }
+    }
+
+    int findUPar(int node)
+    {
+        if (node == parent[node])
+            return node;
+        return parent[node] = findUPar(parent[node]);
+    }
+
+    void unionByRank(int u, int v)
+    {
+        int ultimateParentU = findUPar(u);
+        int ultimateParentV = findUPar(v);
+        if (ultimateParentU == ultimateParentV)
+            return;
+        if (rank.at(ultimateParentU) < rank.at(ultimateParentV))
+        {
+            parent.at(ultimateParentU) = ultimateParentV;
+        }
+        else if (rank.at(ultimateParentV) < rank.at(ultimateParentU))
+        {
+            parent[ultimateParentV] = ultimateParentU;
+        }
+        else
+        {
+            parent.at(ultimateParentV) = parent.at(ultimateParentU);
+            rank.at(ultimateParentU)++;
+        }
+    }
+
+    void unionBySize(int u, int v)
+    {
+        int ultimateParentU = findUPar(u);
+        int ultimateParentV = findUPar(v);
+        if (ultimateParentU == ultimateParentV)
+            return;
+        if (size.at(ultimateParentU) < size.at(ultimateParentV))
+        {
+            parent.at(ultimateParentU) = ultimateParentV;
+            size.at(ultimateParentV) += size.at(ultimateParentU);
+        }
+        else
+        {
+            parent.at(ultimateParentV) = parent.at(ultimateParentU);
+            size.at(ultimateParentU) += size.at(ultimateParentV);
+        }
+    }
+};
+
+//^ 36 Kruskals algorithm
+class Kruskal
+{
+public:
+    // Function to find sum of weights of edges of the Minimum Spanning Tree.
+    int spanningTree(int V, vector<vector<int>> adj[])
+    {
+        vector<pair<int, pair<int, int>>> edges;
+        for (int i = 0; i < V; i++)
+        {
+            for (auto &it : adj[i])
             {
-                parent.at(i) = i;
-            }
-            
-        }
-
-        int findUPar(int node){
-            if(node == parent[node]) return node;
-            return parent[node] = findUPar(parent[node]);
-        }
-
-        void unionByRank(int u,int v){
-            int ultimateParentU = findUPar(u);
-            int ultimateParentV = findUPar(v);
-            if(ultimateParentU == ultimateParentV) return;
-            if(rank.at(ultimateParentU) < rank.at(ultimateParentV)){
-                parent.at(ultimateParentU) = ultimateParentV; 
-            }
-            else if(rank.at(ultimateParentV) < rank.at(ultimateParentU)){
-                parent[ultimateParentV] = ultimateParentU;
-            }
-            else{
-                parent.at(ultimateParentV) = parent.at(ultimateParentU);
-                rank.at(ultimateParentU)++;
+                int v = it[0];
+                int wt = it[1];
+                edges.push_back({wt, {i, v}});
             }
         }
+        sort(edges.begin(), edges.end());
+        int mstWeight;
+        DisjointSet ds(V);
+        for (auto &it : edges)
+        {
+            int wt = it.first;
+            int u = it.second.first;
+            int v = it.second.second;
+            if (ds.findUPar(u) != ds.findUPar(v))
+            {
+                mstWeight += wt;
+                ds.unionByRank(u, v);
+            }
+        }
+        return mstWeight;
+    }
+};
+//^ 37 Number of Operations to make network connected
+/*
+Intuition:
 
+The problem is to find the minimum number of operations required to make all computers connected in a network. We can solve this problem using the concept of disjoint sets (also known as a union-find data structure).
+
+Explanation:
+
+    Create a DisjointSet object ds with n nodes. Each node represents a computer, and initially, each computer is in its own component.
+
+    Initialize a variable extraEdges to 0. This variable will keep track of the number of extra cables that are not needed.
+
+    Iterate through each connection in the connections vector:
+
+        Check if the computers at both ends of the connection (it.front() and it.back()) are already in the same component. If they are, it means adding this connection would create a cycle, so increment extraEdges.
+
+        Otherwise, perform a union operation to merge the components of the two computers using ds.unionBySize(it[0], it[1]).
+
+    After processing all connections, initialize a variable numberOfComponents to 0. This variable will keep track of the number of components in the network.
+
+    Iterate through all nodes (computers) from 0 to n-1. For each node i, check if it is the parent of itself in the disjoint set. If it is, increment numberOfComponents.
+
+    Now, we have the following information:
+
+        extraEdges: The number of extra cables.
+
+        numberOfComponents: The number of components in the network.
+
+    To connect all computers, we need at least numberOfComponents - 1 cables. If extraEdges is greater than or equal to numberOfComponents - 1, it means we have enough extra cables to connect all components. In this case, return numberOfComponents - 1 as the minimum number of operations required.
+
+    If extraEdges is less than numberOfComponents - 1, it means we don't have enough extra cables to connect all components, and it's impossible to make all computers connected. Return -1 in this case.
+
+Time Complexity:
+
+    The time complexity of the union-find operations (union and find) is typically O(log n) on average, where n is the number of nodes (computers). In the worst case, it can be O(n) for a find operation, but this is rare.
+
+    The loop that iterates through the connections has a time complexity of O(E), where E is the number of connections.
+
+    The loop that counts the number of components has a time complexity of O(n).
+
+    Overall, the time complexity of the algorithm is dominated by the union-find operations, so it is approximately O(E * log n).
+
+Space Complexity:
+
+    The space complexity is O(n) for the DisjointSet object, as it stores the parent and size arrays for each node.
+
+Hint:
+
+    Use a disjoint-set data structure (union-find) to keep track of connected components.
+
+    Calculate the number of extra edges that are not needed.
+
+    Calculate the number of connected components in the network.
+
+    Determine if it's possible to connect all computers by comparing the number of extra edges with the number of components.
+
+ */
+int makeConnected(int n, vector<vector<int>> &connections)
+{
+    DisjointSet ds(n);
+    int extraEdges = 0;
+    for (auto &it : connections)
+    {
+        if (ds.findUPar(it.front()) == ds.findUPar(it.back()))
+            extraEdges++;
+        else
+            ds.unionBySize(it[0], it[1]);
+    }
+    int numberOfComponents = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (ds.parent[i] == i)
+            numberOfComponents++;
+    }
+    return (extraEdges >= numberOfComponents - 1) ? numberOfComponents - 1 : -1;
+}
+
+//^ 38 Accounts Merge
+/*
+Intuition:
+
+The problem is to merge accounts of the same person based on their emails. We can use a disjoint set (union-find) data structure to group accounts belonging to the same person. Here's the general approach:
+
+    Create a DisjointSet object ds with n nodes, where n is the number of accounts. Each node represents an account.
+
+    Sort the details vector lexicographically. This step is essential to ensure that we process accounts with the same name consecutively.
+
+    Initialize an unordered map mapMailNode to keep track of the mapping from emails to their corresponding account node. We will use this map to quickly find the account to which an email belongs.
+
+    Iterate through each account in the details vector:
+
+        For each account, iterate through its emails starting from the second element (index 1).
+
+        Check if the email is already in mapMailNode. If it's not, add it to the map with the corresponding account node index. If it's already in the map, it means this email belongs to multiple accounts. In this case, perform a union operation between the current account node and the account node associated with this email using ds.unionBySize(i, mapMailNode[mail]).
+
+    After processing all accounts and merging them based on emails, create a vector of vectors called mergedMail. Each inner vector represents a group of merged emails belonging to the same person. We use the disjoint set data structure to find the parent (representative) node for each group of emails.
+
+    Create a vector of vectors called ans to store the final merged accounts.
+
+    Iterate through the mapMailNode map:
+
+        For each email, find its corresponding account node using ds.findUPar(it.second).
+
+        Append the email to the mergedMail vector corresponding to the representative account node.
+
+    Finally, iterate through the mergedMail vector:
+
+        Sort the emails lexicographically for each group.
+
+        Create a temporary vector temp to store the merged account details, starting with the account name (details[i][0]) followed by the sorted emails.
+
+        Append the temp vector to the ans vector.
+
+    Sort the ans vector lexicographically based on the first element (account name).
+
+    Return the ans vector as the result.
+
+Time Complexity:
+
+    The time complexity is dominated by the union-find operations (union and find) performed during the processing of accounts, which is approximately O(N * log N), where N is the total number of emails.
+
+    Sorting the ans vector takes O(M * log M) time, where M is the total number of accounts. However, M is bounded by N, so the overall time complexity remains O(N * log N).
+
+Space Complexity:
+
+    The space complexity is O(N) for the DisjointSet object and the mapMailNode unordered map, where N is the number of accounts.
+
+    The mergedMail and ans vectors also contribute to the space complexity, but they are bounded by the number of emails, so they do not dominate the space complexity.
+
+Hint:
+
+    Use a disjoint-set data structure to group accounts based on their emails.
+
+    Sort the accounts lexicographically to ensure that accounts with the same name are processed together.
+
+    Keep a map of email-to-account-node mapping to efficiently find the account node for each email.
+
+    After merging accounts, iterate through the merged groups of emails and sort them before creating the final merged accounts.
+ */
+vector<vector<string>> accountsMerge(vector<vector<string>> &details)
+{
+    int n = details.size();
+    DisjointSet ds(n);
+    sort(details.begin(), details.end());
+    unordered_map<string, int> mapMailNode;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 1; j < details[i].size(); j++)
+        {
+            string mail = details[i][j];
+            if (mapMailNode.find(mail) == mapMailNode.end())
+            {
+                mapMailNode[mail] = i;
+            }
+            else
+            {
+                ds.unionBySize(i, mapMailNode[mail]);
+            }
+        }
+    }
+
+    vector<string> mergedMail[n];
+    for (auto it : mapMailNode)
+    {
+        string mail = it.first;
+        int node = ds.findUPar(it.second);
+        mergedMail[node].push_back(mail);
+    }
+
+    vector<vector<string>> ans;
+
+    for (int i = 0; i < n; i++)
+    {
+        if (mergedMail[i].size() == 0)
+            continue;
+        sort(mergedMail[i].begin(), mergedMail[i].end());
+        vector<string> temp;
+        temp.push_back(details[i][0]);
+        for (auto it : mergedMail[i])
+        {
+            temp.push_back(it);
+        }
+        ans.push_back(temp);
+    }
+    sort(ans.begin(), ans.end());
+    return ans;
+}
+
+//^ 39 Number of Islands 2
+class NumberOfIslands2
+{
+private:
+    /*
+    Intuition:
+
+The problem is about simulating the process of adding islands (changing 0 to 1) in a grid and counting the number of connected islands after each addition. We can solve this problem using a disjoint-set (union-find) data structure to keep track of connected components (islands).
+
+Here's the general approach:
+
+    Define a vector dirs representing the four possible directions to adjacent cells: up, right, down, and left.
+
+    Create a function getCellNumber to calculate the unique cell number based on the row, column, and total number of columns. This function is useful for mapping grid coordinates to a unique index for the disjoint-set data structure.
+
+    Create a function inbound to check if a given row and column are within the bounds of the grid.
+
+    Initialize a DisjointSet object ds with n * m nodes, where n is the number of rows and m is the number of columns. Each node represents a cell in the grid.
+
+    Initialize a variable islands to keep track of the number of islands.
+
+    Create an empty vector ans to store the answers for each operation.
+
+    Create a 2D vector visited of size n x m to keep track of visited cells.
+
+    Iterate through the operations (operators) provided as input:
+
+        For each operator, extract the row and column coordinates.
+
+        Check if the cell is already visited. If it is, append the current islands count to the ans vector and continue to the next operation.
+
+        Mark the cell as visited.
+
+        Increment the islands count since a new island is being added.
+
+        Iterate through the four directions to check adjacent cells:
+
+            Calculate the new row and column coordinates based on the direction.
+
+            Check if the new coordinates are within the bounds of the grid (inbound function).
+
+            If the adjacent cell is visited, perform a union operation using the DisjointSet object ds. This operation checks if the current cell and the adjacent cell belong to different islands. If they do, it merges them and decreases the islands count.
+
+        Append the current islands count to the ans vector after processing the operation.
+
+    After processing all operations, return the ans vector, which contains the number of islands after each operation.
+
+Time Complexity:
+
+    The time complexity is dominated by the union-find operations (union and find) performed during the processing of operations, which is approximately O(K * log(N * M)), where K is the number of operations, and N and M are the number of rows and columns in the grid.
+
+Space Complexity:
+
+    The space complexity is O(N * M) for the visited matrix and O(N * M) for the disjoint-set data structure.
+
+Hint:
+
+    Use a disjoint-set (union-find) data structure to keep track of connected islands.
+
+    Mark visited cells to avoid double counting when adding new islands.
+
+    Iterate through adjacent cells to check and merge islands when necessary.
+     */
+    vector<pair<int, int>> dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+    int getCellNumber(int row, int col, int totalCols)
+    {
+        return (totalCols * row) + col;
+    }
+    bool inbound(int row, int col, int n, int m)
+    {
+        return row >= 0 && row < n && col >= 0 && col < m;
+    }
+    vector<int> numOfIslands(int n, int m, vector<vector<int>> &operators)
+    {
+        // code here
+        DisjointSet ds(n * m);
+        int islands = 0;
+        vector<int> ans;
+        vector<vector<bool>> visited(n, vector<bool>(m));
+        for (auto &it : operators)
+        {
+            int row = it.front();
+            int col = it.back();
+            if (visited[row][col])
+            {
+                ans.push_back(islands);
+                continue;
+            }
+            visited[row][col] = true;
+            islands++;
+            for (auto &dir : dirs)
+            {
+                int nrow = row + dir.first;
+                int ncol = col + dir.second;
+                if (inbound(nrow, ncol, n, m) && visited[nrow][ncol])
+                {
+                    if (ds.findUPar(getCellNumber(row, col, m)) != ds.findUPar(getCellNumber(nrow, ncol, m)))
+                    {
+                        islands--;
+                        ds.unionBySize(getCellNumber(row, col, m), getCellNumber(nrow, ncol, m));
+                    }
+                }
+            }
+            ans.push_back(islands);
+        }
+        return ans;
+    }
+};
+
+//^ 40 Maximum stone removals
+/* 
+Intuition:
+
+The problem is essentially asking how many stones can be removed while ensuring that there is at least one stone remaining in each row and each column. We can solve this problem using a disjoint-set (union-find) data structure to keep track of connected stones in both rows and columns.
+
+Here's the general approach:
+
+    Iterate through the given stones vector to find the maximum row index (maxRow) and maximum column index (maxCol). This information will help us map row and column indices into a single range.
+
+    Initialize a DisjointSet object ds with the size of maxRow + maxCol + 1. This size is used to represent both rows and columns as disjoint sets. Each node in the disjoint-set corresponds to a row or column.
+
+    Create an unordered set stoneNodes to keep track of nodes (rows and columns) where stones are placed.
+
+    Iterate through the stones vector:
+
+        For each stone, calculate its corresponding node index for the row (nodeRow) and column (nodeCol) by adding appropriate offsets (maxRow + 1 for columns).
+
+        Use the DisjointSet object ds to perform a union operation between nodeRow and nodeCol. This operation connects the stone's row and column.
+
+        Add nodeRow and nodeCol to the stoneNodes set to mark them as nodes with stones.
+
+    Initialize a counter cnt to 0, which will be used to count the number of components (rows or columns) with stones that are not removed.
+
+    Iterate through the elements in the stoneNodes set:
+        For each node, check if it is the representative (parent) of its disjoint set. If it is, increment cnt. The representative nodes represent rows or columns with stones that cannot be removed.
+
+    Calculate the maximum possible number of removed stones as n - cnt. This is because for each component with stones (either rows or columns), we can keep one stone, and all other stones in that component can be removed.
+
+    Return the maximum possible number of removed stones.
+
+Time Complexity:
+
+    The time complexity is dominated by the union-find operations (union and find) performed during the processing of stones, which is approximately O(N * α(N)), where N is the number of stones, and α(N) is the inverse Ackermann function, a very slow-growing function.
+
+Space Complexity:
+
+    The space complexity is O(N) for storing the stone nodes and O(maxRow + maxCol) for the disjoint-set data structure.
+
+Hint:
+
+    Use a disjoint-set (union-find) data structure to connect stones in both rows and columns.
+
+    Count the number of connected components (representatives) that cannot be removed, and subtract it from the total number of stones to get the maximum possible number of removed stones.
+ */
+int maxRemove(vector<vector<int>> &stones, int n)
+{
+    int maxRow = 0, maxCol = 0;
+    for (auto &it : stones)
+    {
+        maxRow = max(maxRow, it.front());
+        maxCol = max(maxCol, it.back());
+    }
+    DisjointSet ds(maxRow + maxCol + 1);
+    unordered_set<int> stoneNodes;
+    for (int i = 0; i < n; i++)
+    {
+        int nodeRow = stones[i][0];
+        int nodeCol = stones[i][1] + maxRow + 1;
+        ds.unionBySize(nodeRow, nodeCol);
+        stoneNodes.insert(nodeRow);
+        stoneNodes.insert(nodeCol);
+    }
+    int cnt = 0;
+    for (auto &it : stoneNodes)
+    {
+        if (ds.findUPar(it) == it)
+            cnt++;
+    }
+    return n - cnt;
+}
+
+//^ 41 Kosharaju Algorithm
+class Kosharaju{
+    private:
+    /* 
+    Intuition:
+
+This problem can be solved using Kosaraju's algorithm, which is a two-pass algorithm to find strongly connected components (SCCs) in a directed graph.
+
+Here's how the algorithm works:
+
+    First, perform a Depth-First Search (DFS) on the original graph and push nodes onto a stack in the order they finish processing (i.e., after exploring all of their descendants). This stack will contain the nodes in reverse topological order. We call this stack s.
+
+    Reverse the directions of all edges in the graph to create a reversed graph. This can be done by iterating through each node in the original graph and reversing its edges. We call this reversed graph adjReverse.
+
+    Initialize a count for strongly connected components (stronglyConnectedComponents) to 0.
+
+    While the stack s is not empty:
+
+        Pop a node from the stack s. If it has not been visited in the reversed graph:
+
+            Perform a DFS from this node in the reversed graph, marking all reachable nodes as visited.
+
+            Increment the stronglyConnectedComponents count by 1. This represents a new strongly connected component.
+
+    Return the stronglyConnectedComponents count, which represents the number of SCCs in the graph.
+
+Time Complexity:
+
+    The time complexity is O(V + E), where V is the number of vertices (nodes) and E is the number of edges in the graph. Both the DFS passes take linear time in terms of the number of nodes and edges.
+
+Space Complexity:
+
+    The space complexity is O(V + E) to store the graph and adjacency lists, and O(V) for the vis array and the stack.
+
+Hint:
+
+    Use two DFS passes: one on the original graph to fill the stack, and another on the reversed graph to count SCCs.
+
+    Pay attention to the order of processing nodes in the stack to ensure reverse topological order.
+     */
+    public:
+	//Function to find number of strongly connected components in the graph.
+	void DFS(int src,vector<vector<int>> &adj,vector<bool> &vis,stack<int> &s){
+	    vis.at(src) = true;
+	    for(auto &it : adj[src]){
+	        if(!vis.at(it)){
+	            DFS(it,adj,vis,s);
+	        }
+	    }
+	    s.push(src);
+	}
+	
+	void reverseDFS(int src,vector<vector<int>> &adj,vector<bool> &vis){
+	    vis.at(src) = true;
+	    for(auto &it : adj[src]){
+	        if(!vis.at(it)){
+	            reverseDFS(it,adj,vis);
+	        }
+	    }
+	}
+	
+    int kosaraju(int V, vector<vector<int>>& adj)
+    {
+        //code here
+        vector<bool> vis(V);
+        stack<int> s;
+        for(int i = 0; i < V; i++){
+            if(!vis.at(i)){
+                DFS(i,adj,vis,s);
+            }
+        }
+        
+        // reverse the graph
+        vector<vector<int>> adjReverse(V);
+        for(int i = 0; i < V; i++){
+            vis[i] = false;
+            for(auto &it : adj[i]){
+                adjReverse[it].push_back(i); // directed graph
+            }
+        }
+        
+        int stronglyConnectedComponents = 0;
+        while(!s.empty()){
+            int node = s.top(); s.pop();
+            if(!vis[node]){
+                reverseDFS(node,adjReverse,vis);
+                stronglyConnectedComponents++;
+            }
+        }
+        return stronglyConnectedComponents;
+        
+
+    }
+};
+
+//^ 42 Tarjans Algorithmas
+class Tarjans{
+    private:    
+    /* 
+    Intuition:
+
+This problem can be solved using Tarjan's algorithm for finding bridges in an undirected graph. A bridge is an edge in the graph such that if it is removed, the graph becomes disconnected or has an increase in the number of connected components.
+
+Here's how the algorithm works:
+
+    Perform a Depth-First Search (DFS) on the graph to find bridges. During the DFS traversal, maintain two arrays tin and low for each node. tin represents the time of entry for each node in the DFS traversal, and low represents the lowest tin value that can be reached from that node.
+
+    Initialize a timer variable timer to 1 and increment it at each step to record the entry time.
+
+    When exploring an edge (u, v) from node u to node v, do the following:
+
+        If v is the parent of u, continue to the next iteration (skip the back edge).
+
+        If v is not visited (vis[v] == 0), recursively call DFS on v and update low[u] with min(low[u], low[v]).
+
+        If v is visited (vis[v] == 1), update low[u] with min(low[u], tin[v]).
+
+        If low[v] is greater than tin[u], it means the edge (u, v) is a bridge, so add it to the bridges vector.
+
+    After the DFS traversal, the bridges vector contains all the critical connections (bridges) in the graph.
+
+Time Complexity:
+
+    The time complexity is O(V + E), where V is the number of vertices (nodes) and E is the number of edges in the graph. Both the DFS pass and the bridge finding step take linear time in terms of the number of nodes and edges.
+
+Space Complexity:
+
+    The space complexity is O(V + E) to store the graph and adjacency lists, and O(V) for the vis, tin, and low arrays.
+
+Hint:
+
+    Maintain an additional array vis to keep track of the visited status of nodes (0 for unvisited, 1 for visiting, 2 for visited).
+
+    Bridges are edges where low[v] > tin[u], where u and v are the nodes connected by the edge (u, v).
+
+    Use Tarjan's algorithm to find bridges efficiently.
+     */
+    public:
+    int timer = 1;
+    void dfs(int node, int parent, vector<int> &vis,
+             vector<int> adj[], int tin[], int low[], vector<vector<int>> &bridges) {
+        vis[node] = 1;
+        tin[node] = low[node] = timer;
+        timer++;
+        for (auto it : adj[node]) {
+            if (it == parent) continue;
+            if (vis[it] == 0) {
+                dfs(it, node, vis, adj, tin, low, bridges);
+                low[node] = min(low[it], low[node]);
+                // node --- it
+                if (low[it] > tin[node]) {
+                    bridges.push_back({it, node});
+                }
+            }
+            else {
+                low[node] = min(low[node], low[it]);
+            }
+        }
+    }
+    vector<vector<int>> criticalConnections(int n,
+    vector<vector<int>>& connections) {
+        vector<int> adj[n];
+        for (auto it : connections) {
+            int u = it[0], v = it[1];
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        vector<int> vis(n, 0);
+        int tin[n];
+        int low[n];
+        vector<vector<int>> bridges;
+        dfs(0, -1, vis, adj, tin, low, bridges);
+        return bridges;
+    }
 };
 int main()
 {

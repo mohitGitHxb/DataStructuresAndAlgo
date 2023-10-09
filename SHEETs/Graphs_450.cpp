@@ -988,7 +988,7 @@ public:
 };
 
 //^ 12 Detect a cycle in a directed graph
-class Solution
+class CycleInADirectedGraph
 {
 private:
     /*
@@ -1823,6 +1823,73 @@ public:
 
 //^25 Shortest path in a binary maze
 
+/* 
+Intuition:
+
+To find the shortest path between a source cell and a destination cell in a binary grid, we can use Breadth-First Search (BFS) starting from the source cell and stopping when we reach the destination cell. During the BFS traversal, we'll keep track of the distance from the source cell to each cell we visit.
+
+Here's how the algorithm works:
+
+    Initialize a 2D vector dist of size n x m where each element is initially set to a large value (e.g., 1e9). This vector will store the minimum distance from the source cell to each cell.
+
+    Initialize a queue q for BFS. Each element in the queue will be a pair (distance, cell) where distance is the distance from the source cell to the current cell, and cell is a pair (row, col) representing the coordinates of the cell.
+
+    Initialize the distance of the source cell to 0 and add it to the queue: dist[source.first][source.second] = 0, q.push({0, source}).
+
+    Implement the BFS traversal as follows:
+        While the queue is not empty, dequeue the front element (dis, {r, c}).
+        Check if the current cell grid[r][c] is valid for movement (i.e., it is 1 and the new distance 1 + dis is less than the current distance dist[r][c]).
+        If the above conditions are met, update dist[r][c] with the new distance and enqueue the adjacent cells (up, down, left, right) with the new distance.
+
+    After the BFS traversal, if the dist[dest.first][dest.second] is still the initial large value, it means there is no path from the source to the destination, so return -1.
+
+    Otherwise, return dist[dest.first][dest.second] as the shortest distance from the source to the destination.
+
+Time Complexity:
+
+    The BFS traversal visits each cell at most once, resulting in a time complexity of O(n * m), where n is the number of rows and m is the number of columns in the grid.
+
+Space Complexity:
+
+    The space complexity is O(n * m) for the dist vector and O(n * m) for the queue q, resulting in a total space complexity of O(n * m).
+
+Hint:
+
+    Use BFS to explore the grid while keeping track of the minimum distance from the source cell to each visited cell. If the destination cell is reached, return its distance; otherwise, return -1 if no path is found.
+ */
+class BinaryMazePath {
+  public:
+  vector<pair<int,int>> dirs = {{1,0},{0,1},{-1,0},{0,-1}};
+  bool isValid(int row,int col,int n,int m,vector<vector<int>> &vis,vector<vector<int>> &grid,int distance){
+      return row>=0 && row<n && col>=0 && col<m && grid[row][col] == 1 && 1 + distance < vis[row][col];
+  }
+    int shortestPath(vector<vector<int>> &grid, pair<int, int> source,
+                     pair<int, int> dest) {
+        // code here
+        int n = grid.size() , m = grid.front().size();
+        vector<vector<int>> dist(n,vector<int> (m,1e9));
+        dist[source.first][source.second] = 0;
+        queue<pair<int,pair<int,int>>> q;
+        q.push({0,{source.first,source.second}});
+        while(!q.empty()){
+            int dis = q.front().first;
+            int r = q.front().second.first;
+            int c = q.front().second.second;
+            q.pop();
+            for(auto &it : dirs){
+                int nrow = r + it.first;
+                int ncol = c + it.second;
+                if(isValid(nrow,ncol,n,m,dist,grid,dis)){
+                    dist[nrow][ncol] = 1 + dis;
+                    q.push({1 + dis , {nrow,ncol}});
+                }
+            }
+        }
+        if(dist[dest.first][dest.second] == 1e9) return -1;
+        return dist[dest.first][dest.second];
+    }
+};
+
 //^26 Path to minimum efforts
 class MinimumEfforts
 {
@@ -2022,6 +2089,42 @@ public:
 };
 
 //^ 29 Number of ways to arrive at destination
+/* 
+**Intuition:**
+
+This problem can be solved using Dijkstra's algorithm to find the shortest paths from the source node (intersection 0) to all other intersections. Additionally, we can keep track of the number of shortest paths to each intersection.
+
+Here's how the algorithm works:
+
+1. Create an adjacency list `adj` to represent the graph, where `adj[i]` is a vector of pairs `(j, w)` indicating that there is a road from intersection `i` to intersection `j` with a travel time of `w` minutes.
+
+2. Initialize two arrays:
+   - `dist` to store the minimum travel time to reach each intersection. Initialize it with a large value (e.g., `INT_MAX`) except for `dist[0]` which is set to 0 since we start at intersection 0.
+   - `ways` to store the number of ways to reach each intersection with the minimum travel time. Initialize it with zeros except for `ways[0]` which is set to 1 since there is one way to reach intersection 0 (starting from 0).
+
+3. Use a min-heap (priority queue) to perform Dijkstra's algorithm. Initially, push the pair `(0, 0)` into the priority queue, where the first element is the travel time (0 minutes) and the second element is the intersection (0).
+
+4. While the priority queue is not empty, do the following:
+   - Pop the top element `(distance, node)` from the priority queue.
+   - For each neighbor `(adjNode, edgeWt)` of the current node, check if the new travel time `distance + edgeWt` is equal to the current minimum travel time `dist[adjNode]`. If it is equal, increment the `ways[adjNode]` by `ways[node]` to account for the number of ways to reach `adjNode` with the minimum travel time. If it is less than `dist[adjNode]`, update `dist[adjNode]` with the new travel time and set `ways[adjNode]` to `ways[node]`.
+   - Push the pair `(dist[adjNode], adjNode)` into the priority queue.
+
+5. After the loop, `ways[n-1]` will contain the number of ways to reach intersection `n-1` with the minimum travel time.
+
+6. Return `ways[n-1] % MOD` as the answer, where `MOD = 1e9 + 7`.
+
+*Time Complexity:
+
+- The time complexity of Dijkstra's algorithm is O(E * log(V)), where E is the number of edges and V is the number of vertices. In this case, E is the number of roads, and V is the number of intersections.
+
+*Space Complexity:**
+
+- The space complexity is O(V) for the `dist` and `ways` arrays and O(E) for the adjacency list `adj`.
+
+**Hint:**
+
+- Use Dijkstra's algorithm to find the shortest paths and keep track of the number of ways to reach each intersection with the minimum travel time. Be mindful of using a min-heap (priority queue) to efficiently explore nodes with the shortest travel times.
+ */
 class NumberOfWaysToArrive
 {
 private:

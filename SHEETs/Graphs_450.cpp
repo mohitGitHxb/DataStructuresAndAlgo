@@ -3115,6 +3115,98 @@ Hint:
         return bridges;
     }
 };
+
+//^ 43 Articulation point
+class ArticulationPoint{
+    private:
+    /* 
+    
+    Intuition:
+
+    Articulation Points: Articulation points are the vertices in a graph whose removal increases the number of connected components in the graph. In other words, these are the critical points where the graph can be split into multiple disconnected parts if the vertex is removed.
+
+    Depth-First Search (DFS): The code uses a depth-first search (DFS) algorithm to traverse the graph and find these articulation points.
+
+Code:
+
+    Depth-First Search (DFS):
+        The core of the code is the dfs function, which performs a DFS traversal of the graph.
+        It maintains two arrays, tin and low, to keep track of the entry time and the lowest reachable ancestor for each vertex.
+        A timer variable is used to record the current time during the DFS traversal.
+
+    DFS on the Graph:
+        The code iterates through the vertices in the graph.
+        For each vertex, it calls the dfs function. The dfs function explores the neighbors of the current vertex and determines if it's an articulation point based on the properties of tin and low.
+
+    Articulation Point Detection:
+        The key idea is that if, during the DFS traversal, we find a vertex it such that low[it] is greater than or equal to tin[src], it means that there is no back edge from the subtree rooted at it to any ancestor of src other than its immediate parent. In this case, src is marked as an articulation point.
+
+    Counting Children:
+        Additionally, the code keeps track of the number of children each vertex has. If a vertex is the root of the DFS tree (i.e., parent == -1) and has more than one child, it is also marked as an articulation point because removing the root will disconnect the children.
+
+    Output:
+        The code compiles a list of articulation points and returns them as a vector. If no articulation points are found, it returns a vector with a single element containing -1.
+
+Time Complexity:
+
+    The time complexity of this code is O(V + E), where V is the number of vertices, and E is the number of edges in the graph. This is because the DFS traversal visits each vertex and each edge once.
+
+Space Complexity:
+
+    The space complexity is O(V) to store the tin, low, mark, and vis arrays. This is because we need arrays of size V to keep track of information about each vertex.
+
+Hints:
+
+    DFS: The code uses a depth-first search to explore the graph. It starts from a vertex and traverses as deeply as possible before backtracking.
+    Lowest Reachable Ancestor: The low array keeps track of the lowest reachable ancestor for each vertex. This is crucial for detecting articulation points.
+    Tree Roots: If a vertex is th
+    
+     */
+  public:
+    int timer = 0;
+    void dfs(int src,int parent,vector<int> adj[],vector<int> &tin,vector<int> &low,vector<bool> &mark,vector<bool> &vis){
+        vis.at(src) = true;
+        tin.at(src) = low.at(src) = timer++;
+        int children = 0;
+        for(auto &it : adj[src]){
+            if(parent == it) continue;
+            if(!vis[it]){
+                dfs(it,src,adj,tin,low,mark,vis);
+                low.at(src) = min(low.at(src),low.at(it));
+                if(low.at(it) >= tin.at(src) && parent != -1){
+                    mark[src] = true;
+                }
+                children++;
+            }
+            else{
+                low.at(src) = min(low.at(src) , tin.at(it));
+            }
+        }
+        if(children > 1 && parent == -1){
+            mark.at(src) = true;
+        }
+    }
+    vector<int> articulationPoints(int V, vector<int>adj[]) {
+        // Code here
+        vector<bool> vis(V),mark(V);
+        vector<int> tin(V),low(V);
+        for(int i = 0; i < V; i++){
+            if(!vis.at(i)){
+                dfs(i,-1,adj,tin,low,mark,vis);
+            }
+        }
+        
+        vector<int> ans;
+        for(int i = 0; i < mark.size(); i++){
+        
+            if(mark.at(i)){
+                ans.push_back(i);
+            }
+        }
+        if(ans.empty()) return {-1};
+        return ans;
+    }
+};
 int main()
 {
     return 0;

@@ -2474,64 +2474,47 @@ The space complexity is O(n) for the rank and parent vectors, where 'n' is the n
 
 This Disjoint-Set data structure is efficient for managing disjoint sets and performing union and find operations. It is commonly used in various algorithms like Kruskal's Minimum Spanning Tree algorithm and cycle detection in graphs, among others.
 */
-class DisjointSet
-{
-private:
+class DisjointSet {
 public:
     vector<int> rank, parent, size;
-    DisjointSet(int n)
-    {
+    DisjointSet(int n) {
         rank.resize(n + 1);
         parent.resize(n + 1);
         size.resize(n + 1);
-        for (int i = 0; i < n + 1; i++)
-        {
+        for (int i = 0; i < n + 1; i++) {
             parent.at(i) = i;
+            size.at(i) = 1;
         }
     }
 
-    int findUPar(int node)
-    {
-        if (node == parent[node])
-            return node;
+    int findUPar(int node) {
+        if (node == parent[node]) return node;
         return parent[node] = findUPar(parent[node]);
     }
 
-    void unionByRank(int u, int v)
-    {
+    void unionByRank(int u, int v) {
         int ultimateParentU = findUPar(u);
         int ultimateParentV = findUPar(v);
-        if (ultimateParentU == ultimateParentV)
-            return;
-        if (rank.at(ultimateParentU) < rank.at(ultimateParentV))
-        {
+        if (ultimateParentU == ultimateParentV) return;
+        if (rank.at(ultimateParentU) < rank.at(ultimateParentV)) {
             parent.at(ultimateParentU) = ultimateParentV;
-        }
-        else if (rank.at(ultimateParentV) < rank.at(ultimateParentU))
-        {
-            parent[ultimateParentV] = ultimateParentU;
-        }
-        else
-        {
+        } else if (rank.at(ultimateParentV) < rank.at(ultimateParentU)) {
+            parent.at(ultimateParentV) = ultimateParentU;
+        } else {
             parent.at(ultimateParentV) = parent.at(ultimateParentU);
             rank.at(ultimateParentU)++;
         }
     }
 
-    void unionBySize(int u, int v)
-    {
+    void unionBySize(int u, int v) {
         int ultimateParentU = findUPar(u);
         int ultimateParentV = findUPar(v);
-        if (ultimateParentU == ultimateParentV)
-            return;
-        if (size.at(ultimateParentU) < size.at(ultimateParentV))
-        {
+        if (ultimateParentU == ultimateParentV) return;
+        if (size.at(ultimateParentU) < size.at(ultimateParentV)) {
             parent.at(ultimateParentU) = ultimateParentV;
             size.at(ultimateParentV) += size.at(ultimateParentU);
-        }
-        else
-        {
-            parent.at(ultimateParentV) = parent.at(ultimateParentU);
+        } else {
+            parent.at(ultimateParentV) = ultimateParentU;
             size.at(ultimateParentU) += size.at(ultimateParentV);
         }
     }
@@ -3205,6 +3188,63 @@ Hints:
         }
         if(ans.empty()) return {-1};
         return ans;
+    }
+};
+
+//^ 44 Making largest island in a binary matrix [DSU]
+class LargestIsland
+{
+public:
+    bool isValid(int r, int c, int n){
+        return (r>=0 && r<n && c>=0 && c<n);
+    }
+    int largestIsland(vector<vector<int>>& grid) 
+    {
+        // Your code goes here.
+        int n=grid.size();
+        DisjointSet ds(n*n);
+        int dr[4]={-1, 0, 1, 0};
+        int dc[4]={0, 1, 0, -1};
+        
+        for(int row=0; row<n; row++){
+            for(int col=0; col<n; col++){
+                if(grid[row][col]==0) continue;
+                for(int i=0; i<4; i++){
+                    int nr=row+dr[i];
+                    int nc=col+dc[i];
+                    if(isValid(nr, nc, n) && grid[nr][nc]==1){
+                        int nodeNo=row*n+col;
+                        int adjNodeNo=nr*n+nc;
+                        ds.unionBySize(nodeNo, adjNodeNo);
+                    }
+                }
+            }
+        }
+        int maxi=0;
+        
+        for(int row=0; row<n; row++){
+            for(int col=0; col<n; col++){
+                if(grid[row][col]==1) continue;
+                set<int>compo;
+                for(int i=0; i<4; i++){
+                    int nr=row+dr[i];
+                    int nc=col+dc[i];
+                    if(isValid(nr, nc, n) && grid[nr][nc]==1){
+                        compo.insert(ds.findUPar(nr*n+nc));
+                    }
+                }
+                int sz=0;
+                for(auto &it:compo){
+                    sz+=(ds.size[it]);
+                }
+                maxi=max(maxi, sz+1);
+            }
+        }
+        
+        for(int i=0; i<n*n; i++){
+            maxi=max(maxi, ds.size[i]);
+        }
+        return maxi;
     }
 };
 int main()

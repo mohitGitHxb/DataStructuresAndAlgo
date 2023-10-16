@@ -14,7 +14,10 @@
         "chrono": "cpp",
         "random": "cpp",
         "limits": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "format": "cpp",
+        "cmath": "cpp",
+        "complex": "cpp"
     },
     "cSpell.words": [
         "getnode",

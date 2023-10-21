@@ -5,71 +5,167 @@ using namespace std;
 
 class ValidParenthesis
 {
-    public:
-    //Function to check if brackets are balanced or not.
-     bool isMatching(char a,char b){
-    return ((a=='('&&b==')'))||((a=='{'&&b=='}'))||((a=='['&&b==']'));
+public:
+    // Function to check if brackets are balanced or not.
+    bool isMatching(char a, char b)
+    {
+        return ((a == '(' && b == ')')) || ((a == '{' && b == '}')) || ((a == '[' && b == ']'));
     }
     bool ispar(const string &str)
     {
-        if(str.empty())return true;
+        if (str.empty())
+            return true;
         // Your code here
         stack<char> s;
         // s.push(x[0]);
- for (int i = 0; i < str.length(); i++)
-    {
-        if(str.at(i)=='('||str.at(i)=='{'||str.at(i)=='['){
-            s.push(str[i]);
+        for (int i = 0; i < str.length(); i++)
+        {
+            if (str.at(i) == '(' || str.at(i) == '{' || str.at(i) == '[')
+            {
+                s.push(str[i]);
+            }
+            else
+            {
+                if (s.empty())
+                    return false;
+                else if (isMatching(s.top(), str[i]) == false)
+                    return false;
+                else
+                    s.pop();
+            }
         }
-        else{
-            if(s.empty())
-                return false;
-            else if(isMatching(s.top(),str[i])==false)
-                return false;
-            else 
-                s.pop();
-        }
+        return s.empty();
     }
-    return s.empty();
-        
-    }
-
 };
 
 //^ 2 Implementation of min stack
-class MinStack{
+class MinStack
+{
     int minEle;
-    stack<pair<int,int>> s;
-    public:
-    
-       /*returns min element from stack*/
-       int getMin(){
-           
-           //Write your code here
-           if(s.empty()) return -1;
-           minEle = s.top().second;
-           return minEle;
-       }
-       
-       /*returns poped element from stack*/
-       int pop(){
-           if(s.empty()) return -1;
-           int element = s.top().first;
-           s.pop();
-           return element;
-       }
-       
-       /*push element x into the stack*/
-       void push(int x){
-           
-           if(s.empty()){
-               s.push({x,x});
-           }else{
-               s.push({x,min(s.top().second,x)});
-           }
-       }
+    stack<pair<int, int>> s;
+
+public:
+    /*returns min element from stack*/
+    int getMin()
+    {
+
+        // Write your code here
+        if (s.empty())
+            return -1;
+        minEle = s.top().second;
+        return minEle;
+    }
+
+    /*returns poped element from stack*/
+    int pop()
+    {
+        if (s.empty())
+            return -1;
+        int element = s.top().first;
+        s.pop();
+        return element;
+    }
+
+    /*push element x into the stack*/
+    void push(int x)
+    {
+
+        if (s.empty())
+        {
+            s.push({x, x});
+        }
+        else
+        {
+            s.push({x, min(s.top().second, x)});
+        }
+    }
 };
 
+//^ 3 Next greater element in a stack
+/*
+
+Intuition:
+
+    This code utilizes a stack data structure to efficiently find the next greater element for each element in the array.
+    The idea is to traverse the array from right to left, using a stack to keep track of elements seen so far.
+    While iterating through the array, if an element is greater than the top of the stack, it means that the element at the top of the stack is the next greater element for the current element.
+    Store this information in two separate arrays: ans to store the next greater element and indices to store the indices of these elements.
+
+Code:
+
+    Initialize two vectors: ans and indices, both of size N. Set all elements to -1. These vectors will be used to store the results.
+
+    Initialize an empty stack. The stack will store pairs of elements and their indices.
+
+    Start iterating through the array from right to left (i.e., from N-1 to 0).
+
+    While iterating, check if the stack is not empty and the top element of the stack (in the pair) is less than or equal to the current array element. If this condition is met, it means we've found the next greater element.
+
+    If the condition is met, update the ans vector at the current index with the element from the stack and the indices vector with the index from the stack. This information represents the next greater element for the current element.
+
+    Push the current array element and its index onto the stack (to potentially help find the next greater element for future elements).
+
+    After the loop, the ans vector contains the next greater element for each element in the original array.
+
+    Return the ans vector as the result.
+
+Time Complexity:
+
+    The code iterates through the array once from right to left. Therefore, the time complexity is O(N), where N is the size of the input array.
+
+Space Complexity:
+
+    The space complexity is O(N) because we use two additional vectors (ans and indices) to store the results.
+
+Hint:
+
+    The stack is used to efficiently track elements and their indices for finding the next greater element.
+    Pay attention to the order of the elements in the stack and the condition for updating the result vectors.
+    The algorithm works by looking at elements to the right of the current element and finding the next greater one.
+
+ */
+vector<long long> nextLargerElement(vector<long long> arr, int n)
+{
+    // Your code here
+    vector<long long> ans(n, -1);
+    vector<long long> indices(n, -1);
+    stack<pair<long long, long long>> s;
+    for (int i = n - 1; i >= 0; i--)
+    {
+        while (!s.empty() && s.top().first <= arr[i])
+            s.pop();
+        if (!s.empty())
+        {
+            ans.at(i) = s.top().first;
+            indices.at(i) = s.top().second;
+        }
+        s.push({arr[i], i});
+    }
+    return ans;
+}
+
+//^ 4 Next smaller element [help classmate]
+/* 
+* O(N) T.C + S.C
+ */
+vector<int> help_classmate(vector<int> arr, int n)
+{
+    // Your code goes here
+    vector<int> ans(n, -1), indices(n, -1);
+    stack<pair<int, int>> s;
+    for (int i = n - 1; i >= 0; i--)
+    {
+        while (!s.empty() && s.top().first >= arr[i])
+            s.pop();
+        if (!s.empty())
+        {
+            ans.at(i) = s.top().first;
+            indices.at(i) = s.top().second;
+        }
+        s.push({arr[i], i});
+    }
+    return ans;
+}
 int main()
 {
 #ifndef ONLINE_JUDGE
@@ -83,7 +179,7 @@ int main()
     cin >> t;
     while (t--)
     {
-        //write code here
+        // write code here
     }
     return 0;
 }

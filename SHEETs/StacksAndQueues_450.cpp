@@ -145,8 +145,8 @@ vector<long long> nextLargerElement(vector<long long> arr, int n)
 }
 
 //^ 4 Next smaller element [help classmate]
-/* 
-* O(N) T.C + S.C
+/*
+ * O(N) T.C + S.C
  */
 vector<int> help_classmate(vector<int> arr, int n)
 {
@@ -166,6 +166,83 @@ vector<int> help_classmate(vector<int> arr, int n)
     }
     return ans;
 }
+
+//^ Next greater element 2
+/* 
+
+Intuition:
+
+    The code uses a stack to find the next greater number for each element in the array.
+    It first identifies the index of the maximum element in the array to optimize the stack usage.
+    Then, it performs two iterations: one from 0 to the maximum element index and another from the maximum element index to the end of the array.
+    The idea is to find the next greater element for elements in both directions (left and right of the maximum element).
+
+Code:
+
+    Find the index of the maximum element in the array using the max_element function. Let's call this index maxElement.
+
+    Create a stack of pairs. Each pair stores an element value and its index.
+
+    Initialize a vector ans of the same size as the input array and fill it with -1. This vector will store the next greater elements.
+
+    Push the maximum element and its index onto the stack.
+
+    Start the first iteration from maxElement - 1 and continue until index 0 (wrapping around to the end of the array).
+
+    In this iteration, while the stack is not empty and the element at the top of the stack is less than or equal to the current element, pop elements from the stack. If the stack is not empty, update the ans vector with the next greater element from the stack.
+
+    Push the current element and its index onto the stack.
+
+    Start the second iteration from n - 1 (end of the array) and continue until maxElement (the maximum element index).
+
+    Follow the same procedure as in the first iteration to find the next greater elements for the remaining elements in the array.
+
+    Return the ans vector, which contains the next greater elements for each element in the circular array.
+
+Time Complexity:
+
+    The code performs two iterations, each of which goes through the entire array. Therefore, the time complexity is O(N), where N is the size of the input array.
+
+Space Complexity:
+
+    The space complexity is O(N) because of the ans vector and the stack, which can potentially store all elements of the input array.
+
+Hint:
+
+    The key to this code is to perform two iterations from the maximum element index in both directions, using a stack to efficiently find the next greater elements.
+    You need to handle the circular nature of the array when looping from the end to the maximum element index.
+    Remember to update the ans vector with the next greater element when found in both iterations.
+ */
+vector<int> nextGreaterElements(vector<int> &nums)
+{
+    int maxElement = max_element(nums.begin(), nums.end()) - nums.begin();
+    int n = nums.size();
+    stack<pair<int, int>> s;
+    vector<int> ans(n, -1);
+    s.push({nums[maxElement], maxElement});
+    for (int i = maxElement - 1; i >= 0; i--)
+    {
+        while (!s.empty() && s.top().first <= nums.at(i % n))
+            s.pop();
+        if (!s.empty())
+        {
+            ans[i] = s.top().first;
+        }
+        s.push({nums[i % n], i % n});
+    }
+    for (int i = n - 1; i >= maxElement; i--)
+    {
+        while (!s.empty() && s.top().first <= nums.at(i % n))
+            s.pop();
+        if (!s.empty())
+        {
+            ans[i] = s.top().first;
+        }
+        s.push({nums[i % n], i % n});
+    }
+    return ans;
+}
+
 int main()
 {
 #ifndef ONLINE_JUDGE

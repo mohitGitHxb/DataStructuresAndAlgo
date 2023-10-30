@@ -4116,7 +4116,13 @@ public: /*
 
     /*
     @ Using LIS Method
+    The algorithm approach is stated as follows:
 
+    First of all sort the array,
+    Then find the longest divisible subsequence of the array.
+    In order to find the longest divisible subsequence, we will follow the algorithm used to find the longest increasing subsequence discussed in the
+    The distinguishing factor between longest increasing subsequence and longest divisible subsequence is that we used to insert the element if arr[i] > arr[prev] but here we will insert the element when arr[i] % arr[prev] == 0.
+    At last return the hash array as the answer.
     * O(n^2) T.C | O(n) S.C
      */
     vector<int> lds(vector<int> &nums)
@@ -4152,6 +4158,24 @@ public: /*
 //^ Longest string chain
 class LSC
 {
+    /* 
+    Intuition
+
+The problem seems to involve finding the longest chain of strings where each string in the chain can be obtained by deleting a single character from the previous string. To solve this, we could sort the strings by their lengths in ascending order. Then, we can use dynamic programming to compute the longest chain for each string, starting from the shortest string and building up to the longest.
+Approach
+
+    Sort the input strings in ascending order of their lengths.
+    Initialize an array dp of size n (number of input strings) to store the length of the longest chain ending at each string. Initialize all elements of dp to 1, as the minimum chain length for any string is 1 (the string itself).
+    Iterate through each string in the sorted order. For each string, iterate through all previous strings to check if the current string can be obtained by deleting a character from the previous string. If yes, update the dp value for the current string to be the maximum of its current value and 1 plus the dp value of the previous string.
+    Keep track of the maximum chain length seen so far and return it as the result.
+
+Complexity
+
+    Time complexity:O(n2)O(n^2)O(n2)
+
+    Space complexity:O(n)O(n)O(n)
+
+     */
 public:
     static bool comp(string &s1, string &s2)
     {

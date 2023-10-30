@@ -1823,7 +1823,7 @@ public:
 
 //^25 Shortest path in a binary maze
 
-/* 
+/*
 Intuition:
 
 To find the shortest path between a source cell and a destination cell in a binary grid, we can use Breadth-First Search (BFS) starting from the source cell and stopping when we reach the destination cell. During the BFS traversal, we'll keep track of the distance from the source cell to each cell we visit.
@@ -1857,35 +1857,42 @@ Hint:
 
     Use BFS to explore the grid while keeping track of the minimum distance from the source cell to each visited cell. If the destination cell is reached, return its distance; otherwise, return -1 if no path is found.
  */
-class BinaryMazePath {
-  public:
-  vector<pair<int,int>> dirs = {{1,0},{0,1},{-1,0},{0,-1}};
-  bool isValid(int row,int col,int n,int m,vector<vector<int>> &vis,vector<vector<int>> &grid,int distance){
-      return row>=0 && row<n && col>=0 && col<m && grid[row][col] == 1 && 1 + distance < vis[row][col];
-  }
+class BinaryMazePath
+{
+public:
+    vector<pair<int, int>> dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    bool isValid(int row, int col, int n, int m, vector<vector<int>> &vis, vector<vector<int>> &grid, int distance)
+    {
+        return row >= 0 && row < n && col >= 0 && col < m && grid[row][col] == 1 && 1 + distance < vis[row][col];
+    }
     int shortestPath(vector<vector<int>> &grid, pair<int, int> source,
-                     pair<int, int> dest) {
+                     pair<int, int> dest)
+    {
         // code here
-        int n = grid.size() , m = grid.front().size();
-        vector<vector<int>> dist(n,vector<int> (m,1e9));
+        int n = grid.size(), m = grid.front().size();
+        vector<vector<int>> dist(n, vector<int>(m, 1e9));
         dist[source.first][source.second] = 0;
-        queue<pair<int,pair<int,int>>> q;
-        q.push({0,{source.first,source.second}});
-        while(!q.empty()){
+        queue<pair<int, pair<int, int>>> q;
+        q.push({0, {source.first, source.second}});
+        while (!q.empty())
+        {
             int dis = q.front().first;
             int r = q.front().second.first;
             int c = q.front().second.second;
             q.pop();
-            for(auto &it : dirs){
+            for (auto &it : dirs)
+            {
                 int nrow = r + it.first;
                 int ncol = c + it.second;
-                if(isValid(nrow,ncol,n,m,dist,grid,dis)){
+                if (isValid(nrow, ncol, n, m, dist, grid, dis))
+                {
                     dist[nrow][ncol] = 1 + dis;
-                    q.push({1 + dis , {nrow,ncol}});
+                    q.push({1 + dis, {nrow, ncol}});
                 }
             }
         }
-        if(dist[dest.first][dest.second] == 1e9) return -1;
+        if (dist[dest.first][dest.second] == 1e9)
+            return -1;
         return dist[dest.first][dest.second];
     }
 };
@@ -2089,7 +2096,7 @@ public:
 };
 
 //^ 29 Number of ways to arrive at destination
-/* 
+/*
 **Intuition:**
 
 This problem can be solved using Dijkstra's algorithm to find the shortest paths from the source node (intersection 0) to all other intersections. Additionally, we can keep track of the number of shortest paths to each intersection.
@@ -2474,46 +2481,63 @@ The space complexity is O(n) for the rank and parent vectors, where 'n' is the n
 
 This Disjoint-Set data structure is efficient for managing disjoint sets and performing union and find operations. It is commonly used in various algorithms like Kruskal's Minimum Spanning Tree algorithm and cycle detection in graphs, among others.
 */
-class DisjointSet {
+class DisjointSet
+{
 public:
     vector<int> rank, parent, size;
-    DisjointSet(int n) {
+    DisjointSet(int n)
+    {
         rank.resize(n + 1);
         parent.resize(n + 1);
         size.resize(n + 1);
-        for (int i = 0; i < n + 1; i++) {
+        for (int i = 0; i < n + 1; i++)
+        {
             parent.at(i) = i;
             size.at(i) = 1;
         }
     }
 
-    int findUPar(int node) {
-        if (node == parent[node]) return node;
+    int findUPar(int node)
+    {
+        if (node == parent[node])
+            return node;
         return parent[node] = findUPar(parent[node]);
     }
 
-    void unionByRank(int u, int v) {
+    void unionByRank(int u, int v)
+    {
         int ultimateParentU = findUPar(u);
         int ultimateParentV = findUPar(v);
-        if (ultimateParentU == ultimateParentV) return;
-        if (rank.at(ultimateParentU) < rank.at(ultimateParentV)) {
+        if (ultimateParentU == ultimateParentV)
+            return;
+        if (rank.at(ultimateParentU) < rank.at(ultimateParentV))
+        {
             parent.at(ultimateParentU) = ultimateParentV;
-        } else if (rank.at(ultimateParentV) < rank.at(ultimateParentU)) {
+        }
+        else if (rank.at(ultimateParentV) < rank.at(ultimateParentU))
+        {
             parent.at(ultimateParentV) = ultimateParentU;
-        } else {
+        }
+        else
+        {
             parent.at(ultimateParentV) = parent.at(ultimateParentU);
             rank.at(ultimateParentU)++;
         }
     }
 
-    void unionBySize(int u, int v) {
+    void unionBySize(int u, int v)
+    {
         int ultimateParentU = findUPar(u);
         int ultimateParentV = findUPar(v);
-        if (ultimateParentU == ultimateParentV) return;
-        if (size.at(ultimateParentU) < size.at(ultimateParentV)) {
+        if (ultimateParentU == ultimateParentV)
+            return;
+        if (size.at(ultimateParentU) < size.at(ultimateParentV))
+        {
             parent.at(ultimateParentU) = ultimateParentV;
             size.at(ultimateParentV) += size.at(ultimateParentU);
-        } else {
+        }
+        else
+        {
             parent.at(ultimateParentV) = ultimateParentU;
             size.at(ultimateParentU) += size.at(ultimateParentV);
         }
@@ -2852,7 +2876,7 @@ Hint:
 };
 
 //^ 40 Maximum stone removals
-/* 
+/*
 Intuition:
 
 The problem is essentially asking how many stones can be removed while ensuring that there is at least one stone remaining in each row and each column. We can solve this problem using a disjoint-set (union-find) data structure to keep track of connected stones in both rows and columns.
@@ -2924,9 +2948,10 @@ int maxRemove(vector<vector<int>> &stones, int n)
 }
 
 //^ 41 Kosharaju Algorithm
-class Kosharaju{
-    private:
-    /* 
+class Kosharaju
+{
+private:
+    /*
     Intuition:
 
 This problem can be solved using Kosaraju's algorithm, which is a two-pass algorithm to find strongly connected components (SCCs) in a directed graph.
@@ -2963,65 +2988,77 @@ Hint:
 
     Pay attention to the order of processing nodes in the stack to ensure reverse topological order.
      */
-    public:
-	//Function to find number of strongly connected components in the graph.
-	void DFS(int src,vector<vector<int>> &adj,vector<bool> &vis,stack<int> &s){
-	    vis.at(src) = true;
-	    for(auto &it : adj[src]){
-	        if(!vis.at(it)){
-	            DFS(it,adj,vis,s);
-	        }
-	    }
-	    s.push(src);
-	}
-	
-	void reverseDFS(int src,vector<vector<int>> &adj,vector<bool> &vis){
-	    vis.at(src) = true;
-	    for(auto &it : adj[src]){
-	        if(!vis.at(it)){
-	            reverseDFS(it,adj,vis);
-	        }
-	    }
-	}
-	
-    int kosaraju(int V, vector<vector<int>>& adj)
+public:
+    // Function to find number of strongly connected components in the graph.
+    void DFS(int src, vector<vector<int>> &adj, vector<bool> &vis, stack<int> &s)
     {
-        //code here
-        vector<bool> vis(V);
-        stack<int> s;
-        for(int i = 0; i < V; i++){
-            if(!vis.at(i)){
-                DFS(i,adj,vis,s);
+        vis.at(src) = true;
+        for (auto &it : adj[src])
+        {
+            if (!vis.at(it))
+            {
+                DFS(it, adj, vis, s);
             }
         }
-        
+        s.push(src);
+    }
+
+    void reverseDFS(int src, vector<vector<int>> &adj, vector<bool> &vis)
+    {
+        vis.at(src) = true;
+        for (auto &it : adj[src])
+        {
+            if (!vis.at(it))
+            {
+                reverseDFS(it, adj, vis);
+            }
+        }
+    }
+
+    int kosaraju(int V, vector<vector<int>> &adj)
+    {
+        // code here
+        vector<bool> vis(V);
+        stack<int> s;
+        for (int i = 0; i < V; i++)
+        {
+            if (!vis.at(i))
+            {
+                DFS(i, adj, vis, s);
+            }
+        }
+
         // reverse the graph
         vector<vector<int>> adjReverse(V);
-        for(int i = 0; i < V; i++){
+        for (int i = 0; i < V; i++)
+        {
             vis[i] = false;
-            for(auto &it : adj[i]){
+            for (auto &it : adj[i])
+            {
                 adjReverse[it].push_back(i); // directed graph
             }
         }
-        
+
         int stronglyConnectedComponents = 0;
-        while(!s.empty()){
-            int node = s.top(); s.pop();
-            if(!vis[node]){
-                reverseDFS(node,adjReverse,vis);
+        while (!s.empty())
+        {
+            int node = s.top();
+            s.pop();
+            if (!vis[node])
+            {
+                reverseDFS(node, adjReverse, vis);
                 stronglyConnectedComponents++;
             }
         }
         return stronglyConnectedComponents;
-        
-
     }
 };
 
 //^ 42 Tarjans Algorithmas
-class Tarjans{
-    private:    
-    /* 
+class Tarjans
+{
+private:
+    /*
     Intuition:
 
 This problem can be solved using Tarjan's algorithm for finding bridges in an undirected graph. A bridge is an edge in the graph such that if it is removed, the graph becomes disconnected or has an increase in the number of connected components.
@@ -3060,32 +3097,40 @@ Hint:
 
     Use Tarjan's algorithm to find bridges efficiently.
      */
-    public:
+public:
     int timer = 1;
     void dfs(int node, int parent, vector<int> &vis,
-             vector<int> adj[], int tin[], int low[], vector<vector<int>> &bridges) {
+             vector<int> adj[], int tin[], int low[], vector<vector<int>> &bridges)
+    {
         vis[node] = 1;
         tin[node] = low[node] = timer;
         timer++;
-        for (auto it : adj[node]) {
-            if (it == parent) continue;
-            if (vis[it] == 0) {
+        for (auto it : adj[node])
+        {
+            if (it == parent)
+                continue;
+            if (vis[it] == 0)
+            {
                 dfs(it, node, vis, adj, tin, low, bridges);
                 low[node] = min(low[it], low[node]);
                 // node --- it
-                if (low[it] > tin[node]) {
+                if (low[it] > tin[node])
+                {
                     bridges.push_back({it, node});
                 }
             }
-            else {
+            else
+            {
                 low[node] = min(low[node], low[it]);
             }
         }
     }
     vector<vector<int>> criticalConnections(int n,
-    vector<vector<int>>& connections) {
+                                            vector<vector<int>> &connections)
+    {
         vector<int> adj[n];
-        for (auto it : connections) {
+        for (auto it : connections)
+        {
             int u = it[0], v = it[1];
             adj[u].push_back(v);
             adj[v].push_back(u);
@@ -3100,10 +3145,11 @@ Hint:
 };
 
 //^ 43 Articulation point
-class ArticulationPoint{
-    private:
-    /* 
-    
+class ArticulationPoint
+{
+private:
+    /*
+
     Intuition:
 
     Articulation Points: Articulation points are the vertices in a graph whose removal increases the number of connected components in the graph. In other words, these are the critical points where the graph can be split into multiple disconnected parts if the vertex is removed.
@@ -3143,50 +3189,63 @@ Hints:
     DFS: The code uses a depth-first search to explore the graph. It starts from a vertex and traverses as deeply as possible before backtracking.
     Lowest Reachable Ancestor: The low array keeps track of the lowest reachable ancestor for each vertex. This is crucial for detecting articulation points.
     Tree Roots: If a vertex is th
-    
+
      */
-  public:
+public:
     int timer = 0;
-    void dfs(int src,int parent,vector<int> adj[],vector<int> &tin,vector<int> &low,vector<bool> &mark,vector<bool> &vis){
+    void dfs(int src, int parent, vector<int> adj[], vector<int> &tin, vector<int> &low, vector<bool> &mark, vector<bool> &vis)
+    {
         vis.at(src) = true;
         tin.at(src) = low.at(src) = timer++;
         int children = 0;
-        for(auto &it : adj[src]){
-            if(parent == it) continue;
-            if(!vis[it]){
-                dfs(it,src,adj,tin,low,mark,vis);
-                low.at(src) = min(low.at(src),low.at(it));
-                if(low.at(it) >= tin.at(src) && parent != -1){
+        for (auto &it : adj[src])
+        {
+            if (parent == it)
+                continue;
+            if (!vis[it])
+            {
+                dfs(it, src, adj, tin, low, mark, vis);
+                low.at(src) = min(low.at(src), low.at(it));
+                if (low.at(it) >= tin.at(src) && parent != -1)
+                {
                     mark[src] = true;
                 }
                 children++;
             }
-            else{
-                low.at(src) = min(low.at(src) , tin.at(it));
+            else
+            {
+                low.at(src) = min(low.at(src), tin.at(it));
             }
         }
-        if(children > 1 && parent == -1){
+        if (children > 1 && parent == -1)
+        {
             mark.at(src) = true;
         }
     }
-    vector<int> articulationPoints(int V, vector<int>adj[]) {
+    vector<int> articulationPoints(int V, vector<int> adj[])
+    {
         // Code here
-        vector<bool> vis(V),mark(V);
-        vector<int> tin(V),low(V);
-        for(int i = 0; i < V; i++){
-            if(!vis.at(i)){
-                dfs(i,-1,adj,tin,low,mark,vis);
+        vector<bool> vis(V), mark(V);
+        vector<int> tin(V), low(V);
+        for (int i = 0; i < V; i++)
+        {
+            if (!vis.at(i))
+            {
+                dfs(i, -1, adj, tin, low, mark, vis);
             }
         }
-        
+
         vector<int> ans;
-        for(int i = 0; i < mark.size(); i++){
-        
-            if(mark.at(i)){
+        for (int i = 0; i < mark.size(); i++)
+        {
+
+            if (mark.at(i))
+            {
                 ans.push_back(i);
             }
         }
-        if(ans.empty()) return {-1};
+        if (ans.empty())
+            return {-1};
         return ans;
     }
 };
@@ -3195,56 +3254,107 @@ Hints:
 class LargestIsland
 {
 public:
-    bool isValid(int r, int c, int n){
-        return (r>=0 && r<n && c>=0 && c<n);
+    bool isValid(int r, int c, int n)
+    {
+        return (r >= 0 && r < n && c >= 0 && c < n);
     }
-    int largestIsland(vector<vector<int>>& grid) 
+    int largestIsland(vector<vector<int>> &grid)
     {
         // Your code goes here.
-        int n=grid.size();
-        DisjointSet ds(n*n);
-        int dr[4]={-1, 0, 1, 0};
-        int dc[4]={0, 1, 0, -1};
-        
-        for(int row=0; row<n; row++){
-            for(int col=0; col<n; col++){
-                if(grid[row][col]==0) continue;
-                for(int i=0; i<4; i++){
-                    int nr=row+dr[i];
-                    int nc=col+dc[i];
-                    if(isValid(nr, nc, n) && grid[nr][nc]==1){
-                        int nodeNo=row*n+col;
-                        int adjNodeNo=nr*n+nc;
+        int n = grid.size();
+        DisjointSet ds(n * n);
+        int dr[4] = {-1, 0, 1, 0};
+        int dc[4] = {0, 1, 0, -1};
+
+        for (int row = 0; row < n; row++)
+        {
+            for (int col = 0; col < n; col++)
+            {
+                if (grid[row][col] == 0)
+                    continue;
+                for (int i = 0; i < 4; i++)
+                {
+                    int nr = row + dr[i];
+                    int nc = col + dc[i];
+                    if (isValid(nr, nc, n) && grid[nr][nc] == 1)
+                    {
+                        int nodeNo = row * n + col;
+                        int adjNodeNo = nr * n + nc;
                         ds.unionBySize(nodeNo, adjNodeNo);
                     }
                 }
             }
         }
-        int maxi=0;
-        
-        for(int row=0; row<n; row++){
-            for(int col=0; col<n; col++){
-                if(grid[row][col]==1) continue;
-                set<int>compo;
-                for(int i=0; i<4; i++){
-                    int nr=row+dr[i];
-                    int nc=col+dc[i];
-                    if(isValid(nr, nc, n) && grid[nr][nc]==1){
-                        compo.insert(ds.findUPar(nr*n+nc));
+        int maxi = 0;
+
+        for (int row = 0; row < n; row++)
+        {
+            for (int col = 0; col < n; col++)
+            {
+                if (grid[row][col] == 1)
+                    continue;
+                set<int> compo;
+                for (int i = 0; i < 4; i++)
+                {
+                    int nr = row + dr[i];
+                    int nc = col + dc[i];
+                    if (isValid(nr, nc, n) && grid[nr][nc] == 1)
+                    {
+                        compo.insert(ds.findUPar(nr * n + nc));
                     }
                 }
-                int sz=0;
-                for(auto &it:compo){
-                    sz+=(ds.size[it]);
+                int sz = 0;
+                for (auto &it : compo)
+                {
+                    sz += (ds.size[it]);
                 }
-                maxi=max(maxi, sz+1);
+                maxi = max(maxi, sz + 1);
             }
         }
-        
-        for(int i=0; i<n*n; i++){
-            maxi=max(maxi, ds.size[i]);
+
+        for (int i = 0; i < n * n; i++)
+        {
+            maxi = max(maxi, ds.size[i]);
         }
         return maxi;
+    }
+};
+
+//^ 45 M coloring problem
+class Mcoloring
+{
+public:
+    vector<int> colors;
+    bool isSafe(int node, int color, int m, int n, bool graph[101][101])
+    {
+        for (int k = 0; k < n; k++)
+        {
+            if (k != node && graph[k][node] == 1 && colors.at(k) == color)
+                return false;
+        }
+        return true;
+    }
+    bool solve(int node, int m, int n, bool graph[101][101])
+    {
+        if (node == n)
+            return true;
+        for (int i = 1; i <= m; i++)
+        {
+            if (isSafe(node, i, m, n, graph))
+            {
+                colors.at(node) = i;
+                if (solve(node + 1, m, n, graph))
+                    return true;
+                colors.at(node) = 0;
+            }
+        }
+        return false;
+    }
+    bool graphColoring(bool graph[101][101], int m, int n)
+    {
+        // your code here
+        colors.resize(n);
+        return solve(0, m, n, graph);
     }
 };
 int main()

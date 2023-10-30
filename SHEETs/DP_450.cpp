@@ -5141,6 +5141,31 @@ public:
         return f(n - 1, target, arr);
     }
 };
+
+//^ Word Break 1
+class WordBreak1
+{
+public:
+    vector<int> dp;
+    bool solve(int i, string A, unordered_set<string> &dict){
+        if(i == A.size()) return true;
+        if(dp[i] != -1)return dp[i];
+        string temp = "";
+        for(int cut = i; cut < A.size(); cut++){
+            temp.push_back(A[cut]);
+            if(dict.count(temp)){
+                if(solve(cut + 1,A,dict)) return dp[i] = true;
+            }
+        }
+        return dp[i] = false;
+    }
+    int wordBreak(string A, vector<string> &B) {
+        //code here
+        unordered_set<string> dict(B.begin(),B.end());
+        dp.resize(A.size() + 1,-1);
+        return solve(0,A,dict);
+    }
+};
 int main(int argc, char const *argv[])
 {
 

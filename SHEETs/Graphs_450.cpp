@@ -1955,7 +1955,7 @@ public:
 
 //^ 27 Cheapest flights in K stops
 
-class Solution
+class Kflights
 {
 private:
     /*

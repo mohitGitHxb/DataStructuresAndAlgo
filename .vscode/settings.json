@@ -1,5 +1,7 @@
 {
     "files.associations": {
+        "*.excalidraw": "json",
+        "*.excalidrawlib": "json",
         "iostream": "cpp",
         "ostream": "cpp",
         "new": "cpp",
@@ -17,7 +19,11 @@
         "*.tcc": "cpp",
         "format": "cpp",
         "cmath": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "string_view": "cpp",
+        "ranges": "cpp",
+        "span": "cpp",
+        "stacktrace": "cpp"
     },
     "cSpell.words": [
         "getnode",

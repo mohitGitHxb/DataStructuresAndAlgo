@@ -687,6 +687,16 @@ private:
      */
 public:
     vector<pair<int, int>> dirs{{1, 0}, {0, -1}, {-1, 0}, {0, 1}};
+    /**
+     * Check if the given row and column are within the bounds of the matrix.
+     *
+     * @param row the row index to check
+     * @param col the column index to check
+     * @param m the number of rows in the matrix
+     * @param n the number of columns in the matrix
+     *
+     * @return true if the given row and column are within the bounds of the matrix, false otherwise
+     */
     bool inBound(int row, int col, unsigned m, unsigned n)
     {
         return row >= 0 && row < m && col >= 0 && col < n;

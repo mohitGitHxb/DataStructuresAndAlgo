@@ -167,8 +167,8 @@ vector<int> help_classmate(vector<int> arr, int n)
     return ans;
 }
 
-//^ Next greater element 2
-/* 
+//^ 5 Next greater element 2
+/*
 
 Intuition:
 
@@ -243,6 +243,76 @@ vector<int> nextGreaterElements(vector<int> &nums)
     return ans;
 }
 
+//^ 6 Sum of subarrays minimum
+
+/*
+    Denote by left[i] the distance between element A[i] and its PLE.
+    Denote by right[i] the distance between element A[i] and its NLE.
+
+    The final answer is,
+    sum(A[i]*left[i]*right[i] )
+
+    The last thing that needs to be mentioned for handling duplicate elements:
+    Method: Set strict less and non-strict less(less than or equal to) for finding NLE and PLE respectively. The order doesn't matter.
+
+    For example, the below code for finding NLE is strict less, while PLE is actually non-strict less.
+    Remark: Although in both loop conditions the signs are set as >, for NLE, we make records inside the loop, while for PLE, records are done outside the loop.
+
+*/
+
+int sumSubarrayMins(vector<int> &nums)
+{
+    int n = nums.size();
+    int MOD = 1e9 + 7;
+    vector<int> left(n), right(n);
+
+    // Calculate the distance to the next smaller element on the left
+    stack<int> st;
+    st.push(0);
+    left[0] = 1;
+    for (int i = 1; i < n; i++)
+    {
+        while (!st.empty() && nums[i] < nums[st.top()])
+            st.pop();
+
+        if (st.empty())
+            left[i] = i + 1;
+        else
+            left[i] = i - st.top();
+
+        st.push(i);
+    }
+
+    while (!st.empty())
+        st.pop();
+
+    // Calculate the distance to the next smaller element on the right
+    st.push(n - 1);
+    right[n - 1] = 1;
+    for (int i = n - 2; i >= 0; i--)
+    {
+        while (!st.empty() && nums[i] <= nums[st.top()])
+            st.pop();
+
+        if (st.empty())
+            right[i] = n - i;
+        else
+            right[i] = st.top() - i;
+
+        st.push(i);
+    }
+
+    int res = 0;
+    // Calculate the total contribution of each element to the final answer
+    for (int i = 0; i < n; i++)
+    {
+        long long prod = (left[i] * right[i]) % MOD;
+        prod = (prod * nums[i]) % MOD;
+        res = (res + prod) % MOD;
+    }
+
+    return res;
+}
 int main()
 {
 #ifndef ONLINE_JUDGE

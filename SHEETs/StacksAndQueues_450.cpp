@@ -313,6 +313,191 @@ int sumSubarrayMins(vector<int> &nums)
 
     return res;
 }
+
+//^ 7 Stock Span Problem
+/*
+Intuition
+
+Question is very badly explained, so let me explain in simple words.
+
+    Lets Consider [100,80,70,75,85]
+    Question asks us to find the span of that stock's price for the current day.
+    So starting from the 0 th index, we consider 100 as the current day price. So we need to find the previous highest price so their no previous data so it will be 1.
+    On the 1st index (80) the previous highest price is 100, so span will be 1 and return 1.
+    On the 2nd index (70) the previous highest price is 80, so span will be 1 and return 1.
+    On the 3rd index (75) the previous highest price is 80, so span will be 2 and return 2.
+    On the 2st index (85) the previous highest price is 100, so span will be 4 and return 4.
+    The output will look like [1,1,1,2,4]
+
+Input:
+["StockSpanner","next","next","next","next","next"]
+[ [ ],[100],[80],[70],[75],[85]]
+
+Output:
+[null,1,1,1,2,4]
+Approach
+
+    The StockSpanner class has a stack of pairs of integers, where the first integer represents the stock price, and the second integer represents the span of that price.
+    The constructor of the class does not take any arguments and does not do anything.
+    The next() method of the class takes an integer argument price, which represents the price of the stock for the current day, and returns an integer representing the span of that price.
+    Initially, the span is set to 1.
+    If the stack is not empty and the top of the stack has a price less than or equal to the current price, then the span is increased by the span of the top of the stack, and the top of the stack is popped.
+    The pair of the current price and its span is pushed onto the stack.
+    Finally, the span of the current price is returned.
+
+Complexity:
+
+    The time complexity of the next function is O(N), where N is the number of calls to next. This is because in the worst case, all the elements in the stack will be popped out before the current price is pushed onto the stack.
+    The space complexity of the algorithm is O(N), as we are storing all the prices and their corresponding span values in the stack.
+
+ */
+
+class StockSpanner
+{
+public:
+    stack<pair<int, int>> st;
+    int next(int price)
+    {
+        int span = 1;
+        while (!st.empty() && st.top().first <= price)
+        {
+            span += st.top().second;
+            st.pop();
+        }
+        st.push({price, span});
+        return span;
+    }
+    /*
+
+    Actual Concept:
+        vector <int> calculateSpan(int price[], int n)
+    {
+       vector<int> ans(n,1);
+       stack<pair<int,int>> s;
+       s.push({price[0],0});
+       for(int i = 1; i < n; i++){
+           while(!s.empty() && price[s.top().second] <= price[i]) s.pop();
+           if(s.empty()){
+               ans[i] = i + 1;
+           }
+           else{
+               ans[i] = (i - s.top().second);
+           }
+        s.push({price[i],i});
+       }
+       return ans;
+    }
+
+     */
+};
+
+//^ 8 Sliding Window Maximum
+class SlidingWindowMax
+{
+public:
+    /*
+    * BEST SOLUTION (O(N) T.C | O(N) S.C)
+    Intuition:
+
+The idea is to use a deque (double-ended queue) to efficiently keep track of the maximum element in the sliding window. The deque stores pairs of values where the first element is the value from the array, and the second element is its index. The deque will always be sorted in decreasing order of values.
+Algorithm:
+
+    Initialize an empty deque and an empty vector ans to store the maximum values.
+    Iterate through each element in the array.
+        If the deque is not empty and the front element's index is outside the current sliding window, remove it from the deque.
+        While the deque is not empty and the back element's value is less than the current element, remove elements from the back of the deque.
+        Push the current element along with its index to the back of the deque.
+        If the index is greater than or equal to k - 1, add the front element's value to the ans vector (representing the maximum in the current sliding window).
+    Return the ans vector.
+
+Time Complexity:
+
+The algorithm has a time complexity of O(n), where n is the size of the input array. Each element is processed once.
+Space Complexity:
+
+The space complexity is O(k), where k is the size of the sliding window. The deque stores at most k elements.
+     */
+    vector<int> maxSlidingWindow(vector<int> &nums, int k)
+    {
+        vector<int> ans;
+        deque<pair<int, int>> dq;
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (!dq.empty() && dq.front().second == i - k)
+                dq.pop_front();
+            while (!dq.empty() && dq.front().first < nums.at(i))
+                dq.pop_back();
+            dq.push_back({nums.at(i), i});
+            if (i >= k - 1)
+                ans.push_back(dq.front().first);
+        }
+        return ans;
+    }
+
+    /*
+    % Alternative Solution using PQ
+    Intuition
+
+1st solution uses priority_queue (max-heap) for pair (nums[i], i)!
+2nd solution uses double-ended queue.
+3rd solution uses just array and is what you have never seen before with very high probabilty.
+Approach
+
+The solution using priority_queue (max-heap) might not be very fast, but more intuitive.
+
+Second approach uses double-ended queue storing index for max. It is fast with a linear time.
+
+If the second approach is fully understood, Why not using the easier data structure? Not just double-ended queue. Third approach uses just an array storing index for max with a pointer named left. This solution is fast and run also in a linear time.
+
+Consider the concrete example
+
+[1,3,1,2,0,5]
+3
+
+The states for the max_idx[left:] in 3rd approach( or max_idx in 2nd approach) and ans[i] within the loop are as follows:
+
+[0]
+[1]
+[1,2]->ans[0]=3
+[1,3]->ans[1]=3
+[3,4]->ans[2]=2
+[5]->ans[3]=5
+
+Complexity
+
+    Time complexity:
+
+O(nlog⁡(n))→O(n)O(n \log(n))\to O(n)O(nlog(n))→O(n)
+
+    Space complexity:
+
+O(n)→O(k)O(n)\to O(k)O(n)→O(k)
+Code
+
+class Solution {
+    using int2=pair<int, int>; //(nums[i], i)
+public:
+
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        int n=nums.size();
+        priority_queue<int2> pq;
+
+        vector<int> ans(n-k+1);
+        for (int i=0; i<k; i++)
+            pq.push({nums[i], i});
+
+        ans[0]=pq.top().first;
+        for(int i=k; i<n; i++){
+            while(!pq.empty() && pq.top().second<=(i-k))
+                pq.pop(); //Pop up element not in the window
+            pq.push({nums[i], i});
+            ans[i-k+1]=pq.top().first;//Max element for this window
+        }
+        return ans;
+    }
+};
+     */
+};
 int main()
 {
 #ifndef ONLINE_JUDGE

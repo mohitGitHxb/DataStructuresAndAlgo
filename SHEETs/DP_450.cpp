@@ -926,7 +926,7 @@ public:
             vector<int> curr(grid.at(i).size());
             for (int j = 0; j < grid[i].size(); j++)
             {
-                if (grid[i][j] == 1)
+                if (grid[i][j] == -1)
                     curr[j] = 0;
                 else if (i == 0 && j == 0)
                     curr[j] = 1;

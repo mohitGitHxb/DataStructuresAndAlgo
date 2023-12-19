@@ -498,6 +498,54 @@ public:
 };
      */
 };
+
+/**
+ * The code is designed to solve a problem involving asteroids represented as an array of integers. Each asteroid is moving in a certain direction (positive meaning right, negative meaning left) at the same speed. When two asteroids collide, the smaller one will explode. If both are the same size, both will explode. Two asteroids moving in the same direction will never meet.
+
+The asteroidCollision function processes the array of asteroids. It uses a stack (stk) to keep track of the asteroids that have not yet collided.
+
+Here’s a step-by-step explanation:
+
+The function iterates over each asteroid in the input array.
+If the asteroid is moving to the right (positive), it’s pushed onto the stack because it can’t collide with any asteroid to its right.
+If the asteroid is moving to the left (negative), it may collide with some asteroids in the stack. A while loop is used to process these potential collisions:
+If the top asteroid in the stack is moving to the right and its size is less than the current asteroid, it’s removed from the stack because it would explode upon collision.
+If the top asteroid in the stack is moving to the right and its size is equal to the current asteroid, both asteroids would explode, so both are removed.
+If the top asteroid in the stack is moving to the right and its size is greater than the current asteroid, or if it’s moving to the left, the loop breaks because the current asteroid can’t collide with it.
+If the current asteroid hasn’t exploded, it’s pushed onto the stack.
+After all asteroids have been processed, the function returns the stack, which represents the state of the asteroids after all collisions.
+ * Solves the asteroid collision problem.
+ * 
+ * @param asteroids The array of asteroids represented as integers.
+ * @return The array of asteroids after all collisions.
+ */
+std::vector<int> asteroidCollision(const std::vector<int>& asteroids)
+{
+    std::vector<int> stk;
+    for (int asteroid : asteroids)
+    {
+        bool isPushed = false;
+        while (!stk.empty() && asteroid < 0 && stk.back() > 0)
+        {
+            if (stk.back() < -asteroid)
+            {
+                stk.pop_back();
+                continue;
+            }
+            else if (stk.back() == -asteroid)
+            {
+                stk.pop_back();
+            }
+            isPushed = true;
+            break;
+        }
+        if (!isPushed)
+        {
+            stk.push_back(asteroid);
+        }
+    }
+    return stk;
+}
 int main()
 {
 #ifndef ONLINE_JUDGE

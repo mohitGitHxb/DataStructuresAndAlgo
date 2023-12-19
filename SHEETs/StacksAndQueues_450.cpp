@@ -81,6 +81,136 @@ public:
     }
 };
 
+/*
+This class defines a set of stack operations for finding previous and next smaller or greater elements for each element in an array.
+
+prevSmallerElement: Finds the index of the previous smaller element for each element in the array.
+nextSmallerElement: Finds the index of the next smaller element for each element in the array.
+prevGreaterElement: Finds the index of the previous greater element for each element in the array.
+nextGreaterElement: Finds the index of the next greater element for each element in the array
+ */
+class StackOperations
+{
+public:
+    // Function to find the previous smaller element for each element in the array
+    std::vector<long long> prevSmallerElement(std::vector<int> &arr)
+    {
+        // Create a vector to store the indices of the previous smaller elements
+        std::vector<long long> indices(arr.size(), -1);
+
+        // Create a stack to store pairs of values (element, index)
+        std::stack<std::pair<long long, long long>> stk;
+
+        // Iterate through the array
+        for (long long i = 0; i < arr.size(); i++)
+        {
+            // Keep popping elements from the stack until we find a smaller element
+            while (!stk.empty() && arr.at(stk.top().second) >= arr.at(i))
+                stk.pop();
+
+            // If the stack is not empty, update the index of the previous smaller element
+            if (!stk.empty())
+                indices.at(i) = stk.top().second;
+
+            // Push the current element and its index onto the stack
+            stk.push({arr.at(i), i});
+        }
+
+        // Return the vector of indices of the previous smaller elements
+        return indices;
+    }
+
+    // Function to find the next smaller element for each element in the array
+    std::vector<long long> nextSmallerElement(std::vector<int> &arr)
+    {
+        // Create a vector to store the indices of the next smaller element for each element in the array
+        std::vector<long long> indices(arr.size(), arr.size());
+
+        // Create a stack to store the elements in decreasing order along with their indices
+        std::stack<std::pair<long long, long long>> stk;
+
+        // Iterate through the array from right to left
+        for (long long i = arr.size() - 1; i >= 0; i--)
+        {
+            // Remove elements from the stack that are greater than the current element
+            while (!stk.empty() && arr.at(stk.top().second) > arr.at(i))
+                stk.pop();
+
+            // If there is still an element in the stack, it is the next smaller element for the current element
+            if (!stk.empty())
+            {
+                indices.at(i) = stk.top().second;
+            }
+
+            // Push the current element along with its index into the stack
+            stk.push({arr.at(i), i});
+        }
+
+        // Return the vector of indices
+        return indices;
+    }
+
+    // Function to find the previous greater element for each element in the array
+    std::vector<long long> prevGreaterElement(std::vector<int> &arr)
+    {
+        // Create a stack to store pairs of elements and their indices
+        std::stack<std::pair<long long, long long>> stk;
+
+        // Create a vector to store the indices of the previous greater elements
+        std::vector<long long> indices(arr.size(), -1);
+
+        // Iterate through the elements of the array
+        for (long long i = 0; i < arr.size(); i++)
+        {
+            // Keep popping elements from the stack until the top element is greater than the current element
+            while (!stk.empty() && arr.at(stk.top().second) <= arr.at(i))
+                stk.pop();
+
+            // If the stack is not empty, set the index of the previous greater element for the current element
+            if (!stk.empty())
+            {
+                indices.at(i) = stk.top().second;
+            }
+
+            // Push the current element and its index onto the stack
+            stk.push({arr.at(i), i});
+        }
+
+        // Return the vector containing the indices of the previous greater elements
+        return indices;
+    }
+
+    // Function to find the next greater element for each element in the array
+    std::vector<long long> nextGreaterElement(std::vector<int> &arr)
+    {
+        // Create a stack to store elements along with their indices
+        std::stack<std::pair<long long, long long>> stk;
+
+        // Create a vector to store the indices of the next greater element for each element in the array
+        std::vector<long long> indices(arr.size(), arr.size());
+
+        // Iterate through the array from right to left
+        for (long long i = arr.size() - 1; i >= 0; i--)
+        {
+            // While the stack is not empty and the element at the top of the stack is smaller than the current element,
+            // pop elements from the stack
+            while (!stk.empty() && arr.at(stk.top().second) < arr.at(i))
+                stk.pop();
+
+            // If the stack is not empty, store the index of the top element as the index of the next greater element for the current element
+            if (!stk.empty())
+            {
+                indices.at(i) = stk.top().second;
+            }
+
+            // Push the current element and its index into the stack
+            stk.push({arr.at(i), i});
+        }
+
+        // Return the vector of indices of the next greater element for each element in the array
+        return indices;
+    }
+};
 //^ 3 Next greater element in a stack
 /*
 
@@ -515,11 +645,11 @@ If the top asteroid in the stack is moving to the right and its size is greater 
 If the current asteroid hasn’t exploded, it’s pushed onto the stack.
 After all asteroids have been processed, the function returns the stack, which represents the state of the asteroids after all collisions.
  * Solves the asteroid collision problem.
- * 
+ *
  * @param asteroids The array of asteroids represented as integers.
  * @return The array of asteroids after all collisions.
  */
-std::vector<int> asteroidCollision(const std::vector<int>& asteroids)
+std::vector<int> asteroidCollision(const std::vector<int> &asteroids)
 {
     std::vector<int> stk;
     for (int asteroid : asteroids)
@@ -546,6 +676,135 @@ std::vector<int> asteroidCollision(const std::vector<int>& asteroids)
     }
     return stk;
 }
+
+//^ 9 Sum of Subarrays Ranges
+class SubarrayRanges
+{
+public:
+    // THIS QUESTION IS ABT Sum of subarray range
+
+    // meangin that sum(max-min) kinda
+
+    // HERE ALSO, we need to focus on each element contrib
+
+    // We did Sum of subarray mins, say return was y
+
+    // If we also do Sum of subarray max, say return x
+
+    // then doing x-y, will give us ANSWER.
+
+    // SINCE HERE, we will only do +, -....over and over
+
+    // HERE WE ALSO USING ALL 4 variant
+
+    // PSE, NSE, = SubArrayMIN
+
+    // PGE, NGE. = SubArrayMAX
+
+    vector<long long> prevSmallerElement(vector<int> &arr)
+    {
+        vector<long long> indices(arr.size(), -1);
+        stack<pair<long long, long long>> stk;
+        for (long long i = 0; i < arr.size(); i++)
+        {
+            while (!stk.empty() && arr.at(stk.top().second) >= arr.at(i))
+                stk.pop();
+            if (!stk.empty())
+                indices.at(i) = stk.top().second;
+            stk.push({arr.at(i), i});
+        }
+        return indices;
+    }
+
+    vector<long long> nextSmallerElement(vector<int> &arr)
+    {
+        vector<long long> indices(arr.size(), arr.size());
+        stack<pair<long long, long long>> stk;
+        for (long long i = arr.size() - 1; i >= 0; i--)
+        {
+            while (!stk.empty() && arr.at(stk.top().second) > arr.at(i))
+                stk.pop();
+            if (!stk.empty())
+            {
+                indices.at(i) = stk.top().second;
+            }
+            stk.push({arr.at(i), i});
+        }
+        return indices;
+    }
+
+    vector<long long> prevGreaterElement(vector<int> &arr)
+    {
+        stack<pair<long long, long long>> stk;
+        vector<long long> indices(arr.size(), -1);
+        for (long long i = 0; i < arr.size(); i++)
+        {
+            while (!stk.empty() && arr.at(stk.top().second) <= arr.at(i))
+                stk.pop();
+            if (!stk.empty())
+            {
+                indices.at(i) = stk.top().second;
+            }
+            stk.push({arr.at(i), i});
+        }
+        return indices;
+    }
+
+    vector<long long> nextGreaterElement(vector<int> &arr)
+    {
+        stack<pair<long long, long long>> stk;
+        vector<long long> indices(arr.size(), arr.size());
+        for (long long i = arr.size() - 1; i >= 0; i--)
+        {
+            while (!stk.empty() && arr.at(stk.top().second) < arr.at(i))
+                stk.pop();
+            if (!stk.empty())
+            {
+                indices.at(i) = stk.top().second;
+            }
+            stk.push({arr.at(i), i});
+        }
+        return indices;
+    }
+
+    long long sumSubarrayMaxs(vector<int> &arr)
+    {
+        vector<long long> prevG = prevGreaterElement(arr);
+        vector<long long> nextG = nextGreaterElement(arr);
+        long long n = arr.size();
+        long long contribution = 0;
+        for (long long i = 0; i < n; i++)
+        {
+            long long l = prevG[i];
+            long long r = nextG[i];
+            contribution += (i - l) * (r - i) * arr[i];
+        }
+        return contribution;
+    }
+
+    long long sumSubarrayMins(vector<int> &arr)
+    {
+        vector<long long> prevS = prevSmallerElement(arr);
+        vector<long long> nextS = nextSmallerElement(arr);
+        long long n = arr.size();
+        long long contribution = 0;
+        for (long long i = 0; i < n; i++)
+        {
+            long long to_add;
+            long long l = prevS[i];
+            long long r = nextS[i];
+            contribution += (i - l) * (r - i) * arr[i];
+        }
+        return contribution;
+    }
+
+    long long subArrayRanges(vector<int> &nums)
+    {
+        long long totalMaxs = sumSubarrayMaxs(nums);
+        long long totalMins = sumSubarrayMins(nums);
+        return totalMaxs - totalMins;
+    }
+};
 int main()
 {
 #ifndef ONLINE_JUDGE

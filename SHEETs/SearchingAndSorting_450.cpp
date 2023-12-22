@@ -2061,6 +2061,205 @@ string baseEquiv(int n, int m)
     return "No";
 }
 
+//^ 41 Median of 2 sorted arrays
+/*
+We are going to use the Binary Search algorithm to optimize the approach.
+
+The primary objective of the Binary Search algorithm is to efficiently determine the appropriate half to eliminate, thereby reducing the search space by half. It does this by determining a specific condition that ensures that the target is not present in that half.
+
+Now, let’s learn through the following observations how we can apply binary search to this problem. First, we will try to solve this problem where n1+n2 is even and then we will consider the odd scenario.
+Observations:
+
+Assume, n = n1+n2 i.e. the total length of the final merged array.
+
+    Median creates a partition on the final merged array: Upon closer observation, we can easily show that the median divides the final merged array into two halves. For example,
+
+    Characteristics of each half:
+        Each half contains (n/2) elements.
+        Each half also contains x elements from the first array i.e. arr1[] and (n/2)-x elements from the second array i.e. arr2[]. The value of x might be different for the two halves. For example, in the above array, the left half contains 3 elements from arr1[] and 2 elements from arr2[].
+    The unique configuration of halves: Considering different values of x, we can get different left and right halves(x = the number of elements taken from arr1[] for a particular half). Some different configurations for the above example are shown below:
+
+How to solve the problem using the above observations:
+
+    Try to form the unique left half:
+        For a valid merged array, the configurations of the two halves are unique. So, we can try to form the halves with different values of x, where x = the number of elements taken from arr1[] for a particular half.
+        There’s no need to construct both halves. Once we have the correct left half, the right half is automatically determined, consisting of the remaining elements not yet considered. Therefore, our focus will solely be on creating the unique left half.
+        How to form all configurations of the left half: We know that the left half will surely contain x elements from arr1[] and (n/2)-x elements from arr2[]. Here the only variable is x. The minimum possible value of x is 0 and the maximum possible value is n1(i.e. The length of the considered array).
+        For all the values,[0, n1] of x, we will try to form the left half and then we will check if that half’s configuration is valid.
+    Check if the formed left half is valid: For a valid left half, the merged array will always be sorted. So, if the merged array containing the formed left half is sorted, the formation is valid.
+        How to check if the merged array is sorted without forming the array:
+        In order to check we will consider 4 elements, i.e. l1, l2, r1, r2.
+            l1 = the maximum element belonging to arr1[] of the left half.
+            l2 = the maximum element belonging to arr2[] of the left half.
+            r1 = the minimum element belonging to arr1[] of the right half.
+            r1 = the minimum element belonging to arr2[] of the right half.
+
+For example,
+
+How to apply Binary search to form the left half:
+
+    We will check the formation of the left half for all possible values of x. Now, we know that the minimum possible value of x is 0 and the maximum is n1(i.e. The length of the considered array). Now the range is sorted. So, we will apply the binary search on the possible values of x i.e. [0, n1].
+    How to eliminate the halves based on the values of x: Binary search works by eliminating the halves in each step. Upon closer observation, we can eliminate the halves based on the following conditions:
+        If l1 > r2: This implies that we have considered more elements from arr1[] than necessary. So, we have to take less elements from arr1[] and more from arr2[]. In such a scenario, we should try smaller values of x. To achieve this, we will eliminate the right half (high = mid-1).
+        If l2 > r1: This implies that we have considered more elements from arr2[] than necessary. So, we have to take less elements from arr2[] and more from arr1[]. In such a scenario, we should try bigger values of x. To achieve this, we will eliminate the left half (low = mid+1).
+
+Until now, we have learned how to use binary search but with the assumption that (n1+n2) is even. Let’s generalize this.
+
+If (n1+n2) is odd: In the case of even, we have considered the length of the left half as
+(n1+n2) / 2. In this case, that length will be (n1 + n2 + 1) / 2. This much change is enough to handle the case of odd. The rest of the things will be completely the same.
+As in the code, division refers to integer division, this modified formula (n1+n2+1) / 2 will be valid for both cases of odd and even.
+
+What will be the answer i.e. the median:
+
+    If l1 <= r2 && l2 <= r1: This condition assures that we have found the correct elements.
+        If (n1+n2) is odd: The median will be max(l1, l2).
+        Otherwise, median = (max(l1, l2) + min(r1, r2)) / 2.0
+
+Note: We are applying binary search on the possible values of x i.e. [0, n1]. Here n1 is the length of arr1[]. Now, to further optimize it, we will consider the smaller array as arr1[]. So, the actual range will be [0, min(n1, n2)].
+Algorithm:
+
+    First, we have to make sure that the arr1[] is the smaller array. If not by default, we will just swap the arrays. Our main goal is to consider the smaller array as arr1[].
+    Calculate the length of the left half: left = (n1+n2+1) / 2.
+    Place the 2 pointers i.e. low and high: Initially, we will place the pointers. The pointer low will point to 0 and the high will point to n1(i.e. The size of arr1[]).
+    Calculate the ‘mid1’ i.e. x and ‘mid2’ i.e. left-x: Now, inside the loop, we will calculate the value of ‘mid1’ using the following formula:
+    mid1 = (low+high) // 2 ( ‘//’ refers to integer division)
+    mid2 = left-mid1
+    Calculate l1, l2, r1, and r2: Generally,
+        l1 = arr1[mid1-1]
+        l2 = arr2[mid2-1]
+        r1 = arr1[mid1]
+        r2 = arr2[mid2]
+        The possible values of ‘mid1’ and ‘mid2’ might be 0 and n1 and n2 respectively. So, to handle these cases, we need to store some default values for these four variables. The default value for l1 and l2 will be INT_MIN and for r1 and r2, it will be INT_MAX.
+    Eliminate the halves based on the following conditions:
+        If l1 <= r2 && l2 <= r1: We have found the answer.
+            If (n1+n2) is odd: Return the median = max(l1, l2).
+            Otherwise: Return median = (max(l1, l2)+min(r1, r2)) / 2.0
+        If l1 > r2: This implies that we have considered more elements from arr1[] than necessary. So, we have to take less elements from arr1[] and more from arr2[]. In such a scenario, we should try smaller values of x. To achieve this, we will eliminate the right half (high = mid1-1).
+        If l2 > r1: This implies that we have considered more elements from arr2[] than necessary. So, we have to take less elements from arr2[] and more from arr1[]. In such a scenario, we should try bigger values of x. To achieve this, we will eliminate the left half (low = mid1+1).
+    Finally, outside the loop, we will include a dummy return statement just to avoid warnings or errors.
+
+The steps from 4-6 will be inside a loop and the loop will continue until low crosses high.
+ */
+double median(vector<int> &a, vector<int> &b)
+{
+
+    int n1 = a.size();
+    int n2 = b.size();
+    if (n1 > n2)
+        return median(b, a);
+
+    int n = n1 + n2;              // total length
+    int left = (n1 + n2 + 1) / 2; // length of left half
+    // apply binary search:
+    // l1 = the maximum element belonging to arr1[] of the left half.
+    // l2 = the maximum element belonging to arr2[] of the left half.
+    // r1 = the minimum element belonging to arr1[] of the right half.
+    // r1 = the minimum element belonging to arr2[] of the right half.
+    int low = 0, high = n1;
+    while (low <= high)
+    {
+        int mid1 = (low + high) / 2;
+        int mid2 = left - mid1;
+        int l1 = (mid1 == 0) ? INT_MIN : a[mid1 - 1];
+        int l2 = (mid2 == 0) ? INT_MIN : b[mid2 - 1];
+        int r1 = (mid1 == n1) ? INT_MAX : a[mid1];
+        int r2 = (mid2 == n2) ? INT_MAX : b[mid2];
+        if (l1 <= r2 && l2 <= r1)
+        {
+            if (n % 2 == 0)
+                return (max(l1, l2) + min(r1, r2)) / 2.0;
+            else
+                return max(l1, l2);
+        }
+        else if (l1 > r2)
+            high = mid1 - 1;
+        else
+            low = mid1 + 1;
+    }
+    return 0.0;
+}
+
+//^ 41 Row with maximum 1s
+class RowMax1s
+{
+public:
+    // int rowWithMax1s(vector<vector<int>> arr, int n, int m)
+    // {
+    //     int j = m - 1, max_row_index = 0;
+    //     for (int i = 0; i < n; i++)
+    //     {
+    //         bool flag = false;
+    //         while (j >= 0 && arr[i][j] == 1)
+    //         {
+    //             j--;
+    //             flag = true;
+    //         }
+    //         if (flag)
+    //         {
+    //             max_row_index = i;
+    //         }
+    //     }
+    //     if (max_row_index == 0 && arr[0][m - 1] == 0)
+    //         return -1;
+    //     return max_row_index;
+    // }
+
+    int rowWithMax1s(vector<vector<int>> &matrix, int n, int m)
+    {
+        int cnt_max = 0;
+        int index = -1;
+
+        // traverse the rows:
+        for (int i = 0; i < n; i++)
+        {
+            // get the number of 1's:
+            int cnt_ones = m - (lower_bound(matrix[i].begin(), matrix[i].end(), 1) - matrix[i].begin());
+            if (cnt_ones > cnt_max)
+            {
+                cnt_max = cnt_ones;
+                index = i;
+            }
+        }
+        return index;
+    }
+};
+
+//^ 42 Search in a 2D sorted Matrix
+/* 
+Algorithm:
+
+    Place the 2 pointers i.e. low and high: Initially, we will place the pointers. The pointer low will point to 0 and the high will point to (NxM)-1.
+    Calculate the ‘mid’: Now, inside the loop, we will calculate the value of ‘mid’ using the following formula:
+    mid = (low+high) // 2 ( ‘//’ refers to integer division)
+    Eliminate the halves based on the element at index mid: To get the element, we will convert index ‘mid’ to the corresponding cell using the above formula. Here no. of columns of the matrix = M.
+    row = mid / M, col = mid % M.
+        If matrix[row][col] == target: We should return true here, as we have found the ‘target’.
+        If matrix[row][col] < target: In this case, we need bigger elements. So, we will eliminate the left half and consider the right half (low = mid+1).
+        If matrix[row][col] > target: In this case, we need smaller elements. So, we will eliminate the right half and consider the left half (high = mid-1).
+    Steps 2-3 will be inside a while loop and the loop will end once low crosses high
+    (i.e. low > high). If we are out of the loop, we can say the target does not exist in the matrix. So, we will return false.
+
+ */
+bool searchMatrix(vector<vector<int>> &matrix, int target)
+{
+    int n = matrix.size();
+    int m = matrix[0].size();
+
+    // apply binary search:
+    int low = 0, high = n * m - 1;
+    while (low <= high)
+    {
+        int mid = (low + high) / 2;
+        int row = mid / m, col = mid % m;
+        if (matrix[row][col] == target)
+            return true;
+        else if (matrix[row][col] < target)
+            low = mid + 1;
+        else
+            high = mid - 1;
+    }
+    return false;
+}
 int main(int argc, char const *argv[])
 {
 

@@ -805,6 +805,69 @@ public:
         return totalMaxs - totalMins;
     }
 };
+
+//^ 10 Largest Area in a histogram
+
+class largestAreaHistogram {
+public:
+/* 
+### Intuition:
+
+The problem involves finding the largest rectangle area in a histogram. The idea is to use two arrays (`left` and `right`) to store the left and right boundaries for each bar, and then calculate the area for each bar by considering its width and height.
+
+### Algorithm:
+
+1. Initialize two arrays `left` and `right` with the same size as the input array `heights`.
+   - `left[i]` represents the index of the left boundary of the rectangle containing the bar at index `i`.
+   - `right[i]` represents the index of the right boundary of the rectangle containing the bar at index `i`.
+2. Use a stack to keep track of indices while iterating through the array from left to right.
+   - For each bar at index `i`, pop elements from the stack until finding a bar whose height is less than the height of the current bar.
+   - The left boundary for the current bar is the index of the element at the top of the stack plus 1 (or 0 if the stack is empty).
+   - Push the current index onto the stack.
+3. Clear the stack and repeat the process from right to left to fill the `right` array.
+4. Iterate through each bar in the array and calculate the area for each rectangle.
+   - The width of the rectangle is `(right[i] - left[i] + 1)`.
+   - The height is the height of the bar at index `i`.
+   - Update the maximum area as needed.
+5. Return the maximum area.
+
+### Time Complexity:
+
+The time complexity is O(n), where n is the size of the input array. Each element is processed once during the stack-based traversal.
+
+### Space Complexity:
+
+The space complexity is O(n) for the left and right arrays and the stack.
+
+### Summary:
+
+The code efficiently uses a stack to find the left and right boundaries for each bar in the histogram, allowing for the calculation of the area of the largest rectangle. The time and space complexities are reasonable for the given problem size.
+ */
+    int largestRectangleArea(vector<int>& heights) {
+        int n = heights.size();
+        vector<int> left(n , 0) , right(n , n) ; 
+        stack<int> s ; 
+        for(int i = 0 ; i < n ; i++) {
+            while(!s.empty() && heights[i] <= heights[s.top()]) s.pop() ;
+            if(s.empty())   left[i] = 0 ; //minimum element
+            else    left[i] = s.top() + 1 ;
+            s.push(i) ; 
+        }
+        while(!s.empty())   s.pop() ; 
+        for(int i = n - 1 ; i >= 0 ; i--) {
+            while(!s.empty() && heights[i] <= heights[s.top()]) s.pop() ;
+            if(s.empty())   right[i] = n - 1 ; //minimum element
+            else    right[i] = s.top() - 1 ;
+            s.push(i) ; 
+        }
+        int area = 0;
+        for(int i = 0; i < n; i++){
+            int width = (right[i] - left[i] + 1);
+            area = max(area,width * heights.at(i));
+        }
+        return area;
+    }
+};
 int main()
 {
 #ifndef ONLINE_JUDGE

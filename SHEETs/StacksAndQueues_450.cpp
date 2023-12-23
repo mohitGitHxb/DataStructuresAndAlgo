@@ -808,62 +808,301 @@ public:
 
 //^ 10 Largest Area in a histogram
 
-class largestAreaHistogram {
+class largestAreaHistogram
+{
 public:
-/* 
-### Intuition:
+    /*
+    ### Intuition:
 
-The problem involves finding the largest rectangle area in a histogram. The idea is to use two arrays (`left` and `right`) to store the left and right boundaries for each bar, and then calculate the area for each bar by considering its width and height.
+    The problem involves finding the largest rectangle area in a histogram. The idea is to use two arrays (`left` and `right`) to store the left and right boundaries for each bar, and then calculate the area for each bar by considering its width and height.
 
-### Algorithm:
+    ### Algorithm:
 
-1. Initialize two arrays `left` and `right` with the same size as the input array `heights`.
-   - `left[i]` represents the index of the left boundary of the rectangle containing the bar at index `i`.
-   - `right[i]` represents the index of the right boundary of the rectangle containing the bar at index `i`.
-2. Use a stack to keep track of indices while iterating through the array from left to right.
-   - For each bar at index `i`, pop elements from the stack until finding a bar whose height is less than the height of the current bar.
-   - The left boundary for the current bar is the index of the element at the top of the stack plus 1 (or 0 if the stack is empty).
-   - Push the current index onto the stack.
-3. Clear the stack and repeat the process from right to left to fill the `right` array.
-4. Iterate through each bar in the array and calculate the area for each rectangle.
-   - The width of the rectangle is `(right[i] - left[i] + 1)`.
-   - The height is the height of the bar at index `i`.
-   - Update the maximum area as needed.
-5. Return the maximum area.
+    1. Initialize two arrays `left` and `right` with the same size as the input array `heights`.
+       - `left[i]` represents the index of the left boundary of the rectangle containing the bar at index `i`.
+       - `right[i]` represents the index of the right boundary of the rectangle containing the bar at index `i`.
+    2. Use a stack to keep track of indices while iterating through the array from left to right.
+       - For each bar at index `i`, pop elements from the stack until finding a bar whose height is less than the height of the current bar.
+       - The left boundary for the current bar is the index of the element at the top of the stack plus 1 (or 0 if the stack is empty).
+       - Push the current index onto the stack.
+    3. Clear the stack and repeat the process from right to left to fill the `right` array.
+    4. Iterate through each bar in the array and calculate the area for each rectangle.
+       - The width of the rectangle is `(right[i] - left[i] + 1)`.
+       - The height is the height of the bar at index `i`.
+       - Update the maximum area as needed.
+    5. Return the maximum area.
 
-### Time Complexity:
+    ### Time Complexity:
 
-The time complexity is O(n), where n is the size of the input array. Each element is processed once during the stack-based traversal.
+    The time complexity is O(n), where n is the size of the input array. Each element is processed once during the stack-based traversal.
 
-### Space Complexity:
+    ### Space Complexity:
 
-The space complexity is O(n) for the left and right arrays and the stack.
+    The space complexity is O(n) for the left and right arrays and the stack.
 
-### Summary:
+    ### Summary:
 
-The code efficiently uses a stack to find the left and right boundaries for each bar in the histogram, allowing for the calculation of the area of the largest rectangle. The time and space complexities are reasonable for the given problem size.
- */
-    int largestRectangleArea(vector<int>& heights) {
+    The code efficiently uses a stack to find the left and right boundaries for each bar in the histogram, allowing for the calculation of the area of the largest rectangle. The time and space complexities are reasonable for the given problem size.
+     */
+    int largestRectangleArea(vector<int> &heights)
+    {
         int n = heights.size();
-        vector<int> left(n , 0) , right(n , n) ; 
-        stack<int> s ; 
-        for(int i = 0 ; i < n ; i++) {
-            while(!s.empty() && heights[i] <= heights[s.top()]) s.pop() ;
-            if(s.empty())   left[i] = 0 ; //minimum element
-            else    left[i] = s.top() + 1 ;
-            s.push(i) ; 
+        vector<int> left(n, 0), right(n, n);
+        stack<int> s;
+        for (int i = 0; i < n; i++)
+        {
+            while (!s.empty() && heights[i] <= heights[s.top()])
+                s.pop();
+            if (s.empty())
+                left[i] = 0; // minimum element
+            else
+                left[i] = s.top() + 1;
+            s.push(i);
         }
-        while(!s.empty())   s.pop() ; 
-        for(int i = n - 1 ; i >= 0 ; i--) {
-            while(!s.empty() && heights[i] <= heights[s.top()]) s.pop() ;
-            if(s.empty())   right[i] = n - 1 ; //minimum element
-            else    right[i] = s.top() - 1 ;
-            s.push(i) ; 
+        while (!s.empty())
+            s.pop();
+        for (int i = n - 1; i >= 0; i--)
+        {
+            while (!s.empty() && heights[i] <= heights[s.top()])
+                s.pop();
+            if (s.empty())
+                right[i] = n - 1; // minimum element
+            else
+                right[i] = s.top() - 1;
+            s.push(i);
         }
         int area = 0;
-        for(int i = 0; i < n; i++){
+        for (int i = 0; i < n; i++)
+        {
             int width = (right[i] - left[i] + 1);
-            area = max(area,width * heights.at(i));
+            area = max(area, width * heights.at(i));
+        }
+        return area;
+    }
+};
+
+//^ 11 Remove K digits from number
+string removeKdigits(string S, int k)
+{
+    string ans = "";                     // Initialize an empty string to store the result
+    for (int i = 0; i < S.length(); i++) // Iterate through each character in the input string
+    {
+        while (!ans.empty() && ans.back() > S[i] && k > 0) // Check if the last digit in the result string is greater than the current digit and there are more digits to be removed
+        {
+            ans.pop_back(); // Remove the last digit from the result string
+            k--;            // Decrement the count of digits to be removed
+        }
+        if (ans.empty() && S[i] == '0') // Skip leading zeros in the input string
+            continue;
+        ans.push_back(S[i]); // Append the current digit to the result string
+    }
+
+    while (!ans.empty() && k--) // Remove remaining digits if k > 0
+        ans.pop_back();
+    return (ans == "") ? "0" : ans; // Return "0" if the result string is empty, otherwise return the result string
+}
+
+//^ 12 Celebrity Problem
+class CelebritySolution
+{
+public:
+    /*
+        Create two arrays indegree and outdegree, to store the indegree and outdegree
+        Run a nested loop, the outer loop from 0 to n and inner loop from 0 to n.
+        For every pair i, j check if i knows j then increase the outdegree of i and indegree of j
+        For every pair i, j check if j knows i then increase the outdegree of j and indegree of i
+        Run a loop from 0 to n and find the id where the indegree is n-1 and outdegree is 0.
+     */
+    /*     int celebrity(vector<vector<int>> &M, int n)
+        {
+            // code here
+            vector<int> adj[n];
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    if (i != j && M[i][j] == 1)
+                    {
+                        adj[i].push_back(j);
+                    }
+                }
+            }
+
+            vector<int> indegree(n), outdegree(n);
+            for (int i = 0; i < n; i++)
+            {
+                outdegree[i] = adj[i].size();
+                for (auto node : adj[i])
+                {
+                    indegree[node]++;
+                }
+            }
+
+            for (int i = 0; i < n; i++)
+            {
+                if (indegree.at(i) == n - 1 && outdegree.at(i) == 0)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        } */
+    /*
+    Intuition
+& TWO POINTERS APPROACH
+The idea is to use two pointers, one from start and one from the end. Assume the start person is A, and the end person is B. If A knows B, then A must not be the celebrity. Else, B must not be the celebrity. At the end of the loop, only one index will be left as a celebrity. Go through each person again and check whether this is the celebrity.
+The Two Pointer approach can be used where two pointers can be assigned, one at the start and the other at the end, and the elements can be compared and the search space can be reduced.
+Implementation
+
+    Create two indices i and j, where i = 0 and j = n-1
+    Run a loop until i is less than j.
+    Check if i knows j, then i can't be a celebrity. so increment i, i.e. i++
+    Else j cannot be a celebrity, so decrement j, i.e. j--
+    Assign i as the celebrity candidate
+    Now at last check whether the candidate is actually a celebrity by re-running a loop from 0 to n-1  and constantly checking that if the candidate knows a person or if there is a candidate who does not know the candidate, then we should return -1. else at the end of the loop, we can be sure that the candidate is actually a celebrity.
+
+Complexity Analysis
+
+*   Time Complexity: O(N), As we running the loop for maximum of n times.
+*   Space Complexity: O(1), As no extra space is required.
+
+     */
+    int celebrity(vector<vector<int>> &M, int n)
+    {
+        // initializing two pointers for two corners.
+        int a = 0;
+        int b = n - 1;
+
+        // we keep moving till the a<b.
+        while (a < b)
+        {
+            if (M[a][b])
+                a++;
+            else
+                b--;
+        }
+
+        // checking if a is actually a celebrity or not.
+        for (int i = 0; i < n; i++)
+        {
+            // if any person doesn't know a or a knows any person, we return -1.
+            if ((i != a) && (M[a][i] || !M[i][a]))
+                return -1;
+        }
+        // if we reach here a is celebrity so we retun a.
+        return a;
+    }
+    /*
+    & Stack approach
+     */
+    int celebrity(vector<vector<int>> &M, int n)
+    {
+        // code here
+        stack<int> s;
+        for (int i = 0; i < n; i++)
+            s.push(i);
+        while (s.size() > 1)
+        {
+            int A = INT_MIN, B = INT_MIN;
+            A = s.top();
+            s.pop();
+            B = s.top();
+            s.pop();
+            if (M[A][B] && !M[B][A])
+            {
+                s.push(B);
+            }
+            else if (M[B][A] && !M[A][B])
+            {
+                s.push(A);
+            }
+            else
+            {
+                continue;
+            }
+        }
+        if (s.empty())
+            return -1;
+        for (int i = 0; i < n; i++)
+        {
+            if (i != s.top() and (!M[i][s.top()] || M[s.top()][i]))
+                return -1;
+        }
+        return s.top();
+    }
+};
+
+//^ 13 Maximum Rectangle in a Binary matrix
+class MaxRect10
+{
+public:
+    void clearStack(stack<int> &s)
+    {
+        while (!s.empty())
+            s.pop();
+    }
+    int largestAreaHistogram(vector<int> &arr)
+    {
+        stack<int> s;
+        vector<int> left(arr.size()), right(arr.size(), arr.size());
+        for (int i = 0; i < arr.size(); i++)
+        {
+            while (!s.empty() && arr.at(s.top()) >= arr.at(i))
+                s.pop();
+            if (s.empty())
+            {
+                left.at(i) = 0;
+            }
+            else
+            {
+                left.at(i) = s.top() + 1; // want boundary
+            }
+            s.push(i);
+        }
+        clearStack(s);
+        for (int i = arr.size() - 1; i >= 0; i--)
+        {
+            while (!s.empty() && arr.at(s.top()) >= arr.at(i))
+                s.pop();
+            if (s.empty())
+            {
+                right.at(i) = arr.size() - 1;
+            }
+            else
+            {
+                right.at(i) = s.top() - 1; // want boundary
+            }
+            s.push(i);
+        }
+
+        int Area = 0;
+        for (int i = 0; i < arr.size(); i++)
+        {
+            int width = right.at(i) - left.at(i) + 1;
+            Area = max(Area, width * arr.at(i));
+        }
+        return Area;
+    }
+    int maxArea(vector<vector<int>> &M, int n, int m)
+    {
+        // Your code here
+        vector<int> histogram(m);
+        int area = 0;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                if (M[i][j] == 0)
+                {
+                    histogram.at(j) = 0;
+                }
+                else
+                {
+                    histogram.at(j) += M[i][j];
+                }
+            }
+
+            area = max(area, largestAreaHistogram(histogram));
         }
         return area;
     }

@@ -35,5 +35,6 @@
     "[markdown]": {
         "editor.wordWrapColumn": 85,
         "editor.wordWrap": "wordWrapColumn"
-    }
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

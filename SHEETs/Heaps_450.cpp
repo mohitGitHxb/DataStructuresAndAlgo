@@ -283,6 +283,454 @@ long long minCost(long long arr[], long long n)
     }
     return cost;
 }
+
+//^ 5 Kth largest sum contiguous subarray
+/* Function to return the Kth largest element
+The approach efficiently explores all subarrays using prefix sums and maintains a min-heap to keep track of the K largest elements encountered. This allows for a systematic approach to finding the Kth largest element without sorting the entire array. The use of a min-heap ensures that the algorithm remains efficient, particularly when K is significantly smaller than the array size.
+ */
+int kthLargest(vector<int> &arr, int N, int K)
+{
+    priority_queue<int, vector<int>, greater<int>> pq;
+    for (int i = 0; i < N; i++)
+    {
+        int currentSum = 0;
+        for (int j = i; j < N; j++)
+        {
+            currentSum += arr[j];
+            pq.push(currentSum);
+            while (!pq.empty() && pq.size() > K)
+            {
+                pq.pop();
+            }
+        }
+    }
+    return pq.top();
+}
+
+//^ 6 Merge k Sorted Arrays
+class MergeKArrays
+{
+public:
+    /*
+    ! Brute force approach
+     */
+    vector<int> mergeKArrays(vector<vector<int>> arr, int K)
+    {
+        vector<int> ans;
+        for (int i = 0; i < K; i++)
+        {
+            ans.insert(ans.end(), arr[i].begin(), arr[i].end());
+        }
+        sort(ans.begin(), ans.end());
+        return ans;
+    }
+    /*
+    % Better approach slightly
+     */
+    vector<int> mergeKArrays(vector<vector<int>> arr, int K)
+    {
+        // Create a min heap using a priority queue.
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+
+        // Initialize the merged array.
+        vector<int> ans;
+
+        // Push the first element of each array into the min heap.
+        for (int i = 0; i < K; i++)
+        {
+            pq.push({arr[i].front(), i});
+        }
+
+        // Merge the arrays by repeatedly popping the smallest element from the min heap.
+        while (!pq.empty())
+        {
+            int index = pq.top().second;
+            ans.push_back(pq.top().first);
+            pq.pop();
+            if (arr[index].size() > 1)
+            {
+                arr[index].erase(arr[index].begin());
+                pq.push({arr[index].front(), index});
+            }
+        }
+        return ans;
+    }
+    /*
+    * Time Complexity: O(K^2logK)
+    * Space Complexity: O(K^2)
+    & Best approach
+
+     */
+    vector<int> mergeKArrays(vector<vector<int>> arr, int K)
+    {
+        // Create a min heap using a priority queue.
+        priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> pq;
+        // Initialize the merged array.
+        vector<int> ans;
+        // Push the first element of each array into the min heap.
+        for (int i = 0; i < K; i++)
+        {
+            pq.push({arr[i][0], {i, 0}});
+        }
+        // Merge the arrays by repeatedly popping the smallest element from the min heap.
+        while (!pq.empty())
+        {
+            int value = pq.top().first;
+            int arrayIndex = pq.top().second.first;
+            int elementIndex = pq.top().second.second;
+            pq.pop();
+            ans.push_back(value);
+            if (elementIndex + 1 < arr[arrayIndex].size())
+            {
+                pq.push({arr[arrayIndex][elementIndex + 1], {arrayIndex, elementIndex + 1}});
+            }
+        }
+        return ans;
+    }
+};
+
+//^ 7 Merge K sorted linked lists
+class MergeKLists
+{
+private:
+    struct Node
+    {
+        int data;
+        Node *next;
+        Node(int x)
+        {
+            data = x;
+            next = NULL;
+        }
+    };
+
+public:
+    struct comp
+    {
+        bool operator()(Node *a, Node *b)
+        {
+            return a->data > b->data;
+        }
+    };
+    /*
+    Intuition:
+    The idea is to use a priority queue (min-heap) to select the node with the smallest value. This node is then removed from its original list and added to the result list. This process is repeated until all nodes have been processed. The priority queue ensures that the smallest node is always selected next, which is necessary to maintain the sorted order of the result list.
+    };
+     */
+    // This function merges K sorted linked lists using a priority queue.
+    // The priority queue is used to always pick the smallest element from the heads of the linked lists.
+    // The smallest element is then removed from its linked list and added to the result list.
+    // This process is repeated until all elements from all lists have been processed.
+    //* Time Complexity: O(NKlogK)
+    Node *mergeKLists(Node *arr[], int K)
+    {
+        // Create a priority queue that stores Node pointers. The nodes are compared using the comp function.
+        priority_queue<Node *, vector<Node *>, comp> pq;
+
+        // If there are no lists to merge, return NULL.
+        if (K == 0)
+            return NULL;
+
+        // Add the head of each list to the priority queue.
+        for (int i = 0; i < K; i++)
+            if (arr[i])
+                pq.push(arr[i]);
+
+        // Initialize the head and tail of the result list.
+        Node *head = NULL, *tail = NULL;
+
+        // Process all nodes.
+        while (!pq.empty())
+        {
+            // Get the node with the smallest value.
+            Node *temp = pq.top();
+            pq.pop();
+
+            // If the chosen list is not empty, add the next node to the priority queue.
+            if (temp->next)
+            {
+                pq.push(temp->next);
+            }
+
+            // If this is the first node, initialize the head and tail of the result list.
+            // Otherwise, add the node to the end of the result list.
+            if (!head)
+            {
+                head = temp;
+                tail = temp;
+            }
+            else
+            {
+                tail->next = temp;
+                tail = tail->next;
+            }
+        }
+
+        // Return the head of the merged list.
+        return head;
+    }
+};
+
+//^ 8 Maximum number of events attended
+int maxEvents(int start[], int end[], int N)
+{
+    // Initialize the answer to 0
+    int ans = 0;
+
+    // Create a vector of pairs where each pair is a start and end day of an event
+    vector<pair<int, int>> events;
+    for (int i = 0; i < N; i++)
+    {
+        events.push_back({start[i], end[i]});
+    }
+
+    // Sort the events by their start days
+    sort(events.begin(), events.end());
+
+    // Initialize a priority queue to keep track of the end days of the events
+    priority_queue<int, vector<int>, greater<int>> pq;
+
+    // Initialize the current day and the index of the current event
+    int day = 0, i = 0;
+
+    // Process the events
+    while (!pq.empty() || i < N)
+    {
+        // If the queue is empty, move to the start day of the next event
+        if (pq.empty())
+        {
+            day = events[i].first;
+        }
+
+        // Add all events that can be attended on the current day to the queue
+        while (i < N && events[i].first <= day)
+        {
+            pq.push(events[i++].second);
+        }
+
+        // Attend the event that ends first (it is at the top of the queue)
+        pq.pop();
+
+        // Move to the next day
+        day++;
+
+        // Increase the count of attended events
+        ans++;
+
+        // Remove all events from the queue that have already ended
+        while (!pq.empty() && pq.top() < day)
+        {
+            pq.pop();
+        }
+    }
+
+    // Return the maximum number of events that can be attended
+    return ans;
+}
+
+//^ 9 Rank Transform of an Array
+vector<int> arrayRankTransform(vector<int> &arr)
+{
+    if (arr.size() == 0)
+        return {};
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    for (int i = 0; i < arr.size(); i++)
+    {
+        pq.push({arr[i], i}); // store element and its index value
+    }
+
+    int rank = 1;              // rank for first smallest element
+    int last = pq.top().first; // last element which was processed (initially pq.top.first)
+    while (!pq.empty())
+    {
+        auto itr = pq.top();
+        pq.pop();
+        if (itr.first != last)
+        {
+            rank = rank + 1; // current element is not same as last element hence rank increases
+        }
+        arr[itr.second] = rank;
+        last = itr.first; // update last element
+    }
+    return arr;
+}
+
+//^ 10 Median in a stream
+class MedianStream
+{
+private:
+    /*
+    The given code is a C++ implementation of a data structure that maintains a stream of integers and allows for constant-time retrieval of the median of the stream. The data structure uses two heaps, a max heap and a min heap, to keep track of the elements in the stream. The max heap stores the smaller half of the elements, and the min heap stores the larger half. This way, the top of the max heap is always the largest of the smaller elements, and the top of the min heap is always the smallest of the larger elements. If the two heaps are the same size, the median is the average of the two tops; if they are not, the median is the top of the larger heap.
+
+   The insertHeap function inserts a new element into the appropriate heap, and then calls balanceHeaps to ensure that the heaps remain balanced (i.e., their sizes differ by at most one). The getMedian function then retrieves the median as described above.
+
+   * The time complexity of the insertHeap and getMedian operations is O(log n), where n is the number of elements in the stream. This is because the heap operations (insertion, deletion, retrieval of the top) all take O(log n) time.
+
+   * The space complexity is O(n), as we need to store all n elements in the heaps.
+
+     */
+    // maxHeap stores the smaller half of the elements
+    priority_queue<int> smallerHalf;
+    // minHeap stores the larger half of the elements
+    priority_queue<int, vector<int>, greater<int>> largerHalf;
+
+public:
+    // Function to insert an element into the appropriate heap
+    void insertElement(int &element)
+    {
+        // If the element is smaller than the largest of the smaller elements,
+        // or if the smaller half is empty, insert it into the smaller half
+        if (smallerHalf.size() == 0 || smallerHalf.top() > element)
+        {
+            smallerHalf.push(element);
+        }
+        // Otherwise, insert it into the larger half
+        else
+        {
+            largerHalf.push(element);
+        }
+        // Ensure that the heaps remain balanced
+        balanceHeaps();
+    }
+
+    // Function to balance the heaps
+    void balanceHeaps()
+    {
+        // If the smaller half has more than one element more than the larger half,
+        // move the largest of the smaller elements to the larger half
+        if (smallerHalf.size() > largerHalf.size() + 1)
+        {
+            largerHalf.push(smallerHalf.top());
+            smallerHalf.pop();
+        }
+        // If the larger half has more elements than the smaller half,
+        // move the smallest of the larger elements to the smaller half
+        else if (smallerHalf.size() < largerHalf.size())
+        {
+            smallerHalf.push(largerHalf.top());
+            largerHalf.pop();
+        }
+    }
+
+    // Function to return the median of the elements
+    double getMedian()
+    {
+        // If the heaps are the same size, the median is the average of the two tops
+        if (smallerHalf.size() == largerHalf.size())
+        {
+            return (smallerHalf.top() + largerHalf.top()) / 2.0;
+        }
+        // If they are not, the median is the top of the larger heap
+        else
+        {
+            return smallerHalf.top();
+        }
+    }
+};
+
+//^ 11 Top K frequent elements
+
+vector<int> topK(vector<int> &nums, int k)
+{
+
+    // Create an unordered map to store the frequency of each element in nums.
+    unordered_map<int, int> mp;
+    // Create a priority queue to store pairs of frequency and element, in descending order of frequency.
+    priority_queue<pair<int, int>> pq;
+    // Create a vector to store the top k frequent elements.
+    vector<int> ans;
+
+    // Iterate over each element in nums.
+    for (int i = 0; i < nums.size(); i++)
+    {
+        // Increment the frequency of the current element in the unordered map.
+        mp[nums[i]]++;
+    }
+
+    // Iterate over each pair in the unordered map.
+    for (auto &x : mp)
+    {
+        // Push the pair into the priority queue.
+        pq.push({x.second, x.first});
+    }
+
+    // Iterate k times to get the top k frequent elements.
+    for (int i = 0; i < k; i++)
+    {
+        // Push the element with the highest frequency into the vector.
+        ans.push_back(pq.top().second);
+        // Remove the element with the highest frequency from the priority queue.
+        pq.pop();
+    }
+    return ans;
+}
+
+//^ 12 Task Scheduling with waiting time n
+int leastInterval(vector<char> &tasks, int n)
+{
+    // Priority queue to store tasks based on their counts
+    priority_queue<pair<int, int>> pq;
+    
+    // Map to store the count of each task
+    unordered_map<char, int> taskCount;
+
+    // Count the frequency of each task
+    for (auto &task : tasks)
+    {
+        taskCount[task]++;
+    }
+
+    // Push tasks and their counts into the priority queue
+    for (auto &task : taskCount)
+    {
+        pq.push({task.second, task.first});
+    }
+
+    // Timer to keep track of the total time
+    int timer = 0;
+
+    // Process tasks until the priority queue is empty
+    while (!pq.empty())
+    {
+        // Vector to store tasks that will be processed in the current round
+        vector<pair<int, int>> v;
+
+        // Process tasks up to 'n' times or until the priority queue is empty
+        for (int i = 0; i <= n; i++)
+        {
+            // Check if there are tasks remaining in the priority queue
+            if (!pq.empty())
+            {
+                // Add the top task to the vector
+                v.push_back(pq.top());
+                pq.pop();
+            }
+            else
+            {
+                // No more tasks remaining, break the loop
+                break;
+            }
+        }
+
+        // Decrease the count of each task in the vector
+        for (auto &task : v)
+        {
+            if (--task.first > 0)
+            {
+                // If the count is still greater than 0, push the task back into the priority queue
+                pq.push(task);
+            }
+        }
+
+        // Increment the timer based on the number of tasks processed in the current round
+        timer += pq.empty() ? v.size() : n + 1;
+    }
+
+    // Return the total time taken
+    return timer;
+}
+
+// Return the vector containing the top k frequent elements.
 int main()
 {
 #ifndef ONLINE_JUDGE

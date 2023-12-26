@@ -23,7 +23,8 @@
         "string_view": "cpp",
         "ranges": "cpp",
         "span": "cpp",
-        "stacktrace": "cpp"
+        "stacktrace": "cpp",
+        "maximum sqr area by removing fences": "cpp"
     },
     "cSpell.words": [
         "getnode",

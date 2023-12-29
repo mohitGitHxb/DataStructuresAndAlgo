@@ -728,6 +728,39 @@ int leastInterval(vector<char> &tasks, int n)
 
     // Return the total time taken
     return timer;
+
+    /*
+
+    * O(N) approach
+    int leastInterval(int N, int K, vector<char> &tasks) {
+    // Initialize a frequency array of size 26 (for each letter of the alphabet)
+    vector<int> freq(26);
+    int maxFreq=0;
+    // Iterate over the tasks
+    for(auto &it : tasks){
+        // Increment the frequency of the current task
+        freq[it-'A']++;
+        // Update maxFreq if the frequency of the current task is greater
+        maxFreq = max(maxFreq,freq[it-'A']);
+    }
+
+    // Initialize a counter for the number of tasks with frequency equal to maxFreq
+    int frequencyCounter = 0;
+    // Iterate over the frequency array
+    for(auto &it : freq){
+        // If the frequency of the current task is equal to maxFreq, increment the counter
+        if(it == maxFreq)frequencyCounter++;
+    }
+    // Calculate the minimum time required to complete all tasks without any idle intervals
+    int time = (maxFreq-1)*(K+1) + frequencyCounter;
+
+    // Return the maximum of time and N (the total number of tasks)
+    // This is because if there are more tasks than time slots, we need to return the total number of tasks
+    return max(time,N);
+}
+
+
+     */
 }
 
 //^ 13 Divide array in sets of K consecutive elements
@@ -869,6 +902,113 @@ vector<int> kthLargest(int k, int arr[], int n)
             v.push_back(-1);
     }
     return v;
+}
+
+//^ 15 Design Twitter
+class Twitter
+{
+public:
+    unordered_map<int, set<int>> following;
+    unordered_map<int, vector<pair<int, int>>> post;
+    int time;
+    Twitter()
+    {
+        time = 0;
+    }
+
+    void postTweet(int userId, int tweetId)
+    {
+        post[userId].push_back({time++, tweetId});
+    }
+
+    vector<int> getNewsFeed(int userId)
+    {
+        priority_queue<pair<int, int>> maxh;
+        vector<int> feed;
+        for (auto it : post[userId])
+        {
+            maxh.push(it);
+        }
+        for (auto iter : following[userId])
+        {
+            for (auto it : post[iter])
+            {
+                maxh.push(it);
+            }
+        }
+
+        while (!maxh.empty())
+        {
+            feed.push_back(maxh.top().second);
+            if (feed.size() == 10)
+                break;
+            maxh.pop();
+        }
+
+        return feed;
+    }
+
+    void follow(int followerId, int followeeId)
+    {
+        following[followerId].insert(followeeId);
+    }
+
+    void unfollow(int followerId, int followeeId)
+    {
+        following[followerId].erase(followeeId);
+    }
+};
+
+/**
+ * Your Twitter object will be instantiated and called as such:
+ * Twitter* obj = new Twitter();
+ * obj->postTweet(userId,tweetId);
+ * vector<int> param_2 = obj->getNewsFeed(userId);
+ * obj->follow(followerId,followeeId);
+ * obj->unfollow(followerId,followeeId);
+ */
+
+//^ 16 Maximum k sum combination from two arrays
+// Given two arrays A and B, the function maxCombinations returns a vector of maximum k sum combinations from the two arrays
+// * Time Complexity: O(NlogN + MlogM + KlogK)
+vector<int> maxCombinations(int N, int K, vector<int> &A, vector<int> &B)
+{
+    // Sort arrays A and B in descending order.
+    sort(A.rbegin(), A.rend());
+    sort(B.rbegin(), B.rend());
+
+    // Use a priority queue to store pairs of sums and their corresponding indices.
+    // Initialize the priority queue with the K largest sum combinations from the start of arrays A and B.
+    priority_queue<pair<int, pair<int, int>>> pq;
+    for (int i = 0; i < K; i++)
+    {
+        pq.push({A[i] + B[0], {i, 0}});
+    }
+
+    // Initialize an empty vector to store the maximum sum combinations.
+    vector<int> ans;
+
+    // Continue the process until the priority queue is empty or K iterations have been performed.
+    while (!pq.empty() && K--)
+    {
+        // Get the maximum sum and its corresponding indices from the top of the priority queue.
+        int val = pq.top().first;
+        int i = pq.top().second.first;
+        int j = pq.top().second.second;
+        pq.pop();
+
+        // Add the maximum sum to the vector.
+        ans.push_back(val);
+
+        // If there are more elements in array B, add the next sum combination to the priority queue.
+        if (j + 1 < N)
+        {
+            pq.push({A[i] + B[j + 1], {i, j + 1}});
+        }
+    }
+
+    // Return the vector of maximum sum combinations.
+    return ans;
 }
 
 int main()

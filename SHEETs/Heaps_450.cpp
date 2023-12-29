@@ -670,7 +670,7 @@ int leastInterval(vector<char> &tasks, int n)
 {
     // Priority queue to store tasks based on their counts
     priority_queue<pair<int, int>> pq;
-    
+
     // Map to store the count of each task
     unordered_map<char, int> taskCount;
 
@@ -730,7 +730,147 @@ int leastInterval(vector<char> &tasks, int n)
     return timer;
 }
 
-// Return the vector containing the top k frequent elements.
+//^ 13 Divide array in sets of K consecutive elements
+class DivideArrayKconsecutiveElements
+{
+public:
+    bool isPossibleDivide(vector<int> &nums, int k)
+    {
+
+        int n = nums.size();
+
+        // if n is not multiple of k, then we can't divide the array
+
+        if (n % k)
+            return false;
+
+        // sort the array
+
+        sort(nums.begin(), nums.end());
+
+        // store the frequency of every elements into the count map
+
+        unordered_map<int, int> count;
+
+        for (int i = 0; i < n; i++)
+        {
+            count[nums[i]]++;
+        }
+
+        // iterate over the array
+
+        for (int i = 0; i < n; i++)
+        {
+            // if all the occurance of curr element is include
+
+            if (count[nums[i]] == 0)
+                continue;
+
+            // decrement the count of occurance of curr element
+
+            count[nums[i]]--;
+
+            // check can we make a set of k consecutive numbers
+
+            for (int j = 1; j < k; j++)
+            {
+                // if nums[i] + j is not present in count map, then we can't make a set of k consecutive numbers
+
+                if (count[nums[i] + j] == 0)
+                    return false;
+
+                // decrement the count of occurance of nums[i] + j element
+
+                count[nums[i] + j]--;
+            }
+        }
+
+        return true;
+    }
+
+    // Refactored code to improve readability and adhere to the given rules
+
+    bool isNStraightHand(vector<int> &hands, int k)
+    {
+        if (hands.size() % k)
+        {
+            return false;
+        }
+
+        sort(hands.begin(), hands.end());
+
+        // Create a min heap using a priority queue to keep track of the current group of cards
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+
+        // Iterate through each card in the hands vector
+        for (int num : hands)
+        {
+            // Check if there are any incomplete groups in the priority queue
+            // (groups that have a card less than num - 1 or have already k cards)
+            while (!pq.empty() && (pq.top().first < num - 1 || pq.top().second == k))
+            {
+                // If an incomplete group is found that has less than k cards,
+                // return false since it is not possible to form a complete hand
+                if (pq.top().second != k)
+                {
+                    return false;
+                }
+                pq.pop();
+            }
+
+            // If the priority queue is empty or the top element has the same value as num,
+            // create a new group with num as the first card and count as 1
+            if (pq.empty() || pq.top().first == num)
+            {
+                pq.push({num, 1});
+                continue;
+            }
+
+            // If the top element has a different value than num,
+            // update the count of the group and push it back into the priority queue
+            auto it = pq.top();
+            pq.pop();
+            pq.push({num, it.second + 1});
+        }
+
+        // Check if there are any remaining incomplete groups in the priority queue
+        // (groups that have less than k cards)
+        while (!pq.empty())
+        {
+            if (pq.top().second != k)
+            {
+                return false;
+            }
+            pq.pop();
+        }
+
+        // If all groups have k cards, return true
+        return true;
+    }
+};
+
+//^ 14 Kth largest element in a stream
+vector<int> kthLargest(int k, int arr[], int n)
+{
+    // code here
+    priority_queue<int, vector<int>, greater<int>> pq;
+    vector<int> v;
+    for (int i = 0; i < n; i++)
+    {
+        pq.push(arr[i]);
+        if (pq.size() == k)
+            v.push_back(pq.top());
+        else if (pq.size() > k)
+        {
+            pq.pop();
+            v.push_back(pq.top());
+        }
+        else
+            v.push_back(-1);
+    }
+    return v;
+}
+
 int main()
 {
 #ifndef ONLINE_JUDGE

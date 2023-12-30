@@ -399,7 +399,7 @@ public:
 };
 
 //^ 7 Minimum number of coins
-/* 
+/*
 This code is a solution to the problem of finding the minimum number of currency denominations that sum up to a given amount (N). The denominations used are {2000, 500, 200, 100, 50, 20, 10, 5, 2, 1}.
 
 The function `minPartition(int N)` takes an integer N as input and returns a vector of integers. The vector contains the denominations used to sum up to N.
@@ -434,6 +434,143 @@ vector<int> minPartition(int N)
     }
 
     return result;
+}
+
+//^ 8 Lemonade exchange
+/*
+Just maintain the counts of five and ten as you iterate through the bills.
+and return false if can't give change.
+* Time Complexity: O(n)
+* Space Complexity: O(1)
+ */
+
+//^ 9 Valid parenthesis
+
+class ValidParenthesis
+{
+public:
+    /*
+    Use stack to store the opening brackets and whenever you encounter a closing bracket, check if the top of the stack is matching with the current bracket. If not, return false.
+
+    * Time Complexity: O(n)
+    * Space Complexity: O(n)
+
+     */
+    bool isMatching(char a, char b)
+    {
+        return ((a == '(' && b == ')')) || ((a == '{' && b == '}')) || ((a == '[' && b == ']'));
+    }
+    bool ispar(const string &str)
+    {
+        if (str.empty())
+            return true;
+        // Your code here
+        stack<char> s;
+        // s.push(x[0]);
+        for (int i = 0; i < str.length(); i++)
+        {
+            if (str.at(i) == '(' || str.at(i) == '{' || str.at(i) == '[')
+            {
+                s.push(str[i]);
+            }
+            else
+            {
+                if (s.empty())
+                    return false;
+                else if (isMatching(s.top(), str[i]) == false)
+                    return false;
+                else
+                    s.pop();
+            }
+        }
+        return s.empty();
+    }
+};
+
+//^ 10 Check if it's possible to jump to the last index in the given array of integers
+bool canJump(vector<int> &nums)
+{
+    // Initialize the maximum reach to the first element of the array
+    int maxReach = nums[0];
+
+    // Iterate through the array
+    for (int i = 1; i < nums.size(); i++)
+    {
+        // If the maximum reach is less than the current index, it's not possible to jump to the last index
+        if (maxReach < i)
+        {
+            return false;
+        }
+        // Update the maximum reach by taking the maximum of the current maximum reach and the combined jump length from the current index
+        maxReach = max(maxReach, nums[i] + i);
+    }
+
+    // If the loop completes without returning false, it's possible to jump to the last index
+    return true;
+}
+
+//^ 11 Minimum number of jumps to reach the end of the array
+int jump(vector<int> &nums)
+{
+    // Get the size of the vector
+    int n = nums.size();
+
+    // Initialize variables to keep track of the number of jumps, the farthest we can reach, and the end of the current jump
+    int jumps = 0, farthest = 0, end = 0;
+
+    // Iterate through the vector, but stop one element before the end
+    for (int i = 0; i < n - 1; i++)
+    {
+
+        // Update the farthest we can reach by comparing the current farthest with the sum of the current index and the value at that index
+        farthest = max(farthest, i + nums[i]);
+
+        // If we've reached the end of the current jump
+        if (i == end)
+        {
+
+            // Increment the number of jumps
+            jumps++;
+
+            // Update the end of the current jump to be the farthest we can reach
+            end = farthest;
+        }
+    }
+
+    // Return the number of jumps
+    return jumps;
+}
+
+bool lemonadeChange(int N, vector<int> &bills)
+{
+    if (bills.front() != 5)
+        return false;
+    int five = 0, ten = 0;
+    for (int i = 0; i < N; i++)
+    {
+        if (bills[i] == 5)
+            five++;
+        else if (bills[i] == 10)
+        {
+            if (five == 0)
+                return false;
+            five--;
+            ten++;
+        }
+        else
+        {
+            if (five > 0 && ten > 0)
+            {
+                five--;
+                ten--;
+            }
+            else if (five >= 3)
+                five -= 3;
+            else
+                return false;
+        }
+    }
+    return true;
 }
 
 int main()

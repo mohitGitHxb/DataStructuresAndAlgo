@@ -541,37 +541,118 @@ int jump(vector<int> &nums)
     return jumps;
 }
 
-bool lemonadeChange(int N, vector<int> &bills)
+//^ 12 Minimum Platforms]
+/* Approach 1: Priority_queue Time Complexity - O(2NlogN) + O(N) Space Complexity - O(N)
+
+INTUITION: Store {arr[i], dep[i]} in a vector. Sort the vector so that the train that arrives first is at the first index, the train that arrives just after the first one is at the second index and so on. We will use minHeap here (min priority_queue). Push the departure time of the first train into the heap.
+
+Now, if arr[secondTrain] > dep[firstTrain], i.e. the first train will depart before the second train arrives. Therefore the second train can occupy the same platform. Thus we are no more concerned about the first train (as its time doesn't collapse with the next train time). Therefore we can remove the departure time of this train from the priority_queue.
+
+Now if arr[secondTrain] <= dep[firstTrain], i.e. the first train will not depart before the second train arrives i.e. we need a separate platform for this train. And we are also concerned about the departure time of both the trains (so that if any one leaves before the next (futureTrain) arrives, we can offer the same platform to that future train). Thus push the departure time of the secondTrain in priority_queue. Now we have two items in the heap.
+
+NOTE: We are concerned about both the departure times, but more concerned about the smaller/lesser/minimum departure i.e. the top of the minHeap.
+
+RESULT: The number of elements in Heap will be minimum number of platforms required. Because the elements present in the Heap are nothing but the departure times which were colliding with some other trains arrival time. So we provided them a new platform. */
+
+class MinimumPlatforms
 {
-    if (bills.front() != 5)
-        return false;
-    int five = 0, ten = 0;
-    for (int i = 0; i < N; i++)
+public:
+    int findPlatform(int arr[], int dep[], int n)
     {
-        if (bills[i] == 5)
-            five++;
-        else if (bills[i] == 10)
+        vector<pair<int, int>> v;
+        for (int i = 0; i < n; i++)
         {
-            if (five == 0)
-                return false;
-            five--;
-            ten++;
+            v.push_back({arr[i], dep[i]});
         }
-        else
+
+        sort(v.begin(), v.end());
+        priority_queue<int, vector<int>, greater<int>> pq;
+
+        for (int i = 0; i < n; i++)
         {
-            if (five > 0 && ten > 0)
-            {
-                five--;
-                ten--;
-            }
-            else if (five >= 3)
-                five -= 3;
-            else
-                return false;
+            pq.push(v[i].second);
+            if (pq.top() < v[i].first)
+                pq.pop();
         }
+        return pq.size();
     }
-    return true;
-}
+    /* Approach 2: Priority_queue Time Complexity - O(2NlogN) + O(2N) Space Complexity - O(1)
+
+INTUITION: Sort both the departure and arrival time arrays. maxi : maximum number of platforms required. platforms : number of platforms in use currently. i : index in "arr" array. j : index in "dep" array.
+
+1. while(i < n && j < n) i.e. last trains arrives or last train depart.
+2. j = 0 , i = 1; If(dep[j] >= arr[i]) platforms++ , i++; i.e. second train arrive before first train departs, we need extra platform (platform++), and move to the next trains arrival time (i++).
+3. If(dep[j] < arr[i]) platforms-- , j++; i.e. first train departs first, so the platform becomes empty. Thus platforms--. Now move the next trains departure time.
+4. if at any time, platforms > maxi then maxi = platforms. i.e. keep the track of max platforms used at any given time. */
+
+    int findPlatform(int arr[], int dep[], int n)
+    {
+        sort(arr, arr + n);
+        sort(dep, dep + n);
+        int platforms = 1, maxi = 1;
+        int i = 1, j = 0;
+        while (i < n && j < n)
+        {
+            if (dep[j] >= arr[i])
+            {
+                platforms++;
+                i++;
+            }
+            else if (dep[j] < arr[i])
+            {
+                platforms--;
+                j++;
+            }
+            if (platforms > maxi)
+            {
+                maxi = platforms;
+            }
+        }
+        return maxi;
+    }
+};
+
+//^ 14 Insert Interval
+class InsertInterval
+{
+private:
+    /*
+    ? NlogN sorting approach
+     Add the new interval to the existing intervals
+     and apply merge intervals function
+
+     * O(N) T.C | O(N) space Approach
+     while traversing the intervals and comparing the newInterval with the current interval, place the interval at its correct position since it is given that intervals are already sorted.
+     */
+public:
+    vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInterval)
+    {
+        int n = intervals.size(), i = 0;
+        vector<vector<int>> res;
+        // case 1: no overlapping case before the merge intervals
+        // compare ending point of intervals to starting point of newInterval
+        while (i < n && intervals[i][1] < newInterval[0])
+        {
+            res.push_back(intervals[i]);
+            i++;
+        }
+        // case 2: overlapping case and merging of intervals
+        while (i < n && newInterval[1] >= intervals[i][0])
+        {
+            newInterval[0] = min(newInterval[0], intervals[i][0]);
+            newInterval[1] = max(newInterval[1], intervals[i][1]);
+            i++;
+        }
+        res.push_back(newInterval);
+        // case 3: no overlapping of intervals after newinterval being merged
+        while (i < n)
+        {
+            res.push_back(intervals[i]);
+            i++;
+        }
+        return res;
+    }
+};
 
 int main()
 {

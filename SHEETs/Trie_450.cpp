@@ -207,9 +207,6 @@ using namespace std;
 // };
 
 //^ Implementation of trie data structure [striver]
-#include <string>
-using namespace std;
-
 // class TrieNode
 // {
 // private:
@@ -457,6 +454,123 @@ public:
         }
 
         return t;
+    }
+};
+
+//^ 2 Count distinct substrings of a given string
+class CountDistinct
+{
+
+public:
+    /*
+    ! Brute Force Approach
+    Consider all substrings of the given string and insert them in a set
+    Return the size of the set
+
+    !Time Complexity: O(n^2)
+    !Space Complexity: O(n*m) if all substrings are distinct
+     */
+    int countDistinctSubstring(string s)
+    {
+        // Your code here
+        unordered_set<string> hs;
+        for (int i = 0; i < s.length(); i++)
+        {
+            string temp = "";
+            for (int j = i; j < s.length(); j++)
+            {
+                temp.push_back(s[j]);
+                hs.insert(temp);
+            }
+        }
+        return hs.size() + 1;
+    }
+
+    /*
+    & Optimized approach using Trie
+    * Time Complexity: O(n^2)
+     */
+    struct Node
+    {
+        Node *links[26];
+        int cntEndWith = 0;
+        int cntPrefix = 0;
+
+        bool containsKey(char ch)
+        {
+            return (links[ch - 'a'] != nullptr);
+        }
+
+        Node *get(char ch)
+        {
+            return links[ch - 'a'];
+        }
+
+        void put(char ch, Node *node)
+        {
+            links[ch - 'a'] = node;
+        }
+
+        void increaseEnd()
+        {
+            cntEndWith++;
+        }
+
+        void increasePrefix()
+        {
+            cntPrefix++;
+        }
+
+        void deleteEnd()
+        {
+            cntEndWith--;
+        }
+
+        void reducePrefix()
+        {
+            cntPrefix--;
+        }
+
+        int getEnd()
+        {
+            return cntEndWith;
+        }
+
+        int getPrefix()
+        {
+            return cntPrefix;
+        }
+    };
+
+    /*You are required to complete this method */
+    int countDistinctSubstring(string s)
+    {
+        int count = 0;           // Initialize the count of distinct substrings
+        Node *root = new Node(); // Create a new root node for the trie
+
+        // Iterate through each character in the string
+        for (int i = 0; i < s.length(); i++)
+        {
+            string temp = "";  // Create a temporary string to store substrings
+            Node *node = root; // Start from the root node
+
+            // Iterate through each character from current position to end of string
+            for (int j = i; j < s.length(); j++)
+            {
+                temp.push_back(s[j]); // Add the current character to the temporary string
+
+                // If the current character is not present in the trie, add it and increment the count
+                if (!node->containsKey(s[j]))
+                {
+                    count++;
+                    node->put(s[j], new Node());
+                }
+
+                node = node->get(s[j]); // Move to the next node
+            }
+        }
+
+        return count + 1; // Return the count of distinct substrings
     }
 };
 int main()

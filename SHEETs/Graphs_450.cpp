@@ -3367,6 +3367,50 @@ public:
         return solve(0, m, n, graph);
     }
 };
+
+//^ Additional Problems ----------------------------------------
+class MinCostPath
+{
+public:
+    // Function to return the minimum cost to react at bottom
+    // right cell from top left cell.
+    vector<pair<int, int>> dirs{{-1, 0}, {0, 1}, {0, -1}, {1, 0}};
+    int minimumCostPath(vector<vector<int>> &grid)
+    {
+        priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> pq;
+        vector<vector<int>> dist(grid.size(), vector<int>(grid.size(), 1e9));
+        dist[0][0] = grid.at(0).at(0);
+        pq.push({grid.at(0).at(0), {0, 0}});
+        while (!pq.empty())
+        {
+            auto top = pq.top();
+            pq.pop();
+            int cost = top.first;
+            int i = top.second.first;
+            int j = top.second.second;
+            if (i == grid.size() - 1 && j == grid[0].size() - 1)
+            {
+                return cost;
+            }
+            if (cost > dist[i][j])
+                continue;
+            for (auto &dir : dirs)
+            {
+                int x = i + dir.first;
+                int y = j + dir.second;
+                if (x < 0 || x >= grid.size() || y < 0 || y >= grid[0].size())
+                    continue;
+                int newCost = cost + grid[x][y];
+                if (newCost < dist[x][y])
+                {
+                    dist[x][y] = newCost;
+                    pq.push({newCost, {x, y}});
+                }
+            }
+        }
+        return dist[grid.size() - 1][grid[0].size() - 1];
+    }
+};
 int main()
 {
     return 0;

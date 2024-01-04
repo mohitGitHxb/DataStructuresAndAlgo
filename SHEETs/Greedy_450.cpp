@@ -654,6 +654,42 @@ public:
     }
 };
 
+//^ 15 This function takes a vector of intervals as input and returns the count of non-overlapping intervals.
+int eraseOverlapIntervals(vector<vector<int>> &intervals)
+{
+    // Sort the intervals in ascending order based on their start time.
+    sort(intervals.begin(), intervals.end());
+
+    // Initialize a variable to keep track of the count of merges.
+    int countMerges = 0;
+
+    // Initialize a variable to store the end time of the previous interval.
+    int end = intervals.front().back();
+
+    // Iterate through the intervals starting from the second interval.
+    for (int i = 1; i < intervals.size(); i++)
+    {
+        // If the start time of the current interval is less than the end time of the previous interval,
+        // it means there is an overlap.
+        if (intervals.at(i).front() < end)
+        {
+            // Increment the count of merges.
+            countMerges++;
+
+            // Update the end time to be the minimum of the current end time and the end time of the current interval.
+            end = min(end, intervals.at(i).back());
+        }
+        else
+        {
+            // If there is no overlap, update the end time to be the end time of the current interval.
+            end = intervals.at(i).back();
+        }
+    }
+
+    // Return the count of merges.
+    return countMerges;
+}
+
 int main()
 {
 #ifndef ONLINE_JUDGE

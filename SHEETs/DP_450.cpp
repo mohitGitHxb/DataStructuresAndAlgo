@@ -4158,7 +4158,7 @@ public: /*
 //^ Longest string chain
 class LSC
 {
-    /* 
+    /*
     Intuition
 
 The problem seems to involve finding the longest chain of strings where each string in the chain can be obtained by deleting a single character from the previous string. To solve this, we could sort the strings by their lengths in ascending order. Then, we can use dynamic programming to compute the longest chain for each string, starting from the shortest string and building up to the longest.
@@ -5147,23 +5147,97 @@ class WordBreak1
 {
 public:
     vector<int> dp;
-    bool solve(int i, string A, unordered_set<string> &dict){
-        if(i == A.size()) return true;
-        if(dp[i] != -1)return dp[i];
+    bool solve(int i, string A, unordered_set<string> &dict)
+    {
+        if (i == A.size())
+            return true;
+        if (dp[i] != -1)
+            return dp[i];
         string temp = "";
-        for(int cut = i; cut < A.size(); cut++){
+        for (int cut = i; cut < A.size(); cut++)
+        {
             temp.push_back(A[cut]);
-            if(dict.count(temp)){
-                if(solve(cut + 1,A,dict)) return dp[i] = true;
+            if (dict.count(temp))
+            {
+                if (solve(cut + 1, A, dict))
+                    return dp[i] = true;
             }
         }
         return dp[i] = false;
     }
-    int wordBreak(string A, vector<string> &B) {
-        //code here
-        unordered_set<string> dict(B.begin(),B.end());
-        dp.resize(A.size() + 1,-1);
-        return solve(0,A,dict);
+    int wordBreak(string A, vector<string> &B)
+    {
+        // code here
+        unordered_set<string> dict(B.begin(), B.end());
+        dp.resize(A.size() + 1, -1);
+        return solve(0, A, dict);
+    }
+};
+
+//^ Maximum Profit in Job Scheduling [Not Greedy problem]
+class JobScheduling
+{
+public:
+    /*
+    & Using DP to try all possibilities and return the maximum profit obtained
+    & Make sure to sort the array according to the ending time of the job as overlapping jobs aren't allowed
+
+    ! Throws MLE since contraints are huge
+
+    * Time Complexity : O(N*max(Ending));
+
+     */
+    /*     int solve(int idx, int prevStart, int prevEnd, vector<pair<pair<int, int>, int>> &v, vector<vector<int>> &dp)
+        {
+            if (idx < 0)
+                return 0;
+
+            if (dp[idx][prevStart] != -1)
+                return dp[idx][prevStart];
+            int notTake = 0 + solve(idx - 1, prevStart, prevEnd, v, dp);
+            int take = 0;
+            if (prevStart >= v[idx].first.second)
+            {
+                take = v[idx].second + solve(idx - 1, v[idx].first.first, v[idx].first.second, v, dp);
+            }
+            return dp[idx][prevStart] = max(notTake, take);
+        }
+        int jobScheduling(vector<int> &startTime, vector<int> &endTime, vector<int> &profit)
+        {
+            int maximumEndTime = *max_element(endTime.begin(), endTime.end());
+            vector<pair<pair<int, int>, int>> v;
+            for (int i = 0; i < startTime.size(); i++)
+            {
+                v.push_back({{startTime[i], endTime[i]}, profit[i]});
+            }
+            sort(v.begin(), v.end(), [](pair<pair<int, int>, int> a, pair<pair<int, int>, int> b)
+                 { return a.first.second < b.first.second; });
+            vector<vector<int>> dp(startTime.size() + 1, vector<int>(maximumEndTime + 1, -1));
+            return solve(startTime.size() - 1, maximumEndTime, maximumEndTime, v, dp);
+        } */
+
+    int f(int i, vector<vector<int>> &job, vector<int> &st, int n, vector<int> &dp)
+    {
+        if (i >= n)
+            return 0;
+        if (dp[i] != -1)
+            return dp[i];
+        int ind = lower_bound(st.begin(), st.end(), job[i][1]) - st.begin();
+        int pick = job[i][2] + f(ind, job, st, n, dp);
+        int notpick = f(i + 1, job, st, n, dp);
+        return dp[i] = max(pick, notpick);
+    }
+
+    int jobScheduling(vector<int> &st, vector<int> &et, vector<int> &pro)
+    {
+        int n = st.size();
+        vector<vector<int>> job;
+        vector<int> dp(n, -1);
+        for (int i = 0; i < n; i++)
+            job.push_back({st[i], et[i], pro[i]});
+        sort(job.begin(), job.end());
+        sort(st.begin(), st.end());
+        return f(0, job, st, n, dp);
     }
 };
 int main(int argc, char const *argv[])

@@ -1836,6 +1836,36 @@ long long int maxSumWithK(long long int a[], long long int n, long long int k)
     }
     return ans;
 }
+
+//^ 33 Longest Subarray whose Sum is Divisible by K
+int longSubarrWthSumDivByK(int a[], int n, int k)
+{
+    // Create a map to store the remainder of the sum modulo k as the key and the index as the value
+    unordered_map<int, int> mp;
+    // Variable to store the maximum length of the subarray
+    int max_len = 0;
+    // Initialize the map with an entry for remainder 0 at index -1
+    mp[0] = -1;
+    // Variable to store the running sum of the array elements
+    int sum = 0;
+    // Iterate over the array
+    for (int i = 0; i < n; i++)
+    {
+        // Calculate the cumulative sum and take the remainder modulo k
+        sum = (sum + a[i] % k) % k;
+        // If the remainder is negative, add k to make it positive
+        if (sum < 0)
+            sum += k;
+        // If the remainder exists in the map, update the maximum length
+        if (mp.find(sum) != mp.end())
+            max_len = max(max_len, i - mp[sum]);
+        // If the remainder is not present in the map, add it with the current index
+        else
+            mp[sum] = i;
+    }
+    // Return the maximum length of the subarray
+    return max_len;
+}
 int main(int argc, char const *argv[])
 {
     vector<int> arr = {4, 0, 0, 3, 1, 4, 5};

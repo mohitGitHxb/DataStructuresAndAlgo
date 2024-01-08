@@ -1107,6 +1107,71 @@ public:
         return area;
     }
 };
+
+//^ 14 This function takes an array of integers `A`, the length of the array `N`,
+// and the window size `K`. It returns a vector containing the first negative
+// integer in every window of size `K`.
+
+vector<long long> printFirstNegativeInteger(long long int A[],
+                                            long long int N, long long int K)
+{
+    // Create a queue to store pairs of negative integers and their indices
+    queue<pair<long long int, long long int>> negative;
+
+    // Create a vector to store the results
+    vector<long long int> ans;
+
+    // Iterate over the first window of size `K`
+    for (long long int i = 0; i < K; i++)
+    {
+        // If the current element is negative, add it to the queue
+        if (A[i] < 0)
+        {
+            negative.push({A[i], i});
+        }
+    }
+
+    // Iterate over the remaining elements of the array
+    for (long long int i = K; i < N; i++)
+    {
+        // If the queue is not empty, add the first negative integer to the result vector
+        if (!negative.empty())
+        {
+            ans.push_back(negative.front().first);
+        }
+        // Otherwise, add 0 to the result vector
+        else
+        {
+            ans.push_back(0);
+        }
+
+        // Remove elements from the queue that are no longer in the current window
+        while (!negative.empty() && negative.front().second <= i - K)
+        {
+            negative.pop();
+        }
+
+        // If the current element is negative, add it to the queue
+        if (A[i] < 0)
+        {
+            negative.push({A[i], i});
+        }
+    }
+
+    // If the queue is not empty after processing all elements, add the first negative integer to the result vector
+    if (!negative.empty())
+    {
+        ans.push_back(negative.front().first);
+    }
+    // Otherwise, add 0 to the result vector
+    else
+    {
+        ans.push_back(0);
+    }
+
+    // Return the result vector
+    return ans;
+}
 int main()
 {
 #ifndef ONLINE_JUDGE

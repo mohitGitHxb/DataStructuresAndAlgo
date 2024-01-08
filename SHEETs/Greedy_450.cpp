@@ -690,6 +690,83 @@ int eraseOverlapIntervals(vector<vector<int>> &intervals)
     return countMerges;
 }
 
+//^ 16 Shortest Job First
+/*
+Sure, I'd be happy to help you understand this code!
+
+## Intuition
+The code is an implementation of the Shortest Job First (SJF) scheduling algorithm. In SJF, the process with the smallest execution time is selected for execution next. This strategy can minimize the average waiting time for a set of processes.
+
+## Application
+This algorithm is commonly used in operating systems to schedule processes. It's particularly useful when you have a good estimate of how long each process will take, as it allows you to minimize the time processes spend waiting in the queue.
+
+## Code Explanation
+The `solve` function takes a vector `bt` of burst times as input, which represents the execution time of each process. The goal is to calculate the average waiting time for these processes when scheduled according to the SJF policy.
+
+The function first pushes each process into a priority queue `pq`, where the priority is determined by the burst time. The process with the shortest burst time is considered the highest priority.
+
+Then, it simulates the execution of the processes. For each process, it updates the current time on the Gantt chart `ganttChartTime` by adding the burst time of the process. It also records the completion time of each process in `completionTime`.
+
+After all processes have been executed, it calculates the waiting time for each process, which is the completion time minus the burst time. The waiting times are stored in `waitingTime`.
+
+Finally, it calculates the average waiting time by summing up all waiting times and dividing by the number of processes. The result is returned as the output.
+
+## Time Complexity
+The time complexity of this code is O(n log n), where n is the number of processes. This is because it needs to insert each process into the priority queue, which takes O(log n) time, and it does this n times.
+
+## Space Complexity
+The space complexity is O(n), as it needs to store the burst time, completion time, and waiting time for each process.
+
+I hope this helps! Let me know if you have any other questions. 😊
+ */
+
+class Solution
+{
+    typedef long long ll;
+
+public:
+    ll sumOfWaitingTime(unordered_map<ll, ll> &waitingTime)
+    {
+        ll sum = 0;
+        for (auto it : waitingTime)
+        {
+            sum += it.second;
+        }
+        return sum;
+    }
+
+    long long solve(vector<int> &bt)
+    {
+        unordered_map<ll, ll> completionTime, waitingTime;
+        priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> pq;
+
+        for (int i = 0; i < bt.size(); i++)
+        {
+            pq.push({bt.at(i), i});
+        }
+
+        ll ganttChartTime = 0;
+
+        while (!pq.empty())
+        {
+            ll burstTimeCurrent = pq.top().first;
+            ll processId = pq.top().second;
+            pq.pop();
+
+            ganttChartTime += burstTimeCurrent;
+            completionTime[processId] = ganttChartTime;
+        }
+        // all processes arrive at 0 hence no need to calculate turn around time
+        for (auto it : completionTime)
+        {
+            waitingTime[it.first] = it.second - bt[it.first];
+        }
+
+        ll averageWaitingTime = sumOfWaitingTime(waitingTime) / bt.size();
+
+        return averageWaitingTime;
+    }
+};
 int main()
 {
 #ifndef ONLINE_JUDGE

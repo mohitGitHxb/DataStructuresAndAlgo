@@ -24,7 +24,7 @@
         "ranges": "cpp",
         "span": "cpp",
         "stacktrace": "cpp",
-        "maximum sqr area by removing fences": "cpp"
+        "source_location": "cpp"
     },
     "cSpell.words": [
         "getnode",

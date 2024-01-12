@@ -120,9 +120,109 @@ vector<vector<int>> subsets(vector<int> &nums)
     // Return the vector of subsets
     return ans;
 }
+
+//^ 5 Count total set bits from 1 to n
+int countSetBits(int n)
+{
+    // Time complexity: O(log N) because we are reducing the problem size approximately by half in each recursive call.
+    // Space complexity: O(log N) because of the recursive call stack.
+    // If n is less than or equal to 1, return n
+    if (n <= 1)
+        return n;
+
+    // Find the closest power of 2 less than or equal to n
+    int closestPowerOf2 = log2(n);
+
+    // Calculate the value of x as 2 raised to the power of closestPowerOf2
+    int x = 1 << closestPowerOf2;
+
+    // Calculate the value of y as 2 raised to the power of (closestPowerOf2 - 1)
+    int y = 1 << (closestPowerOf2 - 1);
+
+    // Calculate the total number of set bits from 1 to n
+    int totalBits = (y * closestPowerOf2) + (n - x + 1) + countSetBits(n - x);
+
+    // Return the total number of set bits
+    return totalBits;
+}
+
+//^ 6 Number of bits to flip to convert A to B
+int countBitsFlip(int a, int b)
+{
+
+    // Your logic here
+    bitset<32> a1(a), b1(b);
+    int counter = 0;
+    for (int i = 0; i < 32; i++)
+    {
+        if (a1[i] != b1[i])
+            counter++;
+    }
+    return counter;
+
+    // or
+    /*
+    Take the xor of a and b which gives only different bits as a set bit.
+    Now call the function __builtin_popcount to count the number of set bit.
+    Return the count of setBit.
+    return __builtin_popcount(a^b)
+    */
+}
+/*
+^ 7 Single element occurring once
+
+To use this approach you first need to understand about Bitwise XOR operator.
+Most of us who have a background in physics ( highschool level ) , are aware of the LOGIC GATES.
+One of such gates is the XOR Gate :
+According to this gate , the output is true , only if both the inputs are of opposite kind .
+That is ,
+A B Y
+0 0 0
+0 1 1
+1 0 1
+1 1 0
+
+We apply the extended version of this gate in our bitwise XOR operator.
+If we do "a^b" , it means that we are applying the XOR gate on the 2 numbers in a bitwise fashion ( on each of the corresponding bits of the numbers).
+Similarly , if we observe ,
+
+    A^A=0
+    A^B^A=B
+    (A^A^B) = (B^A^A) = (A^B^A) = B This shows that position doesn't matter.
+    Similarly , if we see , a^a^a......... (even times)=0 and a^a^a........(odd times)=a
+
+Google It for more details.
+
+We apply the above observations :
+
+    Traverse the array and take the Bitwise XOR of each element.
+    Return the value.
+
+Why does this work ??
+Because , the elements with frequency=2 will result in 0. And then the only element with frequency=1 will generate the answer.
+TC: O(N)
+SC: O(1)
+CODE : */
+
+class Solution
+{
+public:
+    int singleNumber(vector<int> &nums)
+    {
+        int ans = 0;
+        for (auto x : nums)
+            ans ^= x;
+        return ans;
+
+        //& one liner
+        //* return accumulate(nums.begin(), nums.end(), 0, bit_xor<int>());
+    }
+};
+
 int main()
 {
-    printBinaryDigits(59);
-    clearTillIthLSB(59, 4);
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
     return 0;
 }

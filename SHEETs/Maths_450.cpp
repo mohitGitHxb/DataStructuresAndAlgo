@@ -118,6 +118,164 @@ public:
         }
     }
 };
+
+class Divisors
+{
+public:
+    // ! Brute Force approach O(N) time
+    int divisors_1(int n)
+    {
+        int count = 0;
+        int sum = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            if (n % i == 0)
+            {
+                count++;
+                sum += i;
+            }
+        }
+        return count;
+    }
+
+    //% Better approach O(sqrt(N)) time
+    pair<int, int> divisors_2(int n)
+    {
+        int count = 0, sum = 0;
+        for (int i = 1; i * i <= n; i++)
+        {
+            if (n % i == 0)
+            {
+                cout << i << " x " << n / i << "\n";
+                count++;
+                sum += i;
+                if (n / i != i)
+                {
+                    count++;
+                    sum += n / i;
+                }
+            }
+        }
+        return {count, sum};
+    }
+};
+
+class PrimeNumbers
+{
+public:
+    bool isPrime_brute(int n)
+    {
+        for (int i = 2; i < n; i++)
+        {
+            if (n % i == 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool isPrime_sqrt(int n)
+    {
+        if (n == 1)
+            return false;
+        for (int i = 2; i * i <= n; i++)
+        {
+            if (n % i == 0)
+                return false;
+        }
+        return true;
+    }
+
+    vector<int> getPrimeFactors_v1(int num)
+    {
+        vector<int> primes;
+        for (int i = 2; i * i <= num; i++)
+        {
+            while (num % i == 0)
+            {
+                primes.emplace_back(i);
+                num /= i;
+            }
+        }
+        if (num > 1)
+        {
+            primes.emplace_back(num);
+        }
+        return primes;
+    }
+
+    vector<bool> sieve_algo(int num)
+    {
+        vector<bool> sieve(num + 1, true);
+        // vector<int> primes;
+        sieve.at(0) = sieve.at(1) = false;
+        for (int i = 2; i <= num; i++)
+        {
+            if (sieve.at(i))
+            {
+                // primes.emplace_back(i);
+                for (int j = i * i; j <= num; j += i)
+                {
+                    sieve.at(j) = false;
+                }
+            }
+        }
+        return sieve;
+    }
+
+    vector<int> getPrimeNumbersTillN(int num)
+    {
+        vector<bool> sieve = sieve_algo(num);
+        vector<int> primes;
+
+        for (int i = 2; i <= num; i++)
+        {
+            if (sieve.at(i))
+            {
+                primes.emplace_back(i);
+            }
+        }
+        return primes;
+    }
+
+    vector<int> getPrimeFactors_v2(int num)
+    {
+        vector<bool> sieve(num + 1, true);
+        // lowest prime , highest prime
+        vector<int> ans, lp(num + 1), hp(num + 1);
+        sieve.at(0) = sieve.at(1) = false;
+
+        for (int i = 2; i <= num; i++)
+        {
+            if (sieve.at(i))
+            {
+                lp[i] = hp[i] = i;
+                for (int j = 2 * i; j <= num; j += i)
+                {
+                    sieve.at(j) = false;
+                    hp[j] = i;
+                    if (lp[j] == 0)
+                    {
+                        lp[j] = i;
+                    }
+                }
+            }
+        }
+
+        while (num > 1)
+        {
+            ans.emplace_back(lp[num]);
+            num /= lp[num];
+        }
+
+        return ans;
+    }
+
+    vector<int> getDivisors(int num){
+        
+    }
+};
 int main()
 {
 

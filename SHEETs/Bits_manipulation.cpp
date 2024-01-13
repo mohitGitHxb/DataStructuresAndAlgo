@@ -204,7 +204,7 @@ TC: O(N)
 SC: O(1)
 CODE : */
 
-class Solution
+class SingleElement
 {
 public:
     int singleNumber(vector<int> &nums)
@@ -216,6 +216,90 @@ public:
 
         //& one liner
         //* return accumulate(nums.begin(), nums.end(), 0, bit_xor<int>());
+    }
+};
+
+//^ 8 Find XOR from L to R
+class FindXORLR
+{
+public:
+    // Function to compute XOR from 1 to n.
+    int computeXOR(int n)
+    {
+        // XOR of all numbers from 1 to n can be evaluated with the help of the following observations:
+        // If n mod 4 equals 0, then XOR will be same as n.
+        // If n mod 4 equals 1, then XOR will be 1.
+        // If n mod 4 equals 2, then XOR will be n+1.
+        // If n mod 4 equals 3, then XOR will be 0.
+        // For example, if n = 6, then n mod 4 = 2, so XOR of all numbers from 1 to 6 will be 6+1 = 7.
+        if (n % 4 == 0)
+            return n;
+        if (n % 4 == 1)
+            return 1;
+        if (n % 4 == 2)
+            return n + 1;
+        return 0;
+    }
+
+    // Function to compute XOR of all numbers in range [L, R].
+    int rangeXOR(int L, int R)
+    {
+        // XOR of a range can be computed with the help of the following observations:
+        // XOR of all numbers from 1 to R XOR XOR of all numbers from 1 to L-1 gives XOR of all numbers in range L to R.
+        // For example, if L = 3 and R = 6, then XOR of all numbers from 3 to 6 will be XOR(1 to 6) XOR XOR(1 to 2) = 7 XOR 1 = 6.
+        return computeXOR(L - 1) ^ computeXOR(R);
+    }
+};
+
+class ModularArithmetic
+{
+private:
+    /*
+    1. Addition: (a + b) mod n = ((a mod n) + (b mod n)) mod n
+    2. Subtraction: (a - b) mod n = ((a mod n) - (b mod n) + n) mod n
+    3. Multiplication: (a * b) mod n = ((a mod n) * (b mod n)) mod n
+    4. Division: Division is not directly applicable in modular arithmetic. However, multiplicative inverse can be used. If you want to compute (a / b) mod n, you need to find the multiplicative inverse of b, let's call it b_inv, such that (b * b_inv) mod n = 1. Then, (a / b) mod n = (a * b_inv) mod n.
+    5. Power: (a^b) mod n = ((a mod n)^b) mod n
+    6. Distributive Laws: a mod n = (a mod m) mod n if m > n.
+    7. Negative Numbers: If a < 0, then a mod n = n - ((-a) mod n), unless a is a multiple of n, in which case a mod n = 0.
+    8. Modulo of a Modulo: (a mod n) mod n = a mod n
+    9. Modulo of a Sum: (a + b) mod n = ((a mod n) + (b mod n)) mod n
+    10. Modulo of a Difference: (a - b) mod n = ((a mod n) - (b mod n) + n) mod n
+    11. Modulo of a Product: (a * b) mod n = ((a mod n) * (b mod n)) mod n
+
+    Note: These rules are applicable under the assumption that the numbers are integers and the moduli are positive. Also, the division operation in modular arithmetic requires that the divisor has a multiplicative inverse, which is not always the case.
+
+
+    The modular multiplicative inverse of a number 'num' under modulo 'mod' can be found using the Extended Euclidean Algorithm. The modular multiplicative inverse of 'num' modulo 'mod' is a number 'x' such that the product 'num*x' is equivalent to 1 modulo 'mod'.
+
+
+    Fermat's Little Theorem states that if 'p' is a prime number, then for any integer 'a', the number 'a^p' is congruent to 'a' modulo 'p'. In the special case when 'a' is not divisible by 'p', Fermat's Little Theorem is equivalent to the statement that 'a^(p-1) - 1' is an integer multiple of 'p'.
+
+    If 'p' is a prime number and 'a' is an integer not divisible by 'p', then 'a^(p-1) ≡ 1 (mod p)'. This can be used to find the modular multiplicative inverse when 'mod' is a prime number. The modular inverse of 'a' under 'mod' is 'a^(mod-2) % mod'.
+     */
+public:
+    long long binaryExponentiation(long long base, long long exponent, long long mod)
+    {
+        long long res = 1;
+        while (exponent > 0)
+        {
+            if (exponent % 2 == 1)
+            {
+                res = (res * base) % mod;
+            }
+            base = (base * base) % mod;
+            exponent >>= 1;
+        }
+        return res;
+    }
+    long long getModularMultiplicativeInverse(long long num, long long mod)
+    {
+        // multiplicative inverse only exists if num and mod are relatively prime (coprime) i.e gcd(num, mod) = 1
+        if (__gcd(num, mod) != 1)
+        {
+            return -1;
+        }
+        return binaryExponentiation(num, mod - 2, mod);
     }
 };
 

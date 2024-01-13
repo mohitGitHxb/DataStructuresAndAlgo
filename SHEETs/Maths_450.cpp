@@ -189,18 +189,43 @@ public:
 
     vector<int> getPrimeFactors_v1(int num)
     {
+        /*         vector<int> primes;
+                for (int i = 2; i * i <= num; i++)
+                {
+                    while (num % i == 0)
+                    {
+                        primes.emplace_back(i);
+                        num /= i;
+                    }
+                }
+                if (num > 1)
+                {
+                    primes.emplace_back(num);
+                }
+                return primes; */
+
+        //* More optimized O(sqrt(N)) approach
+
         vector<int> primes;
-        for (int i = 2; i * i <= num; i++)
+        while (num % 2 == 0)
+        {
+            if (primes.empty() || primes.back() != 2)
+                primes.emplace_back(2);
+            num /= 2;
+        }
+        for (int i = 3; i * i <= num; i += 2)
         {
             while (num % i == 0)
             {
-                primes.emplace_back(i);
+                if (primes.empty() || primes.back() != i)
+                    primes.emplace_back(i);
                 num /= i;
             }
         }
         if (num > 1)
         {
-            primes.emplace_back(num);
+            if (primes.empty() || primes.back() != num)
+                primes.emplace_back(num);
         }
         return primes;
     }
@@ -272,8 +297,22 @@ public:
         return ans;
     }
 
-    vector<int> getDivisors(int num){
-        
+    vector<int> getDivisors_v2(int num)
+    {
+        vector<bool> isPrime(num + 1, true);
+        vector<vector<int>> divisors(num + 1);
+        isPrime[0] = isPrime[1] = false;
+
+        for (int i = 2; i <= num; i++)
+        {
+            for (int j = i; j <= num; j += i)
+            {
+                divisors[j].emplace_back(i);
+            }
+        }
+
+        // print2dVector(divisors);
+        return divisors[num];
     }
 };
 int main()

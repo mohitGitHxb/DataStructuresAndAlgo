@@ -251,58 +251,145 @@ public:
     }
 };
 
-class ModularArithmetic
+//^ 9 Two odd occuring numbers in an array
+/*
+Intuition
+
+Idea is to use the property of XOR.
+1) XOR of any number n with itself gives us 0, i.e., n ^ n = 0
+2) XOR of any number n with 0 gives us n, i.e., n ^ 0 = n
+3) XOR is cumulative and associative.
+
+Let the two odd occurring numbers be x and y. We use bitwise XOR to get x and y. We try to make 2 groups such that x and y go to different groups. E.g. [a, a, b, b, x], . Then the problem will become “Find ‘one’ number with odd occurrence in an unsorted array”, which becomes a simple problem and will be solved using XOR. Below are steps to group x and y differently.
+
+Step 1: calculate xor of all the elements.
+
+So we have XOR of x and y after the first step, in decimal form. E.g. 5 ^ 6 returns 3, which is computed in bit form as 101 ^ 110 = 011. Let the ‘value’ of XOR be xor2. Every Set bit** in xor2 indicates that ‘the corresponding bits in x and y have values different from each other’ (XOR property- ‘1 when bits are different’). ** ( Set-bits are 1’s in binary form. E.g. 101 has 2 set bits(1’s), at 0th index and at 2nd index. )
+For example, if x = 6 (0110) and y = 15 (1111), then xor2 will be (1001), the two set bits in xor2 indicate that the corresponding bits in x and y are different, at 0th index and at 3rd index both.
+
+Step 2: we pick a set bit of xor2.
+
+Idea is to use the fact that xor2 is ‘1’ in indexes where bits of x and y are different. So we separate x and y to different groups, along with rest of the numbers of list, based on whether the number has same set-bit or not.
+    We choose the rightmost set bit of xor2 as it is easy to get rightmost set bit of a number (bit magic). If we bitwise AND a number with its negative counterpart, we get rightmost set bit. (just an observation based property, do remember). So, (xor2) & (-xor2) will give us right set bit. Find (-number) by 2’s complement, that is ((1’s complement) +1 ). It can also be written as (~number)+1.
+
+Step 3: we separate x and y in different groups
+
+We now know that for selected set bit index, x and y have different corresponding bits. If we AND all numbers in list with set bit, some will give 0 and others will give 1. We will put all numbers giving zeroes in one group and ones in another. x and y will fall in different groups.
+Implementation
+
+Explanation of approach with help of an example:
+
+E.g. arr = [4, 2, 4, 10, 2, 3, 3, 12] ,
+& -Step 1) XOR of all in arr will cancel all repeating nos. 10 ^12 will be ans. 1010 ^ 1100 will be 0110 that is xor=6.
+& -Step 2) Set bit is 10 from 0110 from visualization. (number) & (-number) is also a quick way to find right set bit.
+xor & (-xor) can be coded directly. 6 is 0110 and finding -6 by flipping digits and adding 1, 1001 +1 = 1010.
+So 6 AND -6 is essentially 0110 & 1010, that is 0010 i.e. 2 – Set-bit Number.
+& -Step 3) AND of all in list with 2 (Set bit no.) will give us numbers that give either 1 or 0, and we make groups.
+[4, 4, 12] and [2, 10, 2, 3, 3], giving 0 and 1 respectively on AND with Set-bit number.
+Step 4) XOR of 1st group will give us x=12, and the 2nd group will give us y=10. We can calculate y by doing this. x ^ y is known from 1st step i.e. 6. x ^(x ^y) will give us y. 12 ^6 is 10.
+
+x=12, y=10
+This step works because of the same properties of XOR. All the occurrences of a number will go in same set. XOR of all occurrences of a number which occur even number of times will result in 0 in its set. And the xor of a set will be one of the odd occurring elements.
+Complexity
+
+Time Complexity:  As we are running two loop of size n, so the time complexity is O(n), n is size of the array.
+Space Complexity: As we are using only two variable of type int, so the space complexity is O(1).
+
+ */
+
+vector<long long int> twoOddNum(long long int Arr[], long long int N)
+{
+    long long int xorSum = accumulate(Arr, Arr + N, 0, bit_xor<long long int>());
+
+    long long int setBit = xorSum & ~(xorSum - 1);
+    // deb(setBit);
+
+    long long int x = 0, y = 0;
+    for (long long int i = 0; i < N; i++)
+    {
+        if (Arr[i] & setBit)
+        {
+            x = x ^ Arr[i];
+        }
+        else
+        {
+            y = y ^ Arr[i];
+        }
+        // cout << x << " " << y << "\n";
+    }
+    vector<long long int> ans(2);
+    ans[0] = max(x, y);
+    ans[1] = min(x, y);
+    return ans;
+}
+
+class Questions
 {
 private:
-    /*
-    1. Addition: (a + b) mod n = ((a mod n) + (b mod n)) mod n
-    2. Subtraction: (a - b) mod n = ((a mod n) - (b mod n) + n) mod n
-    3. Multiplication: (a * b) mod n = ((a mod n) * (b mod n)) mod n
-    4. Division: Division is not directly applicable in modular arithmetic. However, multiplicative inverse can be used. If you want to compute (a / b) mod n, you need to find the multiplicative inverse of b, let's call it b_inv, such that (b * b_inv) mod n = 1. Then, (a / b) mod n = (a * b_inv) mod n.
-    5. Power: (a^b) mod n = ((a mod n)^b) mod n
-    6. Distributive Laws: a mod n = (a mod m) mod n if m > n.
-    7. Negative Numbers: If a < 0, then a mod n = n - ((-a) mod n), unless a is a multiple of n, in which case a mod n = 0.
-    8. Modulo of a Modulo: (a mod n) mod n = a mod n
-    9. Modulo of a Sum: (a + b) mod n = ((a mod n) + (b mod n)) mod n
-    10. Modulo of a Difference: (a - b) mod n = ((a mod n) - (b mod n) + n) mod n
-    11. Modulo of a Product: (a * b) mod n = ((a mod n) * (b mod n)) mod n
-
-    Note: These rules are applicable under the assumption that the numbers are integers and the moduli are positive. Also, the division operation in modular arithmetic requires that the divisor has a multiplicative inverse, which is not always the case.
-
-
-    The modular multiplicative inverse of a number 'num' under modulo 'mod' can be found using the Extended Euclidean Algorithm. The modular multiplicative inverse of 'num' modulo 'mod' is a number 'x' such that the product 'num*x' is equivalent to 1 modulo 'mod'.
-
-
-    Fermat's Little Theorem states that if 'p' is a prime number, then for any integer 'a', the number 'a^p' is congruent to 'a' modulo 'p'. In the special case when 'a' is not divisible by 'p', Fermat's Little Theorem is equivalent to the statement that 'a^(p-1) - 1' is an integer multiple of 'p'.
-
-    If 'p' is a prime number and 'a' is an integer not divisible by 'p', then 'a^(p-1) ≡ 1 (mod p)'. This can be used to find the modular multiplicative inverse when 'mod' is a prime number. The modular inverse of 'a' under 'mod' is 'a^(mod-2) % mod'.
-     */
 public:
-    long long binaryExponentiation(long long base, long long exponent, long long mod)
+    //^ Monk and his father
+    long solve(long initial, long target)
     {
-        long long res = 1;
-        while (exponent > 0)
-        {
-            if (exponent % 2 == 1)
-            {
-                res = (res * base) % mod;
-            }
-            base = (base * base) % mod;
-            exponent >>= 1;
-        }
-        return res;
+        bitset<32> b1(target);
+        return b1.count();
     }
-    long long getModularMultiplicativeInverse(long long num, long long mod)
+    void getMaximumXOR(long n)
     {
-        // multiplicative inverse only exists if num and mod are relatively prime (coprime) i.e gcd(num, mod) = 1
-        if (__gcd(num, mod) != 1)
+        // Convert n to binary representation
+        bitset<16> b1(n);
+
+        long x = 0, y = 0;
+        vector<long> set_bits;
+
+        // Iterate over each bit of n
+        for (int i = 0; i < 16; i++)
         {
-            return -1;
+            if (b1[i])
+            {
+                // If bit is set, add it to the set_bits vector
+                set_bits.push_back(i);
+            }
+            else
+            {
+                // If bit is not set, set the corresponding bits of x and y to 1
+                x |= (1 << i);
+                y |= (1 << i);
+            }
         }
-        return binaryExponentiation(num, mod - 2, mod);
+
+        long ans = 1;
+        int sz = 1 << set_bits.size();
+
+        // Iterate over all possible combinations of set bits
+        for (int mask = 0; mask < sz; mask++)
+        {
+            long x_copy = x;
+            long y_copy = y;
+
+            // Iterate over each bit in set_bits vector
+            for (int j = 0; j < set_bits.size(); j++)
+            {
+                if (mask & (1 << j))
+                {
+                    // If bit is set in mask, set the corresponding bit of x_copy to 1
+                    x_copy |= (1 << set_bits[j]);
+                }
+                else
+                {
+                    // If bit is not set in mask, set the corresponding bit of y_copy to 1
+                    y_copy |= (1 << set_bits[j]);
+                }
+            }
+
+            // Calculate the maximum XOR and update ans if necessary
+            ans = max(ans, x_copy * y_copy);
+        }
+
+        // Print the maximum XOR
+        cout << ans << "\n";
+        return;
     }
 };
-
 int main()
 {
     ios_base::sync_with_stdio(0);

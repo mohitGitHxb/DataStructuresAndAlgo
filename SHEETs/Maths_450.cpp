@@ -455,6 +455,126 @@ public:
         return ans;
     }
 };
+
+/*
+^ Problem
+^   Alex has started hacking websites, and also started learning encryption and decryption of messages. Once he faced an interesting issue, where he needs to decrypt the message in a different way.
+^   Initially, he will be given an array A of N integers, and has to decrypt Q messages. In each message he will get an integer X, and if X can be converted into product of two different or same prime numbers, then the real message is "YES" (without quotes), otherwise the message is "NO" (without quotes).
+
+^   To convert X, he can choose one element from array say Y (X should be divisible Y), and can divide X by Y any number of times (till X is divisible by Y). Help Alex in decrypting the messages.
+ */
+
+class Question2
+{
+private:
+    const int N = 1e5 + 10;
+    const int MOD = 1e9 + 7;
+    vector<bool> sieve;
+    vector<int> hp, lp;
+    unordered_map<int, vector<int>> prime_factors;
+
+public:
+    Question2()
+    {
+        sieve.resize(N, true);
+        hp.resize(N, 0);
+        lp.resize(N, 0);
+
+        sieve[0] = sieve[1] = false;
+
+        for (int i = 2; i < N; i++)
+        {
+            if (sieve[i])
+            {
+                lp[i] = hp[i] = i;
+                for (int j = i * 2; j < N; j += i)
+                {
+                    sieve[j] = false;
+                    hp[j] = i;
+                    if (lp[j] == 0)
+                    {
+                        lp[j] = i;
+                    }
+                }
+            }
+        }
+
+        for (int i = 2; i < N; i++)
+        {
+            int temp = i;
+            while (temp > 1)
+            {
+                int p = lp[temp];
+                while (temp % p == 0)
+                    temp /= p;
+                prime_factors[i].push_back(p);
+            }
+        }
+    }
+
+    void printHashmap(void)
+    {
+        for (auto &i : prime_factors)
+        {
+            cout << "{" << i.first << ":";
+            for (auto &k : i.second)
+            {
+                cout << k << " ";
+            }
+            cout << "}\n";
+        }
+        cout << "\n";
+    }
+
+    vector<bool> getCanRemoveArray(int x, const vector<int> &arr)
+    {
+        vector<bool> canRemove(1e5 + 10);
+        for (auto &i : arr)
+        {
+            canRemove[i] = true;
+        }
+        for (int i = 2; i < N; i++)
+        {
+            if (canRemove[i])
+            {
+                for (long j = i; j < N; j *= i)
+                {
+                    canRemove[j] = true;
+                }
+            }
+        }
+        return canRemove;
+    }
+
+    void solve(int x, vector<int> &arr)
+    {
+        vector<int> distinctPrimeFactors = prime_factors[x];
+        vector<bool> canRemove = getCanRemoveArray(x, arr);
+        bool isPossible;
+        for (int i = 0; i < distinctPrimeFactors.size(); i++)
+        {
+            for (int j = i; j < distinctPrimeFactors.size(); j++)
+            {
+                int product = distinctPrimeFactors[i] * distinctPrimeFactors[j];
+                if (i == j && x % product != 0)
+                    continue;
+                int toRemove = x / product;
+                if (canRemove[toRemove] && toRemove == 1)
+                {
+                    isPossible = true;
+                    break;
+                }
+            }
+            if (isPossible)
+            {
+                break;
+            }
+        }
+
+        cout << (isPossible ? "YES" : "NO") << "\n";
+    }
+};
+
 int main()
 {
 

@@ -2179,7 +2179,7 @@ double median(vector<int> &a, vector<int> &b)
     return 0.0;
 }
 
-//^ 41 Row with maximum 1s
+//^ 42 Row with maximum 1s
 class RowMax1s
 {
 public:
@@ -2224,8 +2224,8 @@ public:
     }
 };
 
-//^ 42 Search in a 2D sorted Matrix
-/* 
+//^ 43 Search in a 2D sorted Matrix
+/*
 Algorithm:
 
     Place the 2 pointers i.e. low and high: Initially, we will place the pointers. The pointer low will point to 0 and the high will point to (NxM)-1.
@@ -2260,6 +2260,69 @@ bool searchMatrix(vector<vector<int>> &matrix, int target)
     }
     return false;
 }
+
+//^ 44 Find peak element 2 [matrix version]
+class PeakElement2
+{
+public:
+    int getMaxElementRowNumber(vector<vector<int>> &mat, int mid)
+    {
+        int m = mat.size();
+        int n = mat.front().size();
+
+        int row = 0, maxi = INT_MIN;
+        for (int i = 0; i < m; i++)
+        {
+            if (mat[i][mid] > maxi)
+            {
+                maxi = mat[i][mid];
+                row = i;
+            }
+        }
+        return row;
+    }
+    // Finds the peak element in a 2D grid.
+
+    // Parameters:
+    // - mat: The input 2D grid.
+    // Returns:
+    // - A vector containing the row and column indices of the peak element.
+    //   If no peak element is found, returns {-1, -1}.
+    vector<int> findPeakGrid(vector<vector<int>> &mat)
+    {
+        int m = mat.size();
+        int n = mat.front().size();
+
+        // Binary search to find the peak element.
+        int left = 0, right = n - 1;
+        while (left <= right)
+        {
+            int mid = (left + right) >> 1;
+            int maxElementRowNumber = getMaxElementRowNumber(mat, mid);
+            int _left = (mid - 1) >= 0 ? mat[maxElementRowNumber][mid - 1] : -1;
+            int _right = (mid + 1) < n ? mat[maxElementRowNumber][mid + 1] : -1;
+
+            if (mat[maxElementRowNumber][mid] > _left && mat[maxElementRowNumber][mid] > _right)
+            {
+                // Peak element found.
+                return {maxElementRowNumber, mid};
+            }
+            else if (_left < mat[maxElementRowNumber][mid])
+            {
+                // Peak element lies in the right half.
+                left = mid + 1;
+            }
+            else
+            {
+                // Peak element lies in the left half.
+                right = mid - 1;
+            }
+        }
+
+        // No peak element found.
+        return {-1, -1};
+    }
+};
 int main(int argc, char const *argv[])
 {
 

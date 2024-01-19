@@ -4455,7 +4455,7 @@ public:
     }
 };
 
-//^
+//^ Boolean Parenthesis partition DP
 class BooleanParenthesis
 {
 public:
@@ -4664,6 +4664,39 @@ public:
             dp[i] = maxSum;
         }
         return dp.front();
+    }
+};
+
+
+//^ Count Number Of Square SubMatrices [Tabulation] directly
+class SubMatrices {
+public:
+    int countSquares(vector<vector<int>>& matrix) {
+        vector<vector<int>> dp(matrix.size(),vector<int>(matrix.front().size()));
+        for(int i = 0; i < matrix.size(); i++){
+            if(i == 0){
+                dp.front() = matrix.front();
+            }
+            else{
+                dp[i].front() = matrix[i].front();
+            }
+        }
+
+        for(int i = 1; i < matrix.size(); i++){
+            for(int j = 1; j < matrix[i].size(); j++){
+                if(matrix[i][j])
+                    dp[i][j] = min({dp[i-1][j-1],dp[i-1][j],dp[i][j-1]}) + 1;
+            }
+        }
+
+        
+
+        int squares = 0;
+        for(auto it : dp){
+            squares += accumulate(it.begin(),it.end(),0);
+        }
+
+        return squares;
     }
 };
 

@@ -1774,7 +1774,7 @@ public:
 };
 
 //^ 33 Check if Complete binary tree
-/* 
+/*
 -> Perform level order traversal and maintain a flag indicating whether a null node is encountered or not
 -> whenever we encounter a null node we mark flag as false
 -> check if flag is false every time pushing node into queue
@@ -1818,6 +1818,54 @@ bool isCompleteBT(Node *root)
     }
     return true;
 }
+
+//^ 34 Distribute Candies in a binary tree
+class DistributeCandy
+{
+    /* 
+    The intuition behind this solution is to balance the number of candies at each node by moving candies from nodes with more candies to nodes with fewer candies. We do this by performing a depth-first search on the tree and calculating the number of moves required at each node. The number of moves required at a node is the absolute difference between the number of candies in its left and right subtrees. This is because we need to move candies from the subtree with more candies to the subtree with fewer candies. We add up all these moves to get the total number of moves required.
+     */
+private:
+    struct Node
+    {
+        int key;
+        Node *left, *right;
+    };
+    int ans = 0;
+
+public:
+    // Helper function that performs a depth-first search on the tree
+    int helper(Node *root)
+    {
+        // If the node is null, return 0
+        if (!root)
+            return 0;
+
+        // Recursively call the helper function on the left and right children of the node
+        // This will return the number of candies in the left and right subtrees, respectively
+        int left = helper(root->left);
+        int right = helper(root->right);
+
+        // The number of moves required is the absolute difference between the number of candies in the left and right subtrees
+        // This is because we need to move candies from the subtree with more candies to the subtree with fewer candies
+        // We add this to the total number of moves
+        ans += abs(left) + abs(right);
+
+        // Return the number of candies at the current node plus the number of candies in the left and right subtrees, minus 1
+        // This is because we want each node to have exactly one candy
+        return root->key + left + right - 1;
+    }
+
+    // Main function that calculates the number of moves required
+    int distributeCandy(Node *root)
+    {
+        // Call the helper function on the root of the tree
+        helper(root);
+
+        // Return the total number of moves
+        return ans;
+    }
+};
 
 int main()
 {

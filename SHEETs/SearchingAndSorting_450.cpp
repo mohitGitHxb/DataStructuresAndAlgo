@@ -2323,6 +2323,62 @@ public:
         return {-1, -1};
     }
 };
+
+//^ 45 Median in a row wise sorted matrix
+class MedianRowWiseSorted
+{
+private:
+    /*
+Given a row wise sorted matrix of size R*C where R and C are always odd, find the median of the matrix.
+
+Example 1:
+
+Input:
+R = 3, C = 3
+M = [[1, 3, 5],
+     [2, 6, 9],
+     [3, 6, 9]]
+Output: 5
+Explanation: Sorting matrix elements gives
+us {1,2,3,3,5,6,6,9,9}. Hence, 5 is median.
+
+
+
+     */
+public:
+    int median(vector<vector<int>> &matrix, int R, int C)
+    {
+        // Set the initial range for binary search
+        int low = 1, high = 1e4;
+
+        // Perform binary search
+        while (low <= high)
+        {
+            // Calculate the middle element
+            int mid = (low + high) >> 1;
+
+            // Count elements smaller than mid in the matrix
+            int countOfElementsSmallerThanMid = 0;
+            for (int i = 0; i < R; i++)
+            {
+                countOfElementsSmallerThanMid += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
+            }
+
+            // Adjust the range based on the count of smaller elements
+            if (countOfElementsSmallerThanMid <= (R * C) / 2)
+            {
+                low = mid + 1; // Update lower bound
+            }
+            else
+            {
+                high = mid - 1; // Update upper bound
+            }
+        }
+
+        // Return the median value
+        return low;
+    }
+};
 int main(int argc, char const *argv[])
 {
 

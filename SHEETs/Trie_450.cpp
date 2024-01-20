@@ -573,6 +573,152 @@ public:
         return count + 1; // Return the count of distinct substrings
     }
 };
+
+//^ 4 Maximum XOR of two numbers in an array
+/*
+Problem Overview:
+
+The problem requires finding the maximum result of XOR between any two elements in an array. To solve this problem efficiently, the code implements a Trie (Prefix Tree) data structure. The Trie is used to store the binary representation of the array elements and to find the maximum XOR.
+Trie Implementation:
+
+The Trie is implemented using a structure called Node, which has an array of two pointers (links) to represent the two possible bits (0 or 1). The Trie class has methods for inserting an integer into the Trie and finding the maximum XOR for a given integer.
+Algorithm:
+
+    Create a Trie object.
+    Iterate through the array nums and insert each element into the Trie.
+    For each element in nums, find the maximum XOR by traversing the Trie.
+    Update the maximum XOR if a higher value is found.
+    Return the maximum XOR as the result.
+
+Trie Insertion:
+
+    For each integer, iterate through its binary representation from the most significant bit to the least significant bit.
+    Create nodes in the Trie as needed to represent the binary representation of the integer.
+
+Trie FindMax:
+
+    For each bit of the given integer, traverse the Trie to find the bit that, when XORed with the current bit, produces the maximum XOR.
+    Update the result accordingly.
+
+Time Complexity:
+
+    The time complexity of inserting each element into the Trie is O(32 * n) since each integer has a maximum of 32 bits.
+    The time complexity of finding the maximum XOR for each element is also O(32 * n).
+    Therefore, the overall time complexity is O(n), where n is the size of the input array.
+
+Space Complexity:
+
+    The space complexity is O(n) for storing the Trie nodes.
+
+Summary:
+
+The code efficiently utilizes the Trie data structure to find the maximum XOR for any two elements in the given array. The time and space complexities are reasonable for the given problem size. The algorithm is based on bitwise manipulation and Trie traversal, making it an effective solution for the problem.
+
+ */
+
+//^ 5 Maximum XOR from an element in an array (offline query + trie)
+class MaximumXORQueries
+{
+private:
+    struct Node
+    {
+        Node *links[2];
+
+        bool containsKey(int ind)
+        {
+            return (links[ind] != NULL);
+        }
+        Node *get(int ind)
+        {
+            return links[ind];
+        }
+        void put(int ind, Node *node)
+        {
+            links[ind] = node;
+        }
+    };
+    class Trie
+    {
+    private:
+        Node *root;
+
+    public:
+        Trie()
+        {
+            root = new Node();
+        }
+
+    public:
+        void insert(int num)
+        {
+            Node *node = root;
+            // cout << num << endl;
+            for (int i = 31; i >= 0; i--)
+            {
+                int bit = (num >> i) & 1;
+                if (!node->containsKey(bit))
+                {
+                    node->put(bit, new Node());
+                }
+                node = node->get(bit);
+            }
+        }
+
+    public:
+        int findMax(int num)
+        {
+            Node *node = root;
+            int maxNum = 0;
+            for (int i = 31; i >= 0; i--)
+            {
+                int bit = (num >> i) & 1;
+                if (node->containsKey(!bit))
+                {
+                    maxNum = maxNum | (1 << i);
+                    node = node->get(!bit);
+                }
+                else
+                {
+                    node = node->get(bit);
+                }
+            }
+            return maxNum;
+        }
+    };
+
+public:
+    vector<int> maximizeXor(vector<int> &nums, vector<vector<int>> &queries)
+    {
+        int n = nums.size(), m = queries.size();
+        sort(nums.begin(), nums.end());
+        vector<int> ans(m);
+        vector<pair<int, pair<int, int>>> offlineQueries(m);
+        for (int i = 0; i < m; i++)
+        {
+            offlineQueries[i] = {queries[i][1], {queries[i][0], i}};
+        }
+        sort(offlineQueries.begin(), offlineQueries.end());
+        Trie trie;
+        int index = 0;
+        for (int i = 0; i < m; i++)
+        {
+            while (index < n && nums[index] <= offlineQueries[i].first)
+            {
+                trie.insert(nums[index]);
+                index++;
+            }
+            if (index == 0)
+            {
+                ans[offlineQueries[i].second.second] = -1;
+            }
+            else
+            {
+                ans[offlineQueries[i].second.second] = trie.findMax(offlineQueries[i].second.first);
+            }
+        }
+        return ans;
+    }
+};
 int main()
 {
 #ifndef ONLINE_JUDGE

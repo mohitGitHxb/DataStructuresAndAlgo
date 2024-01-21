@@ -376,6 +376,12 @@ vector<int> nextGreaterElements(vector<int> &nums)
 //^ 6 Sum of subarrays minimum
 
 /*
+    & Intuition:
+    -> for each element in array we try to expand the subarray while this current element being the minimum in the subarray.
+    -> after this we need to find the contribution of this element to the subarray.
+    -> to optimize this we can use monotonic stack
+
+    
     Denote by left[i] the distance between element A[i] and its PLE.
     Denote by right[i] the distance between element A[i] and its NLE.
 

@@ -24,7 +24,8 @@
         "ranges": "cpp",
         "span": "cpp",
         "stacktrace": "cpp",
-        "source_location": "cpp"
+        "source_location": "cpp",
+        "unordered_map": "cpp"
     },
     "cSpell.words": [
         "getnode",

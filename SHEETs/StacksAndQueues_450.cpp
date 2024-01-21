@@ -381,7 +381,7 @@ vector<int> nextGreaterElements(vector<int> &nums)
     -> after this we need to find the contribution of this element to the subarray.
     -> to optimize this we can use monotonic stack
 
-    
+
     Denote by left[i] the distance between element A[i] and its PLE.
     Denote by right[i] the distance between element A[i] and its NLE.
 
@@ -561,7 +561,7 @@ The space complexity is O(k), where k is the size of the sliding window. The deq
         {
             if (!dq.empty() && dq.front().second == i - k)
                 dq.pop_front();
-            while (!dq.empty() && dq.front().first < nums.at(i))
+            while (!dq.empty() && dq.back().first <= nums.at(i))
                 dq.pop_back();
             dq.push_back({nums.at(i), i});
             if (i >= k - 1)

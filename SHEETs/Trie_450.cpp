@@ -648,7 +648,6 @@ private:
             root = new Node();
         }
 
-    public:
         void insert(int num)
         {
             Node *node = root;
@@ -664,7 +663,6 @@ private:
             }
         }
 
-    public:
         int findMax(int num)
         {
             Node *node = root;
@@ -719,6 +717,115 @@ public:
         return ans;
     }
 };
+
+//^ 6 Maximum Strong pair XOR - 2
+class MaxStrongXOR
+{
+private:
+    // Define a Trie node
+    class T
+    {
+    public:
+        T *ch[2]; // Pointers to the child nodes
+        int freq; // Frequency of the node
+        T()
+        {
+            // Initialize the child nodes to NULL and frequency to 1
+            for (int i = 0; i < 2; i++)
+                ch[i] = NULL;
+            freq = 1;
+        }
+    };
+
+    // Define the Trie
+    class trie
+    {
+    public:
+        T *root; // Root of the Trie
+        trie()
+        {
+            // Initialize the root node
+            root = new T();
+        }
+
+        // Function to add a number to the Trie
+        void add(int x)
+        {
+            bitset<32> w(x); // Convert the number to binary
+            T *r = root;
+            for (int i = 31; i >= 0; i--) // Traverse the binary representation from left to right
+            {
+                if (r->ch[w[i]] != NULL) // If the child node exists
+                {
+                    r = r->ch[w[i]]; // Move to the child node
+                    r->freq += 1;    // Increase the frequency
+                }
+                else
+                {
+                    // If the child node does not exist, create a new node
+                    r->ch[w[i]] = new T();
+                    r = r->ch[w[i]];
+                }
+            }
+        }
+
+        // Function to delete a number from the Trie
+        void del(int x)
+        {
+            bitset<32> w(x); // Convert the number to binary
+            T *r = root;
+            for (int i = 31; i >= 0; i--) // Traverse the binary representation from left to right
+            {
+                r = r->ch[w[i]]; // Move to the child node
+                r->freq -= 1;    // Decrease the frequency
+            }
+        }
+
+        // Function to get the maximum XOR of a number with numbers in the Trie
+        int get(int x)
+        {
+            T *r = root;
+            bitset<32> w(x); // Convert the number to binary
+            int maxNum = 0;
+            for (int i = 31; i >= 0; i--) // Traverse the binary representation from left to right
+            {
+                if (r->ch[!w[i]] && r->ch[!w[i]]->freq) // If the opposite bit exists and its frequency is non-zero
+                {
+                    maxNum = maxNum | (1 << i); // Update the maximum number
+                    r = r->ch[!w[i]];           // Move to the child node with the opposite bit
+                }
+                else
+                {
+                    r = r->ch[w[i]]; // Otherwise, move to the child node with the same bit
+                }
+            }
+            return maxNum; // Return the maximum number
+        }
+    };
+
+public:
+    int maximumStrongPairXor(vector<int> &nums)
+    {
+        sort(nums.begin(), nums.end());    // Sort the array in ascending order
+        int ans = INT_MIN;                 // Initialize the answer to the minimum integer
+        int i = 0, j = 0, n = nums.size(); // Initialize the pointers and get the size of the array
+        trie *r = new trie();              // Create a new Trie
+        while (j < n)                      // While the end of the array is not reached
+        {
+            r->add(nums[j]);                       // Add the current number to the Trie
+            while (i < j && nums[j] > 2 * nums[i]) // While the current number is more than twice the number at the i-th position
+            {
+                r->del(nums[i]); // Delete the number at the i-th position from the Trie
+                i++;             // Move the i-th position to the right
+            }
+            int k = r->get(nums[j]); // Get the maximum XOR of the current number with numbers in the Trie
+            ans = max(ans, k);       // Update the answer
+            j++;                     // Move to the next number
+        }
+        return ans; // Return the answer
+    }
+};
+
 int main()
 {
 #ifndef ONLINE_JUDGE

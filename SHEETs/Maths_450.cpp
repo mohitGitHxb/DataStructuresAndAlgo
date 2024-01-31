@@ -339,6 +339,45 @@ public:
         }
         return ans;
     }
+
+    long long int nineDivisors(long long int N)
+    {
+        vector<bool> isprime(sqrt(N) + 2, true);
+        isprime[1] = false;
+        vector<long long> highestPrime(sqrt(N) + 2);
+        for (long long i = 2; i * i <= N; i++)
+        {
+            if (isprime[i])
+            {
+                highestPrime[i] = i;
+                for (long long j = 2 * i; j * j <= N; j += i)
+                {
+                    isprime[j] = false;
+                    highestPrime[j] = i;
+                }
+            }
+        }
+        long long ans = 0;
+        for (long long i = 2; i * i <= N; i++)
+        {
+            long long n = i * i;
+            long long divisors = 1;
+            while (n > 1)
+            {
+                long long hp = highestPrime[sqrt(n)];
+                long long count = 0;
+                while (n % hp == 0)
+                {
+                    count++;
+                    n /= hp;
+                }
+                divisors *= (count + 1);
+            }
+            if (divisors == 9)
+                ans++;
+        }
+        return ans;
+    }
 };
 
 class ModularArithmetic

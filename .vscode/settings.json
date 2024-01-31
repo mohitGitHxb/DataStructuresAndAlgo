@@ -25,7 +25,8 @@
         "span": "cpp",
         "stacktrace": "cpp",
         "source_location": "cpp",
-        "unordered_map": "cpp"
+        "unordered_map": "cpp",
+        "algorithm": "cpp"
     },
     "cSpell.words": [
         "getnode",

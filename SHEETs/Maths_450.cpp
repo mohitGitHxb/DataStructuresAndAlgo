@@ -614,6 +614,35 @@ public:
     }
 };
 
+int CommonFactor(int n)
+{
+    /*
+    This C++ function, named `CommonFactor`, takes an integer `n` as an input and returns the count of common factors of `n`.
+
+Here's a step-by-step explanation of the code:
+
+1. The function starts by initializing two integer variables: `temp` and `count`. `temp` is set to the value of `n`, and `count` is initialized to 0. `count` will be used to keep track of the number of common factors.
+
+2. A `for` loop is then started, which runs from 2 to `n` (inclusive). The loop variable is `i`.
+
+3. Inside the loop, the code first checks if `temp` is divisible by `i` (i.e., `temp % i == 0`). If it is, `count` is incremented by 1, indicating that `i` is a factor of `n`.
+
+4. If `temp` is not divisible by `i`, the code then checks if the greatest common divisor (gcd) of `i` and `n` is not 1 (`__gcd(i, n) != 1`). If this condition is true, `count` is again incremented by 1. This condition checks if `i` and `n` have any common factor other than 1.
+
+5. After the loop finishes running, the function returns the value of `count`, which represents the number of common factors of `n`.
+
+     */
+    int temp = n, count = 0;
+    for (int i = 2; i <= n; i++)
+    {
+        if (temp % i == 0)
+            count++;
+        else if (__gcd(i, n) != 1)
+            count++;
+    }
+    return count;
+}
+
 int main()
 {
 

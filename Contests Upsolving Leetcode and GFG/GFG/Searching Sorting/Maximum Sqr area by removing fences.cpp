@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+using namespace std;
 /*
 There is a large (m - 1) x (n - 1) rectangular field with corners at (1, 1) and (m, n) containing some horizontal and vertical fences given in arrays hFences and vFences respectively.
 

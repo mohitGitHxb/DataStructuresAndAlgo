@@ -1866,6 +1866,29 @@ int longSubarrWthSumDivByK(int a[], int n, int k)
     // Return the maximum length of the subarray
     return max_len;
 }
+
+//^ 33 Sum of all subarrays [IMPORTANT OBSERVATION AND CONCEPT]
+/*
+The function `subarraySum` calculates the sum of all subarrays of an array `a[]` of size `n`. A subarray is a contiguous part of an array. For example, if the array is [1,2,3], then the subarrays are [1], [2], [3], [1,2], [2,3] and [1,2,3].
+
+The function uses a formula to calculate the sum of all subarrays in O(n) time complexity, which is much more efficient than the brute force approach of generating all subarrays and summing them up, which would take O(n^2) time complexity.
+
+The formula used is based on the observation that the element at index `i` is present in `(i + 1) * (n - i)` subarrays, where `i` is 0-indexed. This is because there are `(i + 1)` ways to choose the starting point of the subarray (any of the indices from 0 to `i` inclusive), and `(n - i)` ways to choose the ending point of the subarray (any of the indices from `i` to `n - 1` inclusive). Therefore, the element at index `i` contributes `(i + 1) * (n - i) * a[i]` to the total sum.
+
+The function iterates over the array, calculates the contribution of each element to the total sum using the formula, and adds it to the total sum. The total sum is then returned as the result.
+
+The `% 1000000007` is used to prevent overflow of the sum, as the problem might require the answer to be returned modulo 10^9 + 7, which is a common requirement in competitive programming problems to ensure that the answer fits within the range of a 32-bit integer.
+ */
+long long subarraySum(long long a[], long long n)
+{
+
+    long long sum = 0;
+    for (long long i = 0; i < n; i++)
+    {
+        sum += ((i + 1) * (n - i) * a[i]) % 1000000007;
+    }
+    return sum;
+}
 int main(int argc, char const *argv[])
 {
     vector<int> arr = {4, 0, 0, 3, 1, 4, 5};

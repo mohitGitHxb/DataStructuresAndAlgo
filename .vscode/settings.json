@@ -26,7 +26,13 @@
         "stacktrace": "cpp",
         "source_location": "cpp",
         "unordered_map": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "deque": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp",
+        "unordered_set": "cpp",
+        "vector": "cpp",
+        "numbers": "cpp"
     },
     "cSpell.words": [
         "getnode",

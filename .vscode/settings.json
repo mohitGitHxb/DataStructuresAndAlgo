@@ -40,10 +40,12 @@
     ],
     "editor.wordWrap": "wordWrapColumn",
     "editor.wordWrapColumn": 85,
-    "audioCues.onDebugBreak": "auto",
     "[markdown]": {
         "editor.wordWrapColumn": 85,
         "editor.wordWrap": "wordWrapColumn"
     },
-    "C_Cpp.errorSquiggles": "enabled"
+    "C_Cpp.errorSquiggles": "enabled",
+    "accessibility.signals.onDebugBreak": {
+        "sound": "auto"
+    }
 }

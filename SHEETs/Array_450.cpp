@@ -358,43 +358,67 @@ void rotateArrayByD(vector<int> &arr, int d)
 }
 
 //^ 8 largest sum contiguous array (Kadane's algorithm)
-int largestSumContiguousArray(vector<int> &arr)
+long long largestSumContiguousArray(vector<int> &arr)
 {
-    int res = arr[0], maxEnding = arr[0];
-    for (int i = 1; i < arr.size(); i++)
+    long long sum = 0, max_sum = LONG_LONG_MIN;
+    for (int i = 0; i < arr.size(); i++)
     {
-        maxEnding = max(maxEnding + arr[i], arr[i]);
-        res = max(maxEnding, res);
+        sum += arr[i];
+        max_sum = max(max_sum, sum);
+        if (sum < 0)
+        {
+            sum = 0;
+        }
     }
-    return res;
+    return max_sum;
 
     /*
 
 &    To print the subarray with the maximum sum the idea is to maintain start index & of maximum_sum_ending_here at current index so that whenever maximum_sum_so_far is & updated with maximum_sum_ending_here then start index and end index of subarray can be updated with start and current index
 
      */
-    /*     int max_so_far = 0,maxEnding=0;
-        int start_index = 0 ,end_index = 0, s = 0;
-        for (int i = 0; i < arr.size(); i++)
+    /*     long long maxi = LONG_MIN; // maximum sum
+        long long sum = 0;
+
+        int start = 0;
+        int ansStart = -1, ansEnd = -1;
+        for (int i = 0; i < n; i++)
         {
-            maxEnding += arr[i];
-            if (max_so_far < maxEnding)
+
+            if (sum == 0)
+                start = i; // starting index
+
+            sum += arr[i];
+
+            if (sum > maxi)
             {
-                max_so_far = maxEnding;
-                start_index = s;
-                end_index = i;
-            }
-            if(maxEnding < 0)
-            {
-                maxEnding = 0;
-                s = i+1;
+                maxi = sum;
+
+                ansStart = start;
+                ansEnd = i;
             }
 
+            // If sum < 0: discard the sum calculated
+            if (sum < 0)
+            {
+                sum = 0;
+            }
         }
-        cout << "Maximum contiguous sum is " << max_so_far
-        << endl;
-            cout << "Starting index " << start_index << endl
-        << "Ending index " << end_index << endl; */
+
+        // printing the subarray:
+        cout << "The subarray is: [";
+        for (int i = ansStart; i <= ansEnd; i++)
+        {
+            cout << arr[i] << " ";
+        }
+        cout << "]n";
+
+        // To consider the sum of the empty subarray
+        // uncomment the following check:
+
+        // if (maxi < 0) maxi = 0;
+
+        return maxi; */
 }
 
 // ^ 8 Minimize the maximum difference in an array

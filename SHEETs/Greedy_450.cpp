@@ -769,69 +769,70 @@ public:
 };
 
 //^ 17 Water the Plants (JUMP GAME VARIATION)
-class WateringPlants{
-    public:
-    //Function to find the minimum number of sprinklers required.
+class WateringPlants
+{
+public:
+    // Function to find the minimum number of sprinklers required.
     int min_sprinklers(int gallery[], int n)
     {
-        //creating a vector of pairs to store the range of each sprinkler.
-        vector<pair<int,int>> sprinklers;
-        
-        //iterating over the gallery array.
-        for(int i=0; i<n; i++)
+        // creating a vector of pairs to store the range of each sprinkler.
+        vector<pair<int, int>> sprinklers;
+
+        // iterating over the gallery array.
+        for (int i = 0; i < n; i++)
         {
-            //checking if the gallery at current index is not -1.
-            if(gallery[i] > -1)
+            // checking if the gallery at current index is not -1.
+            if (gallery[i] > -1)
             {
-                //adding the range of each sprinkler to the vector.
-                sprinklers.push_back( pair<int,int> ( i-gallery[i], i+gallery[i] ) );
+                // adding the range of each sprinkler to the vector.
+                sprinklers.push_back(pair<int, int>(i - gallery[i], i + gallery[i]));
             }
         }
-        
-        //sorting the sprinklers based on their starting range.
+
+        // sorting the sprinklers based on their starting range.
         sort(sprinklers.begin(), sprinklers.end());
-        
-        //initializing target, sprinklers_on, and i.
-        int target=0, sprinklers_on=0, i=0;
-        
-        //looping until target is less than n.
-        while(target<n)
+
+        // initializing target, sprinklers_on, and i.
+        int target = 0, sprinklers_on = 0, i = 0;
+
+        // looping until target is less than n.
+        while (target < n)
         {
-            //checking if i has reached the end of the sprinklers vector
-            //or the starting range of next sprinkler is greater than the target.
-            if(i==sprinklers.size() || sprinklers[i].first>target)
+            // checking if i has reached the end of the sprinklers vector
+            // or the starting range of next sprinkler is greater than the target.
+            if (i == sprinklers.size() || sprinklers[i].first > target)
             {
-                //returning -1 if above condition is true.
+                // returning -1 if above condition is true.
                 return -1;
             }
-            
-            //initializing max_range with the ending range of current sprinkler.
+
+            // initializing max_range with the ending range of current sprinkler.
             int max_range = sprinklers[i].second;
-            
-            //looping until i+1 is within the range of sprinklers vector
-            //and the starting range of next sprinkler is less than or equal to target.
-            while( i+1<sprinklers.size() && sprinklers[i+1].first<=target )
+
+            // looping until i+1 is within the range of sprinklers vector
+            // and the starting range of next sprinkler is less than or equal to target.
+            while (i + 1 < sprinklers.size() && sprinklers[i + 1].first <= target)
             {
-                //updating i and max_range if above condition is true.
+                // updating i and max_range if above condition is true.
                 i++;
-                max_range = max( max_range,  sprinklers[i].second );
+                max_range = max(max_range, sprinklers[i].second);
             }
-            
-            //checking if the maximum range is less than target
-            //which means no sprinkle can cover the current target point.
-            if(max_range<target)
+
+            // checking if the maximum range is less than target
+            // which means no sprinkle can cover the current target point.
+            if (max_range < target)
             {
-                //returning -1 if above condition is true.
+                // returning -1 if above condition is true.
                 return -1;
             }
-            
-            //incrementing the count of sprinklers and updating target and i.
+
+            // incrementing the count of sprinklers and updating target and i.
             sprinklers_on++;
-            target = max_range +1;
+            target = max_range + 1;
             i++;
         }
-        
-        //returning the minimum number of sprinklers required.
+
+        // returning the minimum number of sprinklers required.
         return sprinklers_on;
     }
 };

@@ -1413,6 +1413,87 @@ public:
         return d;
     }
 };
+
+//^ 32 Sum of beauty of all substrings
+class SumBeauty
+{
+    /*
+        The problem is asking to find the sum of the beauty of all substrings of a given string. The beauty of a string is defined as the difference between the frequency of the most frequent character and the least frequent character.
+
+The approach to solve this problem is to use a sliding window technique along with a frequency map (hash map).
+
+1. We start by iterating over the string from the beginning. For each character, we start another loop that creates substrings starting from the current character to the end of the string.
+
+2. For each substring, we update the frequency map with the current character and calculate the maximum and minimum frequency of characters in the current substring.
+
+3. The beauty of the current substring is the difference between the maximum and minimum frequencies. We add this to our total sum.
+
+4. We repeat this process for all substrings of the string.
+
+5. Finally, we return the total sum which represents the sum of the beauty of all substrings.
+
+The intuition behind this approach is that by keeping track of the frequency of characters in each substring, we can easily calculate the beauty of each substring. By summing these up, we get the total beauty of all substrings.
+
+     */
+public:
+    int beautySum(string s)
+    {
+        int ans = 0;
+        int n = s.length();
+        for (int i = 0; i < n; i++)
+        {
+            unordered_map<char, int> mp;
+            for (int j = i; j < n; j++)
+            {
+                mp[s[j]]++;
+                int maxi = 0, mini = INT_MAX;
+                for (auto k : mp)
+                {
+                    mini = min(mini, k.second);
+                    maxi = max(maxi, k.second);
+                }
+                ans += (maxi - mini);
+            }
+        }
+        return ans;
+    }
+
+    //* Optimized Approach in O(N^2)
+    /* 
+    & Time Complexity: O(N^2*26)
+    & Use vectors instead of hashmaps to store frequency of characters in each substring. Speed(vector) >> Speed(hashmap)
+    
+     */
+    int freq(vector<int> &mp)
+    {
+        int n = mp.size();
+        int mn = INT_MAX, mx = INT_MIN;
+        for (int i = 0; i < n; i++)
+        {
+            if (mp[i] != 0)
+            {
+                mn = min(mn, mp[i]);
+                mx = max(mx, mp[i]);
+            }
+        }
+        return mx - mn;
+    }
+    int beautySum(string s)
+    {
+        // Your code goes here
+        int n = s.size(), ans = 0;
+        for (int i = 0; i < n; i++)
+        {
+            vector<int> mp(26);
+            for (int j = i; j < n; j++)
+            {
+                mp[s[j] - 'a']++;
+                ans = ans + freq(mp);
+            }
+        }
+        return ans;
+    }
+};
 int main()
 {
     return 0;

@@ -1913,6 +1913,114 @@ long long subarraySum(long long a[], long long n)
     }
     return sum;
 }
+
+//^ 34 Count subarrays with Xor K
+int subarraysWithXorK(vector<int> a, int k)
+{
+    int n = a.size(); // size of the given array.
+    int xr = 0;
+    unordered_map<int, int> mpp; // declaring the map.
+    mpp[xr]++;                   // setting the value of 0.
+    int cnt = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+        // prefix XOR till index i:
+        xr = xr ^ a[i];
+
+        // By formula: x = xr^k:
+        int x = xr ^ k;
+
+        // add the occurrence of xr^k
+        // to the count:
+        cnt += mpp[x];
+
+        // Insert the prefix xor till index i
+        // into the map:
+        mpp[xr]++;
+    }
+    return cnt;
+}
+
+//^ 35 Reverse pairs in an array
+class Solution
+{
+public:
+    void merge(vector<int> &arr, long long low, long long mid, long long high)
+    {
+        vector<long long> temp;    // temporary array
+        long long left = low;      // starting index of left half of arr
+        long long right = mid + 1; // starting index of right half of arr
+
+        // storing elements in the temporary array in a sorted manner//
+
+        while (left <= mid && right <= high)
+        {
+            if (arr[left] <= arr[right])
+            {
+                temp.push_back(arr[left]);
+                left++;
+            }
+            else
+            {
+                temp.push_back(arr[right]);
+                right++;
+            }
+        }
+
+        // if elements on the left half are still left //
+
+        while (left <= mid)
+        {
+            temp.push_back(arr[left]);
+            left++;
+        }
+
+        //  if elements on the right half are still left //
+        while (right <= high)
+        {
+            temp.push_back(arr[right]);
+            right++;
+        }
+
+        // transfering all elements from temporary to arr //
+        for (long long i = low; i <= high; i++)
+        {
+            arr[i] = temp[i - low];
+        }
+    }
+
+    long long countPairs(vector<int> &arr, long long low, long long mid, long long high)
+    {
+        long long right = mid + 1;
+        long long cnt = 0;
+        for (long long i = low; i <= mid; i++)
+        {
+            while (right <= high && arr[i] * 1ll > (2 * 1ll * arr[right]))
+                right++;
+            cnt += (right - (mid + 1));
+        }
+        return cnt;
+    }
+
+    long long mergeSort(vector<int> &arr, long long low, long long high)
+    {
+        long long cnt = 0;
+        if (low >= high)
+            return cnt;
+        long long mid = (low + high) / 2;
+        cnt += mergeSort(arr, low, mid);        // left half
+        cnt += mergeSort(arr, mid + 1, high);   // right half
+        cnt += countPairs(arr, low, mid, high); // Modification
+        merge(arr, low, mid, high);             // merging sorted halves
+        return cnt;
+    }
+    long long reversePairs(vector<int> &nums)
+    {
+        return mergeSort(nums, 0, nums.size() - 1);
+    }
+};
+
 int main(int argc, char const *argv[])
 {
     vector<int> arr = {4, 0, 0, 3, 1, 4, 5};

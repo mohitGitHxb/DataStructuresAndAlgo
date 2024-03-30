@@ -505,6 +505,103 @@ public:
         return atmostK(nums, k) - atmostK(nums, k - 1);
     }
 };
+
+//^ 9 Minimum windowed substring
+class MinWindow
+{
+public:
+    /*
+    & Store the frequency for string t in vector freqT and for string s in vector freqS
+    & if freqS[i] < freqT[i] then return false because the characters in string s can not be formed from string t
+    & if freqS[i] > freqT[i] then return true because the characters in string s can be formed from string t
+    & Shrink and expand window accordingly
+
+    * Time complexity: O(N)
+    * Space complexity: O(128)
+     */
+    bool hasSameFreq(vector<int> &freqT, vector<int> &freqS)
+    {
+        for (int i = 0; i < 128; i++)
+        {
+            if (freqT[i] > 0 and freqT[i] > freqS[i])
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    string minWindow(const string &s, const string &t)
+    {
+        int n = s.length();
+        int m = t.length();
+        if (n < m)
+            return "";
+        vector<int> freqT(128);
+        for (char c : t)
+        {
+            freqT[c - 'A']++;
+        }
+        vector<int> freqS(128);
+        int start = 0, end = 0, minLen = n + 1, minStart = 0;
+        while (end < n)
+        {
+            freqS[s[end] - 'A']++;
+            while (hasSameFreq(freqT, freqS))
+            {
+                if (end - start + 1 < minLen)
+                {
+                    minLen = end - start + 1;
+                    minStart = start;
+                }
+                freqS[s[start] - 'A']--;
+                start++;
+            }
+            end++;
+        }
+        return minLen == n + 1 ? "" : s.substr(minStart, minLen);
+    }
+
+    /*
+    & Better way to match frequencies by maintaining required characters
+    * Time complexity: O(N)
+    * Space complexity: O(128)
+     */
+    string minWindow(const string &s, const string &t)
+    {
+        int n = s.length();
+        int m = t.length();
+        if (n < m)
+            return "";
+        vector<int> freq(128);
+        for (char c : t)
+        {
+            freq[c]++;
+        }
+        int start = 0, end = 0, minLen = n + 1, minStart = 0, required = m;
+        while (end < n)
+        {
+            if (freq[s[end]]-- > 0)
+            {
+                required--;
+            }
+            while (required == 0)
+            {
+                if (end - start + 1 < minLen)
+                {
+                    minLen = end - start + 1;
+                    minStart = start;
+                }
+                if (freq[s[start]]++ == 0)
+                {
+                    required++;
+                }
+                start++;
+            }
+            end++;
+        }
+        return minLen == n + 1 ? "" : s.substr(minStart, minLen);
+    }
+};
 int main()
 {
     return 0;

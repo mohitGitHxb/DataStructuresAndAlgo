@@ -47,5 +47,6 @@
     "C_Cpp.errorSquiggles": "enabled",
     "accessibility.signals.onDebugBreak": {
         "sound": "auto"
-    }
+    },
+    "editor.selectionClipboard": false
 }

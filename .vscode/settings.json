@@ -32,7 +32,11 @@
         "list": "cpp",
         "unordered_set": "cpp",
         "vector": "cpp",
-        "numbers": "cpp"
+        "numbers": "cpp",
+        "any": "cpp",
+        "optional": "cpp",
+        "variant": "cpp",
+        "expected": "cpp"
     },
     "cSpell.words": [
         "getnode",

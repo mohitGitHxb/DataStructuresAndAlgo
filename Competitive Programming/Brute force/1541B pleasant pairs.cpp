@@ -309,6 +309,7 @@ over all test cases does not exceed 2⋅105.
 
 @ Observation:
 Loop over all values of ai and aj. Because i+j≤2⋅n, we only care about pairs (ai,aj) if ai⋅aj≤2⋅n. The number of such pairs is O(nlogn), so you can brute force all pairs.
+& Since Sum of indexes (i + j) can have maximum value of n+n and minimum of 1+2 means all a*b must lie in the range [3,2n-1].
  */
 
 void solve()
@@ -321,8 +322,10 @@ void solve()
             cin>>a;
             index[a] = i;
         }
-        
+        //% question boils down to find a*b = sum OR a = sum/b
         for(ll sum=3;sum<2*n;sum++){
+            //& To simply find combination of a,b we can just simply get the divisors of sum
+            //& Now check if a particular divisor exists and so is the sum/(divisor)
             for(ll i=1;i*i<=sum;i++){
                 if(sum%i==0 and i*i!=sum and index[i]!=-1 and index[sum/i]!=-1 and index[i]+index[sum/i]==sum){
                     ans++;

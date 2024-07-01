@@ -1637,8 +1637,8 @@ public:
             return true;
         if (idx == 0)
             return arr[0] == target;
-        bool notPick = findSubsetSum(idx + 1, arr, target);
-        bool pick = (target >= arr[idx]) ? findSubsetSum(idx + 1, arr, target - arr[idx]) : false;
+        bool notPick = findSubsetSum(idx - 1, arr, target);
+        bool pick = (target >= arr[idx]) ? findSubsetSum(idx - 1, arr, target - arr[idx]) : false;
         return pick || notPick;
     }
     /*
@@ -1657,8 +1657,8 @@ public:
         {
             return dp[idx][target];
         }
-        bool notPick = findSubsetSum_memo(idx + 1, arr, target, dp);
-        bool pick = (target >= arr[idx]) ? findSubsetSum_memo(idx + 1, arr, target - arr[idx], dp) : false;
+        bool notPick = findSubsetSum_memo(idx - 1, arr, target, dp);
+        bool pick = (target >= arr[idx]) ? findSubsetSum_memo(idx - 1, arr, target - arr[idx], dp) : false;
         return dp[idx][target] = pick || notPick;
     }
     /*

@@ -390,6 +390,134 @@ public:
         return;
     }
 };
+
+class BitManipulationCrashCourse
+{
+private:
+    /*
+    @ Key points
+    & And of multiple values always either decreases or remain same it never increases!
+    & OR of multiple values always either remains same or it increases it never decreases
+    & XOR is used to flip bits at ith location
+    % A^A = 0 && A^0 = A && 0^A = A
+    % It detects odd number of ones in binary representation
+    & Left shifting is same as multiplying by 2
+    & Right shifting is same as dividing by 2
+    & While solving problems on AND operator and can't  decide which value to take as initial value always use "-1" as it has all set bits(1s)
+
+
+        Difference between upper case letter and lower case letter binary is that
+ In upper case letter 5th bit!=1;
+ In lower case letter 5th bit =1;
+ cout<<char('A'|(1<<5))<<endl;     //Convert Char to lower case;
+ cout<<char('a'&(~(1<<5)))<<endl;    //Convert Char to upper case;
+
+ Actually char of 1<<5 is _(space);
+ Take any upper case letter and its |(or) with space will get the corresponding lower case letter;
+
+ cout<<char('C'|' ')<<endl;   // will make it small c
+
+Take any lower case letter and its &(and) with _(underscore) will get the corresponding upper //case letter;`
+
+ cout<<char('c'&'_')<<endl;   // will make it capital C
+
+
+Find a letter’s position in alphabet
+We can easily find a letter’s position [1-26] in the
+alphabet by taking its bitwise AND with ASCII 31 (00011111 in binary).
+The case of the letter is irrelevant here.
+
+ eg.
+ (‘A’ & 31) returns position 1
+ (‘c’ & 31) returns position 3
+
+
+
+ Set union A | B
+Set intersection A & B
+Set subtraction A & ~B
+Set negation ALL_BITS ^ A or ~A
+Set bit A |= 1 << bit
+Clear bit A &= ~(1 << bit)
+Test bit (A & 1 << bit) != 0
+Extract last bit A&-A or A&~(A-1) or x^(x&(x-1))
+Remove last bit A&(A-1)
+Get all 1-bits ~0==-1
+
+     */
+
+public:
+    void swapXor(int &a, int &b)
+    {
+        a = a ^ b;
+        b = a ^ b;
+        a = a ^ b;
+    }
+
+    // Binary Number to gray Code
+    vector<int> grayCode(int n)
+    {
+        vector<int> v;
+        for (int i = 0; i < (1 << n); i++)
+            v.push_back(i ^ (i >> 1));
+        return v;
+    }
+
+    // Gray Code to Binary Number
+    int rev_grayCode(int g)
+    {
+        int n = 0;
+        for (; g; g >>= 1)
+            n ^= g;
+        return n;
+    }
+    //     The given number n is a power of 4 if it is a power of 2 and
+    // its remainder is 1 when it is divided by 3.
+    bool checkPowerOf4(unsigned n)
+    {
+        // return true if `n` is a power of 2, and
+        // the remainder is 1 when divided by 3
+        return !(n & (n - 1)) && (n % 3 == 1);
+    }
+    /*
+    The two numbers that appear only once must differ at some bit, this is how we can distinguish between them. Otherwise, they will be one of the duplicate numbers.
+
+    One important point is that by XORing all the numbers, we actually get the XOR of the two target numbers (because XORing two duplicate numbers always results in 0). Consider the XOR result of the two target numbers; if some bit of the XOR result is 1, it means that the two target numbers differ at that location.
+
+    Let’s say the at the ith bit, the two desired numbers differ from each other. which means one number has bit i equaling: 0, the other number has bit i equaling 1.
+
+    Thus, all the numbers can be partitioned into two groups according to their bits at location i.
+    the first group consists of all numbers whose bits at i is 0.
+    the second group consists of all numbers whose bits at i is 1.
+
+    Notice that, if a duplicate number has bit i as 0, then, two copies of it will belong to the first group. Similarly, if a duplicate number has bit i as 1, then, two copies of it will belong to the second group.
+
+    by XoRing all numbers in the first group, we can get the first number.
+    by XoRing all numbers in the second group, we can get the second number.
+
+     */
+    vector<int> singleNumber(vector<int> &nums)
+    {
+        unsigned xorr = 0;
+        for (int &i : nums)
+            xorr ^= i;
+        unsigned rightmost = (xorr) & (-xorr);
+        int a = 0, b = 0;
+        for (int &i : nums)
+        {
+            if (i & rightmost)
+            {
+                a ^= i;
+            }
+            else
+            {
+                b ^= i;
+            }
+        }
+        return {a, b};
+    }
+};
+
 int main()
 {
     ios_base::sync_with_stdio(0);

@@ -90,404 +90,6 @@ void fast_read()
     cin.tie(NULL);
     cout.tie(NULL);
 }
-template <class T = int>
-void customPrint(const T &t)
-{
-    cout << t << " ";
-}
-
-template <class T = int>
-void customPrint(const vector<T> &vec)
-{
-    cout << "[";
-    for (auto &&i : vec)
-    {
-        customPrint(i);
-    }
-    cout << "]\n";
-}
-
-template <class T = int>
-void customPrint(const vector<vector<T>> &vec)
-{
-    cout << "[";
-    for (auto &&i : vec)
-    {
-        customPrint(i);
-    }
-    cout << "]\n";
-}
-
-template <class T = int, class U = int>
-void customPrint(const pair<T, U> &p)
-{
-    cout << "{" << customPrint(p.first) << ":";
-    customPrint(p.second);
-    cout << "}\n";
-}
-
-template <class T = int, class U = int>
-void customPrint(const unordered_map<T, U> &mp)
-{
-    cout << "[";
-    for (auto &i : mp)
-    {
-        cout << "{" << i.first << ":";
-        customPrint(i.second);
-        cout << "}\n";
-    }
-    cout << "]\n";
-}
-
-template <class T = int, class U = int>
-void customPrint(const map<T, U> &mp)
-{
-    cout << "[";
-    for (auto &i : mp)
-    {
-        cout << "{" << i.first << ":";
-        customPrint(i.second);
-        cout << "}\n";
-    }
-    cout << "]\n";
-}
-
-template <class T = int>
-void customPrint(const multiset<T> &mp)
-{
-    cout << "[";
-    for (auto &i : mp)
-    {
-        customPrint(i);
-    }
-    cout << "]\n";
-}
-
-template <class T = int>
-void customPrint(const set<T> &mp)
-{
-    cout << "[";
-    for (auto &i : mp)
-    {
-        customPrint(i);
-    }
-    cout << "]\n";
-}
-
-template <class T = int>
-void customPrint(const unordered_set<T> &mp)
-{
-    cout << "[";
-    for (auto &i : mp)
-    {
-        customPrint(i);
-    }
-    cout << "]\n";
-}
-
-template <class T = int>
-void customPrint(priority_queue<T> pq)
-{
-    cout << "[";
-    while (!pq.empty())
-    {
-        customPrint(pq.top());
-        pq.pop();
-    }
-    cout << "]\n";
-}
-
-template <class T = int>
-void customPrint(stack<T> st)
-{
-    cout << "[";
-    while (!st.empty())
-    {
-        customPrint(st.top());
-        st.pop();
-    }
-    cout << "]\n";
-}
-
-template <class T = int>
-void customPrint(queue<T> q)
-{
-    cout << "[";
-    while (!q.empty())
-    {
-        customPrint(q.front());
-        q.pop();
-    }
-    cout << "]\n";
-}
-
-template <class T = int>
-void customPrint(deque<T> dq)
-{
-    cout << "[";
-    for (auto &i : dq)
-    {
-        customPrint(i);
-    }
-    cout << "]\n";
-}
-
-template <class T = int, class U = int>
-void customPrint(const unordered_multimap<T, U> &mp)
-{
-    cout << "[";
-    for (auto &i : mp)
-    {
-        cout << "{" << i.first << ":";
-        customPrint(i.second);
-        cout << "}\n";
-    }
-    cout << "]\n";
-}
-
-template <class T = int>
-void customPrint(const unordered_multiset<T> &mp)
-{
-    cout << "[";
-    for (auto &i : mp)
-    {
-        customPrint(i);
-    }
-    cout << "]\n";
-}
-void printBitRepresentation(long long n)
-{
-    string binary = bitset<64>(n).to_string(); // converts to binary
-    cout << "Binary representation: " << binary << "\n";
-}
-bool isPrime_sqrt(ll n)
-{
-    if (n == 1)
-        return false;
-    for (ll i = 2; i * i <= n; i++)
-    {
-        if (n % i == 0)
-            return false;
-    }
-    return true;
-}
-long long binaryExponentiation(long long base, long long exponent, long long mod)
-{
-    long long res = 1;
-    while (exponent > 0)
-    {
-        if (exponent % 2 == 1)
-        {
-            res = (res * base) % mod;
-        }
-        base = (base * base) % mod;
-        exponent >>= 1;
-    }
-    return res;
-}
-long long getModularMultiplicativeInverse(long long num, long long mod)
-{
-    // multiplicative inverse only exists if num and mod are relatively prime (coprime) i.e gcd(num, mod) = 1
-    if (__gcd(num, mod) != 1)
-    {
-        return -1;
-    }
-    return binaryExponentiation(num, mod - 2, mod);
-}
-
-class TrieNode
-{
-private:
-    struct Node
-    {
-        Node *links[26];
-        int cntEndWith = 0;
-        int cntPrefix = 0;
-
-        bool containsKey(char ch)
-        {
-            return (links[ch - 'a'] != nullptr);
-        }
-
-        Node *get(char ch)
-        {
-            return links[ch - 'a'];
-        }
-
-        void put(char ch, Node *node)
-        {
-            links[ch - 'a'] = node;
-        }
-
-        void increaseEnd()
-        {
-            cntEndWith++;
-        }
-
-        void increasePrefix()
-        {
-            cntPrefix++;
-        }
-
-        void deleteEnd()
-        {
-            cntEndWith--;
-        }
-
-        void reducePrefix()
-        {
-            cntPrefix--;
-        }
-
-        int getEnd()
-        {
-            return cntEndWith;
-        }
-
-        int getPrefix()
-        {
-            return cntPrefix;
-        }
-    };
-
-    Node *root;
-
-public:
-    TrieNode()
-    {
-        root = new Node();
-    }
-
-    void insert(string word)
-    {
-        Node *node = root;
-        for (int i = 0; i < word.length(); i++)
-        {
-            if (!node->containsKey(word[i]))
-            {
-                node->put(word[i], new Node());
-            }
-            node = node->get(word[i]);
-            node->increasePrefix();
-        }
-        node->increaseEnd();
-    }
-
-    int countWordsEqualTo(string &word)
-    {
-        Node *node = root;
-        for (int i = 0; i < word.length(); i++)
-        {
-            if (node->containsKey(word[i]))
-            {
-                node = node->get(word[i]);
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        return node->getEnd();
-    }
-
-    int countWordsStartingWith(string &word)
-    {
-        Node *node = root;
-        for (int i = 0; i < word.length(); i++)
-        {
-            if (node->containsKey(word[i]))
-            {
-                node = node->get(word[i]);
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        return node->getPrefix();
-    }
-
-    void erase(string &word)
-    {
-        Node *node = root;
-        for (int i = 0; i < word.length(); i++)
-        {
-            if (node->containsKey(word[i]))
-            {
-                node = node->get(word[i]);
-                node->reducePrefix();
-            }
-            else
-            {
-                return;
-            }
-        }
-        node->deleteEnd();
-    }
-};
-
-class DisjointSet
-{
-public:
-    vector<int> rank, parent, size;
-    DisjointSet(int n)
-    {
-        rank.resize(n + 1);
-        parent.resize(n + 1);
-        size.resize(n + 1);
-        for (int i = 0; i < n + 1; i++)
-        {
-            parent.at(i) = i;
-            size.at(i) = 1;
-        }
-    }
-
-    int findUPar(int node)
-    {
-        if (node == parent[node])
-            return node;
-        return parent[node] = findUPar(parent[node]);
-    }
-
-    void unionByRank(int u, int v)
-    {
-        int ultimateParentU = findUPar(u);
-        int ultimateParentV = findUPar(v);
-        if (ultimateParentU == ultimateParentV)
-            return;
-        if (rank.at(ultimateParentU) < rank.at(ultimateParentV))
-        {
-            parent.at(ultimateParentU) = ultimateParentV;
-        }
-        else if (rank.at(ultimateParentV) < rank.at(ultimateParentU))
-        {
-            parent.at(ultimateParentV) = ultimateParentU;
-        }
-        else
-        {
-            parent.at(ultimateParentV) = parent.at(ultimateParentU);
-            rank.at(ultimateParentU)++;
-        }
-    }
-
-    void unionBySize(int u, int v)
-    {
-        int ultimateParentU = findUPar(u);
-        int ultimateParentV = findUPar(v);
-        if (ultimateParentU == ultimateParentV)
-            return;
-        if (size.at(ultimateParentU) < size.at(ultimateParentV))
-        {
-            parent.at(ultimateParentU) = ultimateParentV;
-            size.at(ultimateParentV) += size.at(ultimateParentU);
-        }
-        else
-        {
-            parent.at(ultimateParentV) = ultimateParentU;
-            size.at(ultimateParentU) += size.at(ultimateParentV);
-        }
-    }
-};
 
 class Solution
 {
@@ -541,12 +143,12 @@ public:
     }
     int minimumCost(string target, vsr &words, vector<int> &costs)
     {
-        /* 
-        
-        ! TLE 
+        /*
+
+        ! TLE
         ! first of all string comparisons in the hashmap is O(string length)
         ! then we are running two loops and inside checking again in the hashmap so due to string comparison it can go O(N^2 * maxLength of string)
-        
+
          */
         unordered_map<string, int> mp;
         for (int i = 0; i < words.size(); i++)
@@ -576,6 +178,106 @@ public:
         }
         return (dp[0] == 1e9) ? -1 : dp[0];
     }
+
+    struct TrieNode
+    {
+        unordered_map<char, TrieNode *> children;
+        bool isEnd;
+        int cost; // this will be the minimum cost for the word
+        TrieNode()
+        {
+            isEnd = false;
+            cost = INT_MAX;
+        }
+        bool containsKey(char ch) { return children.count(ch); }
+        void put(char ch) { children[ch] = new TrieNode(); }
+        TrieNode *get(char ch) { return children[ch]; }
+    };
+    class TrieSolution
+    {
+    public:
+        TrieNode *root;
+        /* 
+        @ Insertion with minimum cost [simple trie insertion]
+        
+         */
+        void insert(string &word, int cost)
+        {
+            TrieNode *node = root;
+            for (char ch : word)
+            {
+                if (!node->containsKey(ch))
+                {
+                    node->put(ch);
+                }
+                node = node->get(ch);
+            }
+            node->isEnd = true;
+            node->cost = min(node->cost, cost);
+        }
+        /* 
+        @ Search whether the word exist and return its cost 
+        ! IMPORTANT NOTE:
+        & We can't use this actually because the string length may go upto 5x1e4 which will throw TLE if we call this function in a nested for loop
+         */
+        int search(string &word)
+        {
+            TrieNode *node = root;
+            for (char ch : word)
+            {
+                if (!node->containsKey(ch))
+                {
+                    return 1e9;
+                }
+                else
+                {
+                    node = node->get(ch);
+                }
+            }
+            return node->cost;
+        }
+        int minimumCost(string target, vector<string> &words, vector<int> &costs)
+        {
+            root = new TrieNode();
+            for (int i = 0; i < words.size(); i++)
+            {
+                insert(words[i], costs[i]);
+            }
+
+            vector<long long> dp(target.size() + 1, INT_MAX);
+            dp[0] = 0;
+            /* 
+            @ Core Idea:
+            & We will traverse the target and for each character we will find the cost for the word and then we will update the dp array
+            & But instead of first making the substring like lookFor in the brute force method
+            & We will search simultaneously while building the substring that way we can eliminate the extra O(string) factor
+            % Note that the constraints said sum of lengths would be under 5 x 1e4 if we apply some basic maths for testcase [a,aa,aaa,aaaa,...k]
+            % We will get the value of k as root(2n) 
+            * Overall time complexity is O(Nroot(n))
+            
+             */
+            for (int i = 0; i < target.size(); i++)
+            {
+                if (dp[i] == INT_MAX)
+                    continue;
+                TrieNode *node = root;
+                for (int j = i; j < target.size(); j++)
+                {
+                    char ch = target[j];
+                    if (!node->containsKey(ch))
+                    {
+                        break;
+                    }
+                    node = node->get(ch);
+                    if (node->cost != INT_MAX)
+                    {
+                        dp[j + 1] = min(dp[j + 1], node->cost + dp[i]);
+                    }
+                }
+            }
+            return (dp[target.size()] == INT_MAX) ? -1 : dp[target.size()];
+        }
+    };
 };
 
 int main(int argc, char const *argv[])

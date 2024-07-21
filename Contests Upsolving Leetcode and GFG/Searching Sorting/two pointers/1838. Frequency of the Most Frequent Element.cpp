@@ -426,6 +426,87 @@ public:
         return ans;
     }
 };
+
+
+
+class Binary_Search_Solution {
+public:
+/* 
+
+
+
+    isPossible Function:
+        The isPossible function checks if it's possible to achieve a certain frequency with the allowed difference k.
+        It initializes the times variable based on the frequency and the last element in the subarray.
+        It iterates through the array, updating the times variable by considering the difference in prefix sums and new differences.
+        The minimum times is tracked, and the function returns true if the minimum times is within the allowed difference k.
+
+Explanation of Binary Search:
+
+The binary search in this context is applied to find the maximum frequency efficiently. The search space is the potential frequencies that we can achieve. The isPossible function checks whether it's possible to achieve a given frequency with the allowed difference. The binary search updates the search space based on the result of this check until it finds the maximum frequency.
+Overall:
+
+The approach leverages sorting, prefix sums, and binary search to efficiently find the maximum frequency of an element in a subarray while considering the allowed difference. The isPossible function plays a crucial role in determining the feasibility of achieving a certain frequency. The binary search optimally explores the space of potential frequencies.
+
+
+
+ */
+    int maxFrequency(std::vector<int>& nums, int k) {
+        // Sort the array in ascending order
+        std::sort(nums.begin(), nums.end());
+
+        int length = nums.size();
+
+        // Calculate the differences between adjacent elements
+        std::vector<long> differences(length);
+        for (int i = 1; i < length; i++)
+            differences[i] = static_cast<long>(nums[i]) - static_cast<long>(nums[i - 1]);
+
+        // Calculate the prefix sums of the differences
+        std::vector<long> prefixSums(length);
+        for (int i = 1; i < length; i++)
+            prefixSums[i] = prefixSums[i - 1] + differences[i];
+
+        int low = 1, high = length;
+
+        // Binary search for the maximum frequency
+        while (low < high) {
+            int mid = (high - low + 1) / 2 + low;
+
+            // Check if it's possible to achieve the given frequency with the allowed difference
+            if (isPossible(nums, differences, prefixSums, mid, k))
+                low = mid;
+            else
+                high = mid - 1;
+        }
+
+        return low;
+    }
+
+private:
+    // Function to check if it's possible to achieve the given frequency with the allowed difference
+    bool isPossible(const std::vector<int>& nums, const std::vector<long>& differences, const std::vector<long>& prefixSums, int freq, int k) {
+        int length = differences.size();
+
+        long times = 0;
+
+        // Calculate the initial times based on the frequency and the last element in the subarray
+        for (int i = freq - 2; i >= 0; i--)
+            times += static_cast<long>(nums[freq - 1]) - static_cast<long>(nums[i]);
+
+        long minTimes = times;
+
+        // Iterate from freq-th element to the end of the array
+        for (int i = freq; i < length; i++) {
+            // Update times by considering the difference in prefix sums and new differences
+            times = times - (prefixSums[i - 1] - prefixSums[i - freq]) + differences[i] * (freq - 1);
+            minTimes = std::min(minTimes, times);
+        }
+
+        // Check if the minimum times is within the allowed difference (k)
+        return minTimes <= static_cast<long>(k);
+    }
+};
 int main(int argc, char const *argv[])
 {
     Solution obj;

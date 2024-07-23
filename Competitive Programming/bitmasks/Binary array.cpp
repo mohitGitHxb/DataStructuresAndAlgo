@@ -333,7 +333,7 @@ void solve()
     {
         if (ans.back() == 1 and b[i]) // beginning of a streak
         {
-            ans.back() = -1;
+            ans.back() = -1; // always set first 1 of a streak of consecutive ones to -1
             int streak = 1;
             j = i + 1;
             while (j < 32 and b[j])
@@ -341,6 +341,7 @@ void solve()
                 streak++;
                 j++;
             }
+             // if there were n consecutive ones then insert n-2 zeros between -1 ...n-2 zeros 1
             while (streak--)
             {
                 ans.pb(0);

@@ -1,5 +1,28 @@
 #include <bits/stdc++.h>
 using namespace std;
+/*
+ * CUSTOM hash function which avoids collisions and hence makes unordered maps / sets faster
+ */
+struct custom_hash
+{
+    static uint64_t splitmix64(uint64_t x)
+    {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const
+    {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
+#pragma GCC optimize("O3")
+#pragma GCC optimize("Ofast", "inline", "unroll-loops", "no-stack-protector")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
 #define gc getchar_unlocked
 #define ll long long
 #define deb(x) cerr << #x << "=" << x << endl
@@ -12,6 +35,7 @@ using namespace std;
 #define clr(x) memset(x, false, sizeof(x))
 #define sortall(x) sort(all(x))
 #define tr(it, a) for (auto it = a.begin(); it != a.end(); it++)
+#define forv(it, a) for (auto it : a)
 #define PI 3.1415926535897932384626
 ll MOD = 998244353;
 double eps = 1e-12;
@@ -28,12 +52,12 @@ typedef vector<pii> vpii;
 typedef vector<pl> vpl;
 typedef vector<vi> vvi;
 typedef vector<vl> vvl;
-typedef unordered_map<int, int> hmpi;
-typedef unordered_map<ll, ll> hmpll;
+typedef unordered_map<int, int, custom_hash> hmpi;
+typedef unordered_map<ll, ll, custom_hash> hmpll;
 typedef unordered_map<int, pii> hmppi;
 typedef unordered_map<int, vi> hmpvi;
-typedef unordered_set<int> hsi;
-typedef unordered_set<ll> hsll;
+typedef unordered_set<int, custom_hash> hsi;
+typedef unordered_set<ll, custom_hash> hsll;
 typedef unordered_set<pii> hspi;
 typedef unordered_set<pl> hspl;
 typedef map<int, int> mpi;
@@ -261,78 +285,123 @@ long long getModularMultiplicativeInverse(long long num, long long mod)
     }
     return binaryExponentiation(num, mod - 2, mod);
 }
+
 /*
 
-* THIS THING IS GANGSTA!!!
-* CUSTOM hash function which avoids collisions and hence makes unordered maps / sets faster
- */
-struct custom_hash
-{
-    static uint64_t splitmix64(uint64_t x)
-    {
-        // http://xorshift.di.unimi.it/splitmix64.c
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-        return x ^ (x >> 31);
-    }
+You are given an array a of size n
 
-    size_t operator()(uint64_t x) const
-    {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-};
-/*
-You are given an array a1,a2,…,an consisting of n distinct integers. Count the number of pairs of indices (i,j) such that i<j and ai⋅aj=i+j
+. You will do the following process to calculate your penalty:
+
+    Split array a
+
+into two (possibly empty) subsequences† s and t such that every element of a is either in s or t‡
+.
+For an array b
+of size m, define the penalty p(b) of an array b as the number of indices i between 1 and m−1 where bi<bi+1
+.
+The total penalty you will receive is p(s)+p(t)
+
+    .
+
+If you perform the above process optimally, find the minimum possible penalty you will receive.
+
+†
+A sequence x is a subsequence of a sequence y if x can be obtained from y
+
+by the deletion of several (possibly, zero or all) elements.
+
+‡
+Some valid ways to split array a=[3,1,4,1,5] into (s,t) are ([3,4,1,5],[1]), ([1,1],[3,4,5]) and ([],[3,1,4,1,5]) while some invalid ways to split a are ([3,4,5],[1]), ([3,1,4,1],[1,5]) and ([1,3,4],[5,1])
 
 .
 Input
 
-The first line contains one integer t
-(1≤t≤104) — the number of test cases. Then t
+Each test contains multiple test cases. The first line contains a single integer t
+(1≤t≤104
 
-cases follow.
+) — the number of test cases. The description of the test cases follows.
 
-The first line of each test case contains one integer n
-(2≤n≤105) — the length of array a
+The first line of each test case contains a single integer n
+(1≤n≤2⋅105) — the size of the array a
 
 .
 
-The second line of each test case contains n
-space separated integers a1,a2,…,an (1≤ai≤2⋅n) — the array a
+The second line contains n
+integers a1,a2,…,an (1≤ai≤n) — the elements of the array a
 
-. It is guaranteed that all elements are distinct.
+.
 
 It is guaranteed that the sum of n
 over all test cases does not exceed 2⋅105.
 
-@ Observation:
-Loop over all values of ai and aj. Because i+j≤2⋅n, we only care about pairs (ai,aj) if ai⋅aj≤2⋅n. The number of such pairs is O(nlogn), so you can brute force all pairs.
-& Since Sum of indexes (i + j) can have maximum value of n+n and minimum of 1+2 means all a*b must lie in the range [3,2n-1].
+    @ Algorithm:
+~    Consider the following approach. We start with empty arrays b and c, then insert elements of the array a one by one to the back of b or c. Our penalty function only depends on adjacent elements, so at any point in time, we only care about the value of the last element of arrays b and c. Suppose we already inserted a1,a2,…,ai−1 into arrays b and c and we now want to insert ai. Let x and y be the last element of arrays b and c respectively (if they are empty, use ∞). Note that swapping arrays b and c does not matter, so without loss of generality, assume that x≤y
+
  */
 
 void solve()
 {
-        ll n,ans=0;
-        cin>>n;
-        vi index(2*n+1,-1);
-        for(ll i=1;i<=n;i++){
-            ll a;
-            cin>>a;
-            index[a] = i;
-        }
-        //% question boils down to find a*b = sum OR a = sum/b
-        for(ll sum=3;sum<2*n;sum++){
-            //& To simply find combination of a,b we can just simply get the divisors of sum
-            //& Now check if a particular divisor exists and so is the sum/(divisor)
-            for(ll i=1;i*i<=sum;i++){
-                if(sum%i==0 and i*i!=sum and index[i]!=-1 and index[sum/i]!=-1 and index[i]+index[sum/i]==sum){
-                    ans++;
-                }
+    int n;
+    cin >> n;
+    vi a(n);
+    forn(i, n)
+    {
+        cin >> a[i];
+    }
+    int ans = 0;
+    vi s1, s2;
+    s1.pb(INT_MAX);
+    s2.pb(INT_MAX);
+    forn(i, n)
+    {
+        /*
+
+        & Greedy: always insert element to that array whose last element is greater than curr and is closest to curr in the array
+
+         */
+        if (s1.back() >= a[i] && s2.back() >= a[i])
+        {
+            if (s1.back() < s2.back())
+            {
+                s1.pb(a[i]);
+            }
+            else
+            {
+                s2.pb(a[i]);
             }
         }
-        cout<<ans<<endl;
+        else if (s1.back() >= a[i])
+        {
+            s1.pb(a[i]);
+        }
+        else if (s2.back() >= a[i])
+        {
+            s2.pb(a[i]);
+        }
+        else
+        {
+            if (s1.back() < s2.back())
+            {
+                s1.pb(a[i]);
+            }
+            else
+            {
+                s2.pb(a[i]);
+            }
+        }
+    }
+
+    forsn(i, 1, sz(s1))
+    {
+        ans += (s1[i - 1] < s1[i]);
+    }
+
+    forsn(i, 1, sz(s2))
+    {
+        ans += (s2[i - 1] < s2[i]);
+    }
+
+    cout << ans << endl;
 }
 int main()
 {
@@ -343,7 +412,6 @@ int main()
     fast_read();
     int t;
     cin >> t;
-
     forn(i, t)
     {
         cerr << "\nTestcase " << i + 1 << " started\n";

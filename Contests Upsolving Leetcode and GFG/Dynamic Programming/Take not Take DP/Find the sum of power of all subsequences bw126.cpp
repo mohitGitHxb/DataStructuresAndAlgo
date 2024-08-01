@@ -584,6 +584,9 @@ public:
     {
         //% We can eliminate the state(count) from the dp array by simply replacing below line
         //@ ll notTake = countSubsequenceWithSumK_withCount(nums, k, count, idx + 1); to ll notTake = 2 *  countSubsequenceWithSumK_withCount(nums, k, count, idx + 1);
+        //& The reason why 2 * countSubsequenceWithSumK_withCount(nums, k, count, idx + 1) works because of two not take conditions
+        //& This is a standard way to approach problems like subset of a subset of the original array
+        //& Reason for 2 is: not taking into subset 1 + taking into subset 1 but not in subset 2;
         dpWithCount.resize(nums.size() + 1, vvl(k + 1, vl(k + 1, -1)));
         return countSubsequenceWithSumK_withCount(nums, k, 0, 0) % mod;
     }

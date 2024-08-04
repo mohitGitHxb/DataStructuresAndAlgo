@@ -2,16 +2,16 @@
 using namespace std;
 // Idea:
 // 1. say max_len[i] is the result/answer for first i elements
-////1a. max_len[0] = 0; max_len[1] = 1
+//1a. max_len[0] = 0; max_len[1] = 1
 // 2. say last_val[i] is last value of array
-/////////////////after performing optimal operations for first i elements
+// after performing optimal operations for first i elements
 // 3. max_len[i] = max(max_len[i], max_len[q]+1) for all valid 'q'
-////See below for valid 'q' definition
-////3a. q < i
-////3b. last_val[q] <= nums[q] + nums[q+1] + ...+ nums[i-1]
-////    => last_val[q] <= prefix_sum[i] - prefix_sum[q]
-////    => last_val[q] + prefix_sum[q] <= prefix_sum[i]  (for O(n) solution)
-////
+//See below for valid 'q' definition
+//3a. q < i
+//3b. last_val[q] <= nums[q] + nums[q+1] + ...+ nums[i-1]
+//    => last_val[q] <= prefix_sum[i] - prefix_sum[q]
+//    => last_val[q] + prefix_sum[q] <= prefix_sum[i]  (for O(n) solution)
+//
 
 // O(n^2) solution
 

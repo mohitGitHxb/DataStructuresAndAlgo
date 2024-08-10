@@ -3,50 +3,16 @@ using namespace std;
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
-/*
- * CUSTOM hash function which avoids collisions and hence makes unordered maps / sets faster
- */
-struct custom_hash
-{
-    static uint64_t splitmix64(uint64_t x)
-    {
-        // http://xorshift.di.unimi.it/splitmix64.c
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-        return x ^ (x >> 31);
-    }
-
-    size_t operator()(uint64_t x) const
-    {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-};
 #pragma GCC optimize("O3")
 #pragma GCC optimize("Ofast", "inline", "unroll-loops", "no-stack-protector")
 #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native", "f16c")
 #define gc getchar_unlocked
 #define ll long long
 #define deb(x) cout << #x << "=" << x << endl
-#define pb push_back
-#define eb emplace_back
-#define mp make_pair
-#define F first
-#define S second
 #define all(x) x.begin(), x.end()
-#define rall(v) v.rbegin(), v.rend()
-#define clr(x) memset(x, false, sizeof(x))
-#define MIN(v) *min_element(all(v))
-#define MAX(v) *max_element(all(v))
-#define SUM(v) accumulate(all(v), 0LL)
 #define endl "\n"
 #define sortall(x) sort(all(x))
-#define tr(it, a) for (auto it = a.begin(); it != a.end(); it++)
 #define forv(it, a) for (auto &it : a)
-#define PI 3.1415926535897932384626
-ll MOD = 998244353;
-double eps = 1e-12;
 #define forn(i, e) for (ll i = 0; i < e; i++)
 #define forsn(i, s, e) for (ll i = s; i < e; i++)
 #define rforn(i, s) for (ll i = s; i >= 0; i--)
@@ -55,33 +21,6 @@ typedef pair<int, int> pii;
 typedef pair<ll, ll> pl;
 typedef vector<int> vi;
 typedef vector<string> vsr;
-typedef vector<ll> vl;
-typedef vector<pii> vpii;
-typedef vector<pl> vpl;
-typedef vector<vi> vvi;
-typedef vector<vl> vvl;
-typedef unordered_map<int, int, custom_hash> hmpi;
-typedef unordered_map<ll, ll, custom_hash> hmpll;
-typedef unordered_map<int, pii> hmppi;
-typedef unordered_map<int, vi> hmpvi;
-typedef unordered_set<int, custom_hash> hsi;
-typedef unordered_set<ll, custom_hash> hsll;
-typedef unordered_set<pii> hspi;
-typedef unordered_set<pl> hspl;
-typedef map<int, int> mpi;
-typedef map<ll, ll> mpll;
-typedef map<int, pii> mppi;
-typedef map<int, vi> mpvi;
-typedef set<int> si;
-typedef set<ll> sll;
-typedef set<pii> spi;
-typedef set<pl> spl;
-template <class T = pii>
-using oset =
-    tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-template <class T = pii>
-using mset = tree<T, null_type, less_equal<T>, rb_tree_tag,
-                  tree_order_statistics_node_update>;
 #define sz(x) ((ll)(x).size())
 
 void fast_read()

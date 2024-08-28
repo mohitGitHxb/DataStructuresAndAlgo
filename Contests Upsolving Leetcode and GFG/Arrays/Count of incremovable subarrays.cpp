@@ -64,10 +64,10 @@ public:
     /*
     Intuition
 
-Since the question demands O(n)O(n)O(n) or O(nlognO(nlognO(nlogn) solution,
-we can think finding the number of incremoval subarrays with left end at index iii for all 0<=i<n0<=i<n0<=i<n efficiently.
+Since the question demands O(n) or O(nlogn) solution,
+we can think finding the number of incremoval subarrays with left end at index i for all 0<=i<n efficiently.
 
-Let's find the length (lll) of the longest prefix (P) such that this prefix is a increasing subarray
+Let's find the length (l) of the longest prefix (P) such that this prefix is a increasing subarray
 Similarly, find the length (rrr) of the longest suffix (S) which is a increasing subarray
 
 Ex: [6,5,10,7,8][6, 5, 10, 7, 8][6,5,10,7,8]

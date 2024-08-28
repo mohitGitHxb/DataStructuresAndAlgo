@@ -68,42 +68,42 @@ Since the question demands O(n) or O(nlogn) solution,
 we can think finding the number of incremoval subarrays with left end at index i for all 0<=i<n efficiently.
 
 Let's find the length (l) of the longest prefix (P) such that this prefix is a increasing subarray
-Similarly, find the length (rrr) of the longest suffix (S) which is a increasing subarray
+Similarly, find the length (r) of the longest suffix (S) which is a increasing subarray
 
-Ex: [6,5,10,7,8][6, 5, 10, 7, 8][6,5,10,7,8]
-P: [6][6][6]
-S: [7,8][7, 8][7,8]
+Ex: [6,5,10,7,8]
+P: [6]
+S: [7,8]
 
-l=1,r=2l=1, r=2l=1,r=2
+l=1,r=2
 The valid incremoval subarrays are
-[6,5,10][6, 5, 10][6,5,10]
-[6,5,10,7][6, 5, 10, 7][6,5,10,7]
-[6,5,10,7,8][6, 5, 10, 7, 8][6,5,10,7,8]
+[6,5,10]
+[6,5,10,7]
+[6,5,10,7,8]
 
-[5,10][5, 10][5,10]
-[5,10,7][5, 10, 7][5,10,7]
-[5,10,7,8][5, 10, 7, 8][5,10,7,8]
+[5,10]
+[5,10,7]
+[5,10,7,8]
 
-total=6total=6total=6
+total=6
 
-You can observe that the elements in the range [l,n−r−1][l, n-r-1][l,n−r−1] always exist in any valid incremoval subarray
+You can observe that the elements in the range [l,n−r−1] always exist in any valid incremoval subarray
 Approach
 
-For every element in the prefix a[i]a[i]a[i] find the element in the suffix a[j]a[j]a[j] just greater than a[i]a[i]a[i]
+For every element in the prefix a[i] find the element in the suffix a[j] just greater than a[i]
 
-Then the number of valid incremoval subarrays with left end as i+1i+1i+1 is
-[i+1..j],[i+1..j+1],.....[i+1..n−1][i+1..j], [i+1..j+1], ..... [i+1..n-1][i+1..j],[i+1..j+1],.....[i+1..n−1]
+Then the number of valid incremoval subarrays with left end as i+1 is
+[i+1..j],[i+1..j+1],.....[i+1..n−1]
 
-Which is n−j+1n-j+1n−j+1
-We also need to calculate the number of valid incremoval subarrays with left end as i=0i=0i=0
-which is r+1r+1r+1
+Which is n−j+1
+We also need to calculate the number of valid incremoval subarrays with left end as i=0
+which is r+1
 Complexity
 
     Time complexity:
-    O(nlogn)O(nlogn)O(nlogn)
+    O(nlogn)
 
     Space complexity:
-    O(n)O(n)O(n)
+    O(n)
 
      */
 };

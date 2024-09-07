@@ -12,3 +12,6 @@ TestCode
 test
 CP
 excalidraw
+*.exe
+*.o
+*.a

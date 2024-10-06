@@ -186,6 +186,9 @@ public:
         {
             delete account.second;
         }
+        for(auto &stock : listedStocks){
+            delete stock.second;
+        }
     }
 
     // Create a new account

@@ -305,13 +305,15 @@ public:
 
         for (int i = 2; i <= num; i++)
         {
-            for (int j = i; j <= num; j += i)
+            if (isPrime[i])
             {
-                divisors[j].emplace_back(i);
+                for (int j = i; j <= num; j += i)
+                {
+                    divisors[j].emplace_back(i);
+                }
             }
         }
 
-        // print2dVector(divisors);
         return divisors[num];
     }
 

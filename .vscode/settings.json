@@ -49,7 +49,6 @@
   "accessibility.signals.onDebugBreak": {
     "sound": "auto"
   },
-  "editor.selectionClipboard": false,
   "editor.codeActionsOnSave": {
     "source.fixAll": "always"
   },

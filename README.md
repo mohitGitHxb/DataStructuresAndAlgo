@@ -4,13 +4,74 @@ Welcome to the **DataStructuresAndAlgo** repository! This comprehensive collecti
 
 ## Repository Structure
 
-### 1. SHEET Folder
+```
+DataStructuresAndAlgo/
+├── Competitive Programming/              # Codeforces, grouped by technique
+│   ├── Binary Search/
+│   ├── Bit Manipulation/
+│   ├── Brute Force/
+│   ├── Constructive/
+│   ├── Games/
+│   ├── Greedy/
+│   ├── Implementation/
+│   ├── Math/
+│   ├── Prefix Sums/
+│   └── Strings/
+├── Contests Upsolving Leetcode and GFG/  # LeetCode/GFG, grouped by topic
+│   ├── Arrays/                           # Hashing and Prefix Sum, Matrix
+│   ├── Bit Manipulation/                 # Bit Tricks, Bitwise Subarrays, XOR
+│   ├── Dynamic Programming/              # 6 pattern subfolders (see below)
+│   ├── Fenwick and Segment Trees/
+│   ├── Graph/                            # DFS and BFS, Disjoint Sets, Shortest Path, Topo
+│   ├── Math/                             # Combinatorics, Geometry, Number Theory
+│   ├── Recursion and Backtracking/
+│   ├── Searching and Sorting/            # Binary Search, Greedy, Heaps and Priority Queues, Two Pointers
+│   ├── Stacks/                           # + Monotonic Stack
+│   ├── Strings/                          # Binary Strings, Counting, Matching, Simulation, Trie
+│   └── Trees/
+├── SHEETs/                               # consolidated topic-wise sheet notes
+├── OOPS/                                 # OOP theory + design implementations
+├── Standard-template-library/            # STL reference notes
+├── container_printer.hpp                 # reusable debug printer
+└── README.md
+```
 
-The **SHEET** folder is a treasure trove of DSA questions sourced from prominent DSA sheets such as Striver A2Z and Love Babbar 450. Within this folder, you will find meticulously curated questions accompanied by their most optimized solutions. Each solution is presented with detailed code explanations, allowing you to grasp the underlying concepts and logic. This folder is designed to help you comprehend and implement solutions effectively.
+### 1. `Competitive Programming/`
 
-### 2. content-upsolving Folder
+Codeforces problems grouped by the technique needed to solve them. Each file contains the problem statement/observations and, where useful, more than one approach.
 
-The **content-upsolving** folder offers a collection of medium to hard-level questions sourced from GFG weekly, LeetCode weekly, and biweekly contests. These questions have been meticulously chosen to enhance your problem-solving skills. Each question is supplemented with a comprehensive explanation and an optimized code solution. This folder is an excellent resource for practicing a diverse range of challenging problems and refining your problem-solving prowess.
+### 2. `Contests Upsolving Leetcode and GFG/`
+
+Medium-to-hard problems from LeetCode weekly/biweekly contests and GFG contests, grouped by data structure or topic. Each topic is split into pattern-specific subfolders carrying at least three problems:
+
+| Topic | Subfolders |
+|---|---|
+| `Arrays` | Hashing and Prefix Sum, Matrix |
+| `Bit Manipulation` | Bit Tricks, Bitwise Subarrays, XOR |
+| `Dynamic Programming` | Take or Not Take DP, Partition DP, Non-Standard DP, Bitwise DP, LIS Variations, DP on Trees |
+| `Graph` | DFS and BFS, Disjoint Sets, Shortest Path, Topological Sorting |
+| `Math` | Combinatorics, Geometry, Number Theory |
+| `Searching and Sorting` | Binary Search, Greedy, Heaps and Priority Queues, Two Pointers |
+| `Stacks` | Monotonic Stack |
+| `Strings` | Binary Strings, String Counting, String Matching, String Simulation, Trie |
+
+`Fenwick and Segment Trees`, `Recursion and Backtracking`, and `Trees` are small enough to stay flat. `Trees` holds tree-structure problems (LCA, path counting) plus the binary-lifting concept note, while tree DP lives under `Dynamic Programming/DP on Trees`. `Stacks` keeps two plain stack problems (`Clumsy factorial`, `Remove the balls`) at its root and groups the rest under `Monotonic Stack`. `Two Pointers` also covers the sliding-window problems.
+
+Files are named after the contest problem they solve and are never renamed during reorganisation — moves use `git mv`, so history follows the file.
+
+### 3. `SHEETs/`
+
+Consolidated topic-wise notes and solutions for standard sheets such as Love Babbar 450 and Striver A2Z. Each file covers one topic, with problems arranged sequentially.
+
+### 4. `OOPS/`
+
+C++ OOP theory plus design-oriented implementations (Bank, Library Management, Stock Broker).
+
+### 5. `Standard-template-library/`
+
+STL reference notes and examples.
+
+The scratch folders `CP/`, `excalidraw/`, and `test/` are local-only and git-ignored.
 
 ## Language
 
